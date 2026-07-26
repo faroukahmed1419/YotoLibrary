@@ -1,0 +1,1603 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>القاموس التفاعلي - 3 ث</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', 'Tahoma', 'Arial', sans-serif;
+      background: #f4f7fb;
+      color: #1e293b;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1300px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 32px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+      padding: 30px 25px 40px;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #0f172a;
+      text-align: center;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #64748b;
+      margin-bottom: 30px;
+      font-size: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 18px;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px 20px;
+      background: #f8fafc;
+      padding: 20px 24px;
+      border-radius: 20px;
+      margin-bottom: 28px;
+      align-items: flex-end;
+      border: 1px solid #e2e8f0;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 180px;
+      min-width: 150px;
+    }
+
+    .filter-group label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-bottom: 5px;
+    }
+
+    .filter-group select,
+    .filter-group input {
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid #d1d9e6;
+      background: white;
+      font-size: 0.95rem;
+      color: #1e293b;
+      transition: 0.2s;
+      width: 100%;
+      font-family: inherit;
+    }
+
+    .filter-group select:focus,
+    .filter-group input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+
+    .filter-group.search-box {
+      flex: 2 1 260px;
+    }
+
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      margin: 10px 0 18px;
+      padding: 0 6px;
+    }
+
+    .results-header h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    .results-header .count-badge {
+      background: #e9edf2;
+      padding: 5px 16px;
+      border-radius: 40px;
+      font-size: 0.9rem;
+      color: #334155;
+      font-weight: 500;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      background: #ffffff;
+      border: 1px solid #eef2f6;
+      border-radius: 16px;
+      padding: 16px 18px;
+      transition: 0.2s ease;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.04);
+      transform: translateY(-2px);
+    }
+
+    .card .word {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #0f172a;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .card .word .meta-tag {
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: #3b82f6;
+      background: #e6f0ff;
+      padding: 2px 10px;
+      border-radius: 30px;
+      letter-spacing: 0.2px;
+    }
+
+    .card .translation {
+      font-size: 0.95rem;
+      color: #334155;
+      line-height: 1.6;
+      word-break: break-word;
+    }
+
+    .card .extra-info {
+      font-size: 0.85rem;
+      color: #475569;
+      background: #f8fafc;
+      padding: 6px 12px;
+      border-radius: 10px;
+      margin-top: 8px;
+      border-right: 3px solid #94a3b8;
+    }
+
+    .card .unit-tag {
+      font-size: 0.7rem;
+      color: #94a3b8;
+      margin-top: 8px;
+      border-top: 1px dashed #e2e8f0;
+      padding-top: 8px;
+      text-align: left;
+    }
+
+    .no-results {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 50px 20px;
+      color: #94a3b8;
+      font-size: 1.1rem;
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        padding: 16px 12px;
+      }
+      .filters {
+        padding: 16px;
+        gap: 12px;
+      }
+      .filter-group {
+        flex: 1 1 100%;
+        min-width: unset;
+      }
+      .cards-grid {
+        grid-template-columns: 1fr;
+      }
+      h1 {
+        font-size: 1.6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📘 القاموس التفاعلي</h1>
+    <div class="subtitle">الصف الثالث الثانوي — المفردات والتعبيرات</div>
+
+    <div class="filters">
+      <div class="filter-group">
+        <label for="unitSelect">الوحدة</label>
+        <select id="unitSelect"></select>
+      </div>
+      <div class="filter-group">
+        <label for="categorySelect">التصنيف</label>
+        <select id="categorySelect"></select>
+      </div>
+      <div class="filter-group search-box">
+        <label for="searchInput">🔍 بحث سريع</label>
+        <input type="text" id="searchInput" placeholder="اكتب كلمة أو ترجمة..." />
+      </div>
+    </div>
+
+    <div class="results-header">
+      <h2>نتائج القاموس</h2>
+      <span class="count-badge" id="resultCount">0 كلمة</span>
+    </div>
+
+    <div class="cards-grid" id="resultsContainer">
+      <div class="no-results">جاري تحميل البيانات...</div>
+    </div>
+  </div>
+
+  <script>
+    // ------------------------------------------------------------
+    // البيانات المستخرجة من ملف JSON (مضمنة بالكامل)
+    // ------------------------------------------------------------
+    const data = {
+  "1": {
+    "key_vocabulary": [
+      {"word":"administer","translation":"بيدير/يعطى الدواء"},
+      {"word":"attention","translation":"انتباه/حضور"},
+      {"word":"beep","translation":"صوت صغير"},
+      {"word":"buzz","translation":"طنين"},
+      {"word":"chaos","translation":"فوضى"},
+      {"word":"chest","translation":"صدر"},
+      {"word":"clutch","translation":"يمسك بقوة"},
+      {"word":"collapse","translation":"ينهار"},
+      {"word":"consciousness","translation":"وعي/ضمير"},
+      {"word":"CPR","translation":"إنعاش قلبي رئوي"},
+      {"word":"emergency","translation":"طوارئ"},
+      {"word":"forehead","translation":"جبهة/جين"},
+      {"word":"grab","translation":"يجذب بعنف"},
+      {"word":"groan","translation":"يتوجع/ين"},
+      {"word":"heartbreaking","translation":"مفجع"},
+      {"word":"kick off","translation":"انطلاق/بنطلق/بيدا"},
+      {"word":"medication","translation":"دواء"},
+      {"word":"moon","translation":"يتأوه"},
+      {"word":"paramedic","translation":"رجل الإسعاف"},
+      {"word":"pulse","translation":"نبض"},
+      {"word":"reward","translation":"يكافئ/مكافأة"},
+      {"word":"rewarding","translation":"مجز/مرض"},
+      {"word":"rollercoaster","translation":"موقف متغير"},
+      {"word":"scope","translation":"مناظر"},
+      {"word":"shift","translation":"مناوية عمل/يحول"},
+      {"word":"stitch","translation":"غرزة/بخيط"},
+      {"word":"swallow","translation":"يبتلع"},
+      {"word":"urgency","translation":"حالة طارئة"}
+    ],
+    "main_vocabulary": [
+      {"word":"affect","translation":"يؤثر على"},
+      {"word":"anxiously","translation":"بفتق"},
+      {"word":"challenges","translation":"تحديات"},
+      {"word":"chart","translation":"رسم بياني"},
+      {"word":"choking","translation":"اختناق/خاتق"},
+      {"word":"comfortable","translation":"مرجع"},
+      {"word":"compassion","translation":"شفقة/رحمة"},
+      {"word":"compression","translation":"ضغط"},
+      {"word":"confident","translation":"وافق"},
+      {"word":"confusion","translation":"ارتباك"},
+      {"word":"construction","translation":"بناء/تشييد"},
+      {"word":"critical","translation":"نقدي/حج هتدد"},
+      {"word":"dedication","translation":"تفان/إخلاص/التزام"},
+      {"word":"disorder","translation":"فوضى/عدم ترتيب"},
+      {"word":"document","translation":"يوثق/وثيقة"},
+      {"word":"duty","translation":"واجب"},
+      {"word":"ensure","translation":"يضمن"},
+      {"word":"exhausted","translation":"مرهق/مستهلك"},
+      {"word":"first aid","translation":"إسعافات أولية"},
+      {"word":"flexible","translation":"مرن"},
+      {"word":"fulfill","translation":"يحقق/يرضى"},
+      {"word":"gratitude","translation":"عرفان بالجمل"},
+      {"word":"instructions","translation":"تعليمات"},
+      {"word":"machine","translation":"ماكينة"},
+      {"word":"medical","translation":"طب"},
+      {"word":"mentally","translation":"ذهني/نفسيا"},
+      {"word":"monitor","translation":"يراقب/شاشة"},
+      {"word":"never ending","translation":"لا ينتهي"},
+      {"word":"non-stop","translation":"بالتوافق"},
+      {"word":"panicked","translation":"مفزوع"},
+      {"word":"prescription","translation":"روشنة/وصفة طبية"},
+      {"word":"pressure","translation":"ضغط"},
+      {"word":"procedure","translation":"إجراء"},
+      {"word":"progress","translation":"تطور/بطور"},
+      {"word":"randomly","translation":"بشكل عشوائي"},
+      {"word":"relief","translation":"راحة"},
+      {"word":"review","translation":"يراجع/مقال نقدي"},
+      {"word":"satisfaction","translation":"رضا"},
+      {"word":"situation","translation":"موقف"},
+      {"word":"sore throat","translation":"التهاب في الحلق"},
+      {"word":"staff","translation":"مجموعة عاملين"},
+      {"word":"sterile","translation":"معقم"},
+      {"word":"stethoscope","translation":"سماعة الطبيب"},
+      {"word":"surgery","translation":"جراحة"},
+      {"word":"task","translation":"مهمة"},
+      {"word":"teamwork","translation":"عمل جماعي"},
+      {"word":"toddler","translation":"طفل صغير"},
+      {"word":"updates","translation":"تحديثات"},
+      {"word":"X-rays","translation":"أشعة إكس"}
+    ],
+    "phrases": [
+      {"word":"bring hope and healing","translation":"إجلب الأمل والشفاء"},
+      {"word":"come to an end","translation":"يصل النهاية"},
+      {"word":"fly open","translation":"يفتح بشكل مفاجئ"},
+      {"word":"go the extra mile","translation":"يبدل مجهودا أكثر"},
+      {"word":"head home","translation":"يتجه للبيت"},
+      {"word":"It rained cats and dogs.","translation":""},
+      {"word":"pale as a ghost","translation":"شاحب مثل الشيخ"},
+      {"word":"jump into action","translation":"ينطلق للعمل"},
+      {"word":"soaked to the skin","translation":"ميل كلها"},
+      {"word":"make decisions","translation":"يتخذ قرارات"},
+      {"word":"spring into action","translation":"يبدأ التدخل فورا"},
+      {"word":"have a severe viral cold","translation":"يصاب بنزلة برد فيروسية شديدة"},
+      {"word":"make sure","translation":"يتأكد"},
+      {"word":"weep with relief","translation":"يكي مع الإحساس بالارتياح"},
+      {"word":"No pain, no gain.","translation":"الربح بدون الم"}
+    ],
+    "prepositions": [
+      {"word":"administer ... to","translation":"يعطى ... ل"},
+      {"word":"covered in","translation":"مفطى ب"},
+      {"word":"reflect on","translation":"يفكر في"},
+      {"word":"(be) rushed in","translation":"يندفع للداخل"},
+      {"word":"cry out","translation":"يصرخ بصوت عال"},
+      {"word":"rely on","translation":"يعتمد على"},
+      {"word":"break out","translation":"تندلع"},
+      {"word":"focus on","translation":"يركز على"},
+      {"word":"respond to","translation":"يستجيب إلى"},
+      {"word":"buzz with","translation":"يمتلئ ب"},
+      {"word":"move on","translation":"يمضى قدمًا"},
+      {"word":"care for","translation":"يمتنى ب"},
+      {"word":"prepare for","translation":"يعد ل"},
+      {"word":"trade ... for","translation":""},
+      {"word":"check in","translation":"يراجع الأوراق"},
+      {"word":"recover from","translation":"يشفي من"}
+    ],
+    "derivatives": [
+      {"word":"administer","translation":"بيدير/بقدم الدواء","type":"verb"},
+      {"word":"administration","translation":"إدارة","type":"noun"},
+      {"word":"administrative","translation":"إدارة","type":"adjective"},
+      {"word":"attend","translation":"يحضر","type":"verb"},
+      {"word":"attention","translation":"انتباه","type":"noun"},
+      {"word":"attentive","translation":"يقط/منتبه","type":"adjective"},
+      {"word":"confuse","translation":"يشوش/يريك","type":"verb"},
+      {"word":"confusion","translation":"تشويش/ارتباك","type":"noun"},
+      {"word":"confusing","translation":"مريك","type":"adjective"},
+      {"word":"confused","translation":"مريك","type":"adjective"},
+      {"word":"construct","translation":"يشوس","type":"verb"},
+      {"word":"construction","translation":"بناء/تأسيس","type":"noun"},
+      {"word":"exhaust","translation":"يرفع","type":"verb"},
+      {"word":"exhaustion","translation":"الإرهاق","type":"noun"},
+      {"word":"exhausted","translation":"منرفق","type":"adjective"},
+      {"word":"perform","translation":"يؤدي","type":"verb"},
+      {"word":"performance","translation":"الإداء","type":"noun"},
+      {"word":"performing","translation":"مؤدى","type":"adjective"},
+      {"word":"respond","translation":"يستجيب","type":"verb"},
+      {"word":"response","translation":"استجابة","type":"noun"},
+      {"word":"responsive","translation":"مستجيب","type":"adjective"},
+      {"word":"satisfy","translation":"يرضى","type":"verb"},
+      {"word":"satisfaction","translation":"الرضا","type":"noun"},
+      {"word":"satisfying","translation":"مريض","type":"adjective"},
+      {"word":"satisfied","translation":"يشعر بالرضا","type":"adjective"}
+    ],
+    "synonyms_antonyms": [
+      {"word":"administer","synonym":"manage/organize","antonym":"ignore/mismanage"},
+      {"word":"clutch","synonym":"hold tightly/grasp","antonym":"release/drop"},
+      {"word":"consciousness","synonym":"awareness/alertness","antonym":"unconsciousness/ignorance"},
+      {"word":"handle","synonym":"manage/control","antonym":"neglect/mismanage"},
+      {"word":"heartbreaking","synonym":"tragic/painful","antonym":"joyful/pleasing"},
+      {"word":"moon","synonym":"complain/groan","antonym":"laugh/cheer"},
+      {"word":"never-ending","synonym":"endless/infinite","antonym":"limited/temporary"},
+      {"word":"randomly","synonym":"accidentally/unpredictably","antonym":"systematically/intentionally"},
+      {"word":"sacrifice","synonym":"give up/devote","antonym":"keep/gain"},
+      {"word":"satisfaction","synonym":"fulfillment/pleasure","antonym":"dissatisfaction/frustration"},
+      {"word":"stitch","synonym":"sew/mend","antonym":"tear/cut"},
+      {"word":"urgency","synonym":"necessity/emergency","antonym":"calmness/delay"}
+    ]
+  },
+  "2": {
+    "phrases": [
+      {"word":"blend old and new","translation":"بمنح القديم بالحديث"},
+      {"word":"charge full steam ahead","translation":"بندفع بكامل طاقته / يتقدم بأقصى سرعة"},
+      {"word":"drive forward projects","translation":"بدفع المشروعات إلى الأمام"},
+      {"word":"not the other way around","translation":"وليس العكس"},
+      {"word":"state your claim","translation":"ادكراءك / أبد رأيك"},
+      {"word":"stay on the right track","translation":"يبقى على المسار الصحيح"}
+    ],
+    "derivatives": [
+      {"word":"adopt","translation":"يتبنى","type":"verb"},
+      {"word":"adoption","translation":"التبنى","type":"noun"},
+      {"word":"adopted","translation":"متبنى","type":"adjective"},
+      {"word":"comfort","translation":"يتملئن","type":"verb"},
+      {"word":"comfort","translation":"الراحة","type":"noun"},
+      {"word":"comfortable","translation":"مطمئن","type":"adjective"},
+      {"word":"connect","translation":"يربط","type":"verb"},
+      {"word":"connection","translation":"عالقة / رابطة","type":"noun"},
+      {"word":"connected","translation":"متصل","type":"adjective"},
+      {"word":"depend","translation":"يتمدد","type":"verb"},
+      {"word":"dependence","translation":"االعتماد / التوالي","type":"noun"},
+      {"word":"dependent","translation":"متوكل / تابع","type":"adjective"},
+      {"word":"detect","translation":"يكشف","type":"verb"},
+      {"word":"detection","translation":"الكشف","type":"noun"},
+      {"word":"detectable","translation":"قابل لالكتشاف","type":"adjective"},
+      {"word":"imagine","translation":"يخيل","type":"verb"},
+      {"word":"imagination","translation":"الخيال","type":"noun"},
+      {"word":"imaginative","translation":"مبدع / مبتكر","type":"adjective"},
+      {"word":"innovate","translation":"يبتكر / يجد","type":"verb"},
+      {"word":"innovation","translation":"ابتكار","type":"noun"},
+      {"word":"innovative","translation":"مبدع / مجدد","type":"adjective"},
+      {"word":"rely","translation":"يتمدد","type":"verb"},
+      {"word":"reliance","translation":"االعتماد","type":"noun"},
+      {"word":"reliable","translation":"موثوق فيه","type":"adjective"},
+      {"word":"renew","translation":"يجد","type":"verb"},
+      {"word":"renewability","translation":"قابلية للتجديد","type":"noun"},
+      {"word":"renewable","translation":"متجدد","type":"adjective"},
+      {"word":"replace","translation":"يستبدل","type":"verb"},
+      {"word":"replacement","translation":"استبدال / بديل","type":"noun"},
+      {"word":"replaceable","translation":"قابل لالستبدال","type":"adjective"},
+      {"word":"revolutionize","translation":"يؤثر / يقوم بثورة","type":"verb"},
+      {"word":"revolution","translation":"ثورة","type":"noun"},
+      {"word":"revolutionary","translation":"ثورة","type":"adjective"},
+      {"word":"sophisticate","translation":"يطور / يمقد","type":"verb"},
+      {"word":"sophistication","translation":"التقييد / الرقي","type":"noun"},
+      {"word":"sophisticated","translation":"معقد / متطور","type":"adjective"}
+    ],
+    "prepositions": [
+      {"word":"a part of","translation":"جزء من"},
+      {"word":"argue with","translation":"يتجادل مع"},
+      {"word":"connected to","translation":"متصل بـ"},
+      {"word":"depend on","translation":"يعتمد على"},
+      {"word":"different from/to","translation":"مختلف عن"},
+      {"word":"import from","translation":"يستوره من"},
+      {"word":"in charge of","translation":"مسئول عن"},
+      {"word":"related to","translation":"مرتبط بـ"},
+      {"word":"rich in","translation":"غني بـ"},
+      {"word":"take over","translation":"يتولى المسئولية"},
+      {"word":"wake up","translation":"يستيقظ"},
+      {"word":"worry about","translation":"يقلق بشأن"}
+    ]
+  },
+  "4": {
+    "synonyms_antonyms": [
+      {"word":"conservation","synonym":"preservation/protection","antonym":"destruction/damage"},
+      {"word":"coordinated","synonym":"organized/harmonized","antonym":"uncoordinated/disorganized"},
+      {"word":"dedicated","synonym":"committed/devoted","antonym":"indifferent/uncommitted"},
+      {"word":"disrupt","synonym":"disturb/interrupt","antonym":"maintain/organize"},
+      {"word":"entangled","synonym":"intertwined/ensnared","antonym":"free/untangled"},
+      {"word":"fragile","synonym":"delicate/breakable","antonym":"sturdy/strong"},
+      {"word":"graceful","synonym":"elegant/poised","antonym":"clumsy/awkward"},
+      {"word":"hazardous","synonym":"dangerous/risky","antonym":"safe/harmless"},
+      {"word":"hidden","synonym":"concealed/secret","antonym":"visible/obvious"},
+      {"word":"organized","synonym":"structured/arranged","antonym":"chaotic/disorganized"},
+      {"word":"priceless","synonym":"very expensive/precious","antonym":"worthless/cheap"},
+      {"word":"release","synonym":"free/let go","antonym":"confine/restrain"},
+      {"word":"struggle","synonym":"fight/strive","antonym":"surrender/yield"},
+      {"word":"tension","synonym":"strain/stress","antonym":"relaxation/calm"},
+      {"word":"thrive","synonym":"flourish/prosper","antonym":"fail/decline"},
+      {"word":"tirelessly","synonym":"relentlessly/persistently","antonym":"lazily/idly"},
+      {"word":"variety","synonym":"diversity/assortment","antonym":"uniformity/similarity"},
+      {"word":"vivid","synonym":"bright/lively","antonym":"dull/vague"}
+    ]
+  },
+  "5": {
+    "key_vocabulary": [
+      {"word":"accuracy","translation":""},
+      {"word":"digital literacy","translation":"التلفاز/المعرفة الرقمية"},
+      {"word":"imitate","translation":"يقلد/يحاكى"},
+      {"word":"advance","translation":""},
+      {"word":"digital transformation","translation":"التحول الرقمي"},
+      {"word":"income","translation":"دخل/عاد"},
+      {"word":"analyze","translation":""},
+      {"word":"emotion","translation":"شمور/عاطفة"},
+      {"word":"lonely","translation":"وحيد"},
+      {"word":"capture","translation":""},
+      {"word":"emotional intelligence","translation":""},
+      {"word":"magic","translation":"سحر"},
+      {"word":"collaboration","translation":""},
+      {"word":"flawless","translation":"بلد عيوب/متقن"},
+      {"word":"mindset","translation":"عقلية/طريقة التفكير"},
+      {"word":"construction","translation":""},
+      {"word":"flexibility","translation":"مروة"},
+      {"word":"repetitive","translation":"متكرر"},
+      {"word":"curious","translation":""},
+      {"word":"future-proof","translation":""},
+      {"word":"diagnose","translation":""},
+      {"word":"human insight","translation":"الفهم الإنساني"},
+      {"word":"warmth","translation":"الدفع"},
+      {"word":"Al-related","translation":"متعلق بالذكاء الاصطناعي"},
+      {"word":"elderly","translation":"كبار السن"},
+      {"word":"humanity","translation":"الإنسانية"},
+      {"word":"attitude","translation":""},
+      {"word":"employer","translation":"صاحب العمل"},
+      {"word":"industry","translation":"صناعة"},
+      {"word":"audience","translation":""},
+      {"word":"entertainment","translation":"ترفيه"},
+      {"word":"install","translation":"يثبت/يركب"},
+      {"word":"basic","translation":""},
+      {"word":"expressions","translation":"تعبيرات"},
+      {"word":"instantly","translation":"فورا"},
+      {"word":"characteristics","translation":""},
+      {"word":"fast-moving","translation":"سريع الحركة"},
+      {"word":"institutions","translation":"مؤسسات"},
+      {"word":"competitive","translation":""},
+      {"word":"firefly","translation":"برعة/حشرة مضينة"},
+      {"word":"judgment","translation":"حكم/تقدير"},
+      {"word":"compose","translation":""},
+      {"word":"frequently","translation":"بشكل متكرر"},
+      {"word":"leading","translation":"رائد"},
+      {"word":"contract","translation":""},
+      {"word":"gather","translation":"يجمع/يجتمع/يحشد"},
+      {"word":"live","translation":"مباشر"},
+      {"word":"critical thinking","translation":""},
+      {"word":"gasps","translation":"شهادة"},
+      {"word":"manufacturing","translation":"تصنيع"},
+      {"word":"data management","translation":""},
+      {"word":"handle","translation":"يتعامل مع"},
+      {"word":"match","translation":"يطابق"},
+      {"word":"metaphor","translation":"استعارة/تمييز مجازي (بالغة)"},
+      {"word":"restore","translation":"يستعيد"},
+      {"word":"surgery","translation":"جراحة"},
+      {"word":"missing","translation":""},
+      {"word":"sense","translation":"إحساس"},
+      {"word":"task","translation":"مهمة"},
+      {"word":"muscle","translation":""},
+      {"word":"spark","translation":"يشمل/يثير"},
+      {"word":"tear","translation":"يمزق"},
+      {"word":"passion","translation":""},
+      {"word":"staff","translation":"طاقم العمل"},
+      {"word":"train","translation":"يدرب"},
+      {"word":"plot twists","translation":"تحولات درامية مفاجئة"},
+      {"word":"storytelling","translation":"سرد القصة"},
+      {"word":"workforce","translation":"قوى عاملة"},
+      {"word":"responsibility","translation":""},
+      {"word":"strength","translation":"قوة"},
+      {"word":"workload","translation":"مكان العمل"}
+    ],
+    "main_vocabulary": [
+      {"word":"accuracy","translation":"دقة"},
+      {"word":"advance","translation":"يتقدم"},
+      {"word":"analyze","translation":"يحلل"},
+      {"word":"capture","translation":"يلتقط"},
+      {"word":"collaboration","translation":"تعاون"},
+      {"word":"construction","translation":"بناء"},
+      {"word":"curious","translation":"فضولي"},
+      {"word":"diagnose","translation":"يشخص"},
+      {"word":"attitude","translation":"موقف/اتجاه"},
+      {"word":"audience","translation":"جمهور"},
+      {"word":"basic","translation":"أساسي"},
+      {"word":"characteristics","translation":"خصائص"},
+      {"word":"competitive","translation":"تنافسي"},
+      {"word":"compose","translation":"يؤلف"},
+      {"word":"contract","translation":"عقد"},
+      {"word":"critical thinking","translation":"تفكير نقدي"},
+      {"word":"data management","translation":"إدارة البيانات"},
+      {"word":"emotional intelligence","translation":"ذكاء عاطفي"},
+      {"word":"future-proof","translation":"مقاوم للتقادم"},
+      {"word":"missing","translation":"مفقود"},
+      {"word":"muscle","translation":"عضلة"},
+      {"word":"passion","translation":"شغف"},
+      {"word":"responsibility","translation":"مسؤولية"}
+    ],
+    "phrases": [
+      {"word":"at any time","translation":"في أي وقت"},
+      {"word":"climb the career ladder","translation":"يترتب السلم الوظيفي"},
+      {"word":"hire workers","translation":"يوظف عمال"},
+      {"word":"in response to","translation":"رآنا على"},
+      {"word":"in the same way","translation":"بنفس الطريقة"},
+      {"word":"mental flexibility","translation":"مرونة ذهنية"},
+      {"word":"miss the feeling","translation":"يفتقد الإحساس"},
+      {"word":"moved ... to tears","translation":"يدفع ... إلى البكاء"},
+      {"word":"on my own","translation":"بمفردي"},
+      {"word":"stay ahead of the curve","translation":"(يبقى في الطلبية (يبقى متقدما)"},
+      {"word":"think outside the box","translation":"يبتكر/يبدع"},
+      {"word":"training programs","translation":"برامج تدريبية"},
+      {"word":"win a prize for","translation":"يفوز بجائزة من"}
+    ],
+    "prepositions": [
+      {"word":"adapt to","translation":"يتحقق مع"},
+      {"word":"come from","translation":"يأتي من"},
+      {"word":"depend on","translation":"يستعد على"},
+      {"word":"focus on","translation":"يترزع على"},
+      {"word":"keep up with","translation":"يواكب/يجار"},
+      {"word":"participate in","translation":"يشارك في"},
+      {"word":"prepare for","translation":"يستعد ل"},
+      {"word":"share at","translation":"يحدق في/يحملق في"},
+      {"word":"share with","translation":"يشارك مع"},
+      {"word":"type of","translation":"نوع من"}
+    ],
+    "derivatives": [
+      {"word":"advance","translation":"يقدم","type":"verb"},
+      {"word":"advancement","translation":"تقدم","type":"noun"},
+      {"word":"advanced","translation":"متقدم","type":"adjective"},
+      {"word":"collaborate","translation":"يتعاون","type":"verb"},
+      {"word":"collaboration","translation":"تعاون","type":"noun"},
+      {"word":"collaborative","translation":"تعاوني","type":"adjective"},
+      {"word":"compete","translation":"ينتفاس","type":"verb"},
+      {"word":"competition","translation":"منافسة","type":"noun"},
+      {"word":"competitive","translation":"منافس","type":"adjective"},
+      {"word":"compose","translation":"يوقف","type":"verb"},
+      {"word":"composition","translation":"تأليف","type":"noun"},
+      {"word":"composed","translation":"تركيبي/مؤلف","type":"adjective"},
+      {"word":"diagnose","translation":"يشفي","type":"verb"},
+      {"word":"diagnosis","translation":"تشخيص","type":"noun"},
+      {"word":"diagnostic","translation":"تشخيصي","type":"adjective"},
+      {"word":"imitate","translation":"يتحاكي/يقلد","type":"verb"},
+      {"word":"imitation","translation":"تقليد/محاكاة","type":"noun"},
+      {"word":"imitable","translation":"قابل للتقليد","type":"adjective"},
+      {"word":"lead","translation":"يقد","type":"verb"},
+      {"word":"leadership","translation":"قيادة","type":"noun"},
+      {"word":"leading","translation":"رائد","type":"adjective"},
+      {"word":"repeat","translation":"يكرر","type":"verb"},
+      {"word":"repetition","translation":"تكرر","type":"noun"},
+      {"word":"repetitive/repeated","translation":"متكرر","type":"adjective"},
+      {"word":"restore","translation":"يستعيد","type":"verb"},
+      {"word":"restoration","translation":"استعادة","type":"noun"},
+      {"word":"restorable","translation":"قابل للاستعادة","type":"adjective"},
+      {"word":"warm","translation":"يدفن","type":"verb"},
+      {"word":"warmth","translation":"دفع","type":"noun"},
+      {"word":"warm","translation":"دافئ","type":"adjective"}
+    ],
+    "synonyms_antonyms": [
+      {"word":"accuracy","synonym":"precision/exactness","antonym":"mistake/inaccuracy"},
+      {"word":"collaboration","synonym":"teamwork/partnership","antonym":"conflict/opposition"},
+      {"word":"curious","synonym":"inquisitive/interested","antonym":"indifferent/uninterested"},
+      {"word":"construction","synonym":"building/structure","antonym":"destruction/demolition"},
+      {"word":"flexibility","synonym":"adaptability/pliability","antonym":"rigidity/stiffness"},
+      {"word":"competitive","synonym":"ambitious/rivalrous","antonym":"cooperative/non-competitive"},
+      {"word":"entertainment","synonym":"amusement/fun","antonym":"boredom/dullness"},
+      {"word":"gather","synonym":"collect/assemble","antonym":"scatter/disperse"},
+      {"word":"leading","synonym":"main/top","antonym":"following/secondary"},
+      {"word":"match","synonym":"correspond/equal","antonym":"differ/class"},
+      {"word":"passion","synonym":"enthusiasm/love","antonym":"indifference/apathy"},
+      {"word":"restore","synonym":"recover/repair","antonym":"destroy/ruin"}
+    ]
+  },
+  "6": {
+    "prepositions": [
+      {"word":"beneficial for","translation":"مفيد ل"},
+      {"word":"harmful to","translation":"ضارب"},
+      {"word":"tend to","translation":"يميل إلى"},
+      {"word":"chat with","translation":"يدرض مع"},
+      {"word":"invest in","translation":"يستثمر في"},
+      {"word":"unaware of","translation":"غير مدرك ل"},
+      {"word":"deal with","translation":"بتعامل مع"},
+      {"word":"move away","translation":"ينتقل/يبتعد"},
+      {"word":"grateful for","translation":"ممتن ل"},
+      {"word":"open to","translation":"منفتح على/مستعد ل"},
+      {"word":"catch up on","translation":"يلحق/يواكب"},
+      {"word":"knock over","translation":"يملح بـ/يوقع شيئا"},
+      {"word":"suffer from","translation":"يماني من"}
+    ],
+    "derivatives": [
+      {"word":"celebrate","translation":"يحتفل","type":"verb"},
+      {"word":"celebration","translation":"احتفال","type":"noun"},
+      {"word":"celebrity","translation":"شخص مشهور","type":"noun"},
+      {"word":"depress","translation":"خبط/يكتب","type":"verb"},
+      {"word":"depression","translation":"اكتتاب","type":"noun"},
+      {"word":"depressive","translation":"مكتب/كتب","type":"adjective"},
+      {"word":"depressed","translation":"مكتئب","type":"adjective"},
+      {"word":"embarrass","translation":"خبر","type":"verb"},
+      {"word":"embarrassment","translation":"إخراج","type":"noun"},
+      {"word":"embarrassing","translation":"خبر","type":"adjective"},
+      {"word":"ignore","translation":"يتجاهل","type":"verb"},
+      {"word":"ignorance","translation":"جهل","type":"noun"},
+      {"word":"ignorant","translation":"جاهل","type":"adjective"},
+      {"word":"interact","translation":"يتفاعل","type":"verb"},
+      {"word":"interaction","translation":"تفاعل","type":"noun"},
+      {"word":"interactive","translation":"تفاعلي","type":"adjective"},
+      {"word":"maintain","translation":"يحافظ على","type":"verb"},
+      {"word":"maintenance","translation":"صيانة/الحفاظ","type":"noun"},
+      {"word":"maintainable","translation":"قابل للحفاظ عليه","type":"adjective"},
+      {"word":"mortify","translation":"خبر بشدة","type":"verb"},
+      {"word":"mortification","translation":"خبر","type":"noun"},
+      {"word":"mortified","translation":"مخزي","type":"adjective"},
+      {"word":"persuade","translation":"يتفاع","type":"verb"},
+      {"word":"persuasion","translation":"إقناع","type":"noun"},
+      {"word":"persuasive","translation":"مقنع","type":"adjective"}
+    ],
+    "synonyms_antonyms": [
+      {"word":"anxiety","synonym":"worry/nervousness","antonym":"calm/relaxation"},
+      {"word":"beneficial","synonym":"helpful/advantageous","antonym":"harmful/useless"},
+      {"word":"cheerful","synonym":"happy/joyful","antonym":"sad/gloomy"},
+      {"word":"compromise","synonym":"settlement/agreement","antonym":"conflict/disagreement"},
+      {"word":"destructive","synonym":"harmful/damaging","antonym":"constructive/helpful"},
+      {"word":"dull","synonym":"boring/uninteresting","antonym":"exciting/lively"},
+      {"word":"lively","synonym":"active/energetic","antonym":"dull/sleepy"},
+      {"word":"maintain","synonym":"keep/preserve","antonym":"neglect/abandon"},
+      {"word":"meaningful","synonym":"significant/important","antonym":"meaningless/trivial"}
+    ]
+  },
+  "7": {
+    "key_vocabulary": [
+      {"word":"announcement","translation":"إعلان/إعلان صوتي"},
+      {"word":"checkpoint","translation":"نقطة تفتيش"},
+      {"word":"ramen","translation":"رامن (نوع من الحساء الياباني)"},
+      {"word":"board","translation":"يصعد (المثارة/السفينة)"},
+      {"word":"departure lounge","translation":"صالة المغادرة"},
+      {"word":"restrictions","translation":"قيود/محددات"},
+      {"word":"boarding pass","translation":"بطاقة صعود المثارة"},
+      {"word":"luxury","translation":"رقاهية"},
+      {"word":"security","translation":"الأمن/الحساسة"},
+      {"word":"bustling","translation":"مزدحم/صاحب"},
+      {"word":"navigate","translation":"يوجه/يتنقل"},
+      {"word":"strike up","translation":"يبدأ (محادثة/علاقة)"},
+      {"word":"carry-on bag","translation":"حقيبة يد/أتمتة يدوية"},
+      {"word":"phrase","translation":"عبارة/تميير"},
+      {"word":"terminal","translation":"مبنى المسافرين"}
+    ],
+    "main_vocabulary": [
+      {"word":"announce","translation":"إعلان"},
+      {"word":"approach","translation":"يقترب/يتعامل مع/طريقة"},
+      {"word":"attendant","translation":"مرافق/عامل/موظف"},
+      {"word":"cancel","translation":"يلغى"},
+      {"word":"challenging","translation":"مُنحَدّ/صعب"},
+      {"word":"checklist","translation":"قائمة مرجعية"},
+      {"word":"companion","translation":"رفيق"},
+      {"word":"confident","translation":"وائق"},
+      {"word":"conversation","translation":"محادثة"},
+      {"word":"counter","translation":"طاولة/مكتب عمل"},
+      {"word":"delay","translation":"تأجيل/يؤجل/يؤخر"},
+      {"word":"depart","translation":"يغادر"},
+      {"word":"destination","translation":"وجهة/مقصد سفر"},
+      {"word":"disaster","translation":"كارثة"},
+      {"word":"document","translation":"مستند/وثيقة"},
+      {"word":"embarrass","translation":"محرج"},
+      {"word":"emphasize","translation":"يؤكد على"},
+      {"word":"explore","translation":"يستكشف"},
+      {"word":"facilitate","translation":"يُشهل/ييسر"},
+      {"word":"flexible","translation":"مرن"},
+      {"word":"flight","translation":"رحلة طيران"},
+      {"word":"frustrated","translation":"محبط"},
+      {"word":"grab","translation":"يمسك/يأخذ بسرعة"},
+      {"word":"guidebook","translation":"دليل سياحي"},
+      {"word":"hand over","translation":"يسلم"},
+      {"word":"issue","translation":"قضية/مشكلة"},
+      {"word":"items","translation":"أغراض"},
+      {"word":"overwhelming","translation":"غابرة/نُبعة"},
+      {"word":"pack","translation":"يحزم/يكتظ"},
+      {"word":"passengers","translation":"ركاب"},
+      {"word":"procedure","translation":"إجراء"},
+      {"word":"promotion","translation":"ترقية"},
+      {"word":"push","translation":"يدفع"},
+      {"word":"queue","translation":"طابور/يُقف في طابور"},
+      {"word":"quick-service","translation":"خدمة سريعة"},
+      {"word":"reroute","translation":"يعيد التوجيه"},
+      {"word":"security checks","translation":"فحوصات أمنية"},
+      {"word":"souvenirs","translation":"تذكارات"},
+      {"word":"stressful","translation":"مجهد/مسبب للتوتر"},
+      {"word":"transfer","translation":"ينتقل/يحول"},
+      {"word":"travel guide","translation":"دليل سفر"},
+      {"word":"update","translation":"يحدث"},
+      {"word":"vacation","translation":"إجازة"}
+    ],
+    "phrases": [
+      {"word":"(be) in hot water","translation":"يكون في وريلة"},
+      {"word":"change someone's view","translation":"يغير وجهة نظر شخص"},
+      {"word":"experience ... in person","translation":"يجرب ... شخصيًا"},
+      {"word":"get frustrated","translation":"يشعر بالإحباط"},
+      {"word":"get upset","translation":"يشعر بالضيق/الانزعاج"},
+      {"word":"go with the flow","translation":"يتناشى مع الوضع/يساير الأمور"},
+      {"word":"in the rush","translation":"وسط الزحام/في المجلة"},
+      {"word":"made it through","translation":"تجاوز/اجتاز بنجاح"},
+      {"word":"prove valuable","translation":"يثبت قيمته"},
+      {"word":"someone's heart sinks","translation":"يشعر بالإحباط أو القلق"},
+      {"word":"stay calm","translation":"يبقى هادئًا"},
+      {"word":"wait in line","translation":"ينتظر في صف/طابور"}
+    ],
+    "prepositions": [
+      {"word":"come over","translation":"بند"},
+      {"word":"go off","translation":"پنطق"},
+      {"word":"throw away","translation":"پری/پتخلص من"},
+      {"word":"packed with","translation":"مكتظ/مزدحم ب"},
+      {"word":"walk through","translation":"پیمز عبر/پنجول داخل"},
+      {"word":"deal with","translation":"پتعامل مع"},
+      {"word":"check ... in","translation":"پراجع/پسجل الدخول إلى (مطار/فندق)"}
+    ],
+    "derivatives": [
+      {"word":"announce","translation":"پلمان","type":"verb"},
+      {"word":"announcement","translation":"إعلان","type":"noun"},
+      {"word":"announced","translation":"من","type":"adjective"},
+      {"word":"approach","translation":"پتقرب","type":"verb"},
+      {"word":"approach","translation":"أسلوب/طريقة","type":"noun"},
+      {"word":"approachable","translation":"ودود/سهل المنال","type":"adjective"},
+      {"word":"attend","translation":"بحضر","type":"verb"},
+      {"word":"attendant","translation":"مرافق/عامل","type":"noun"},
+      {"word":"attendance","translation":"حضور","type":"noun"},
+      {"word":"attentive","translation":"مثبت/پظ","type":"adjective"},
+      {"word":"frustrate","translation":"پُجُبْط","type":"verb"},
+      {"word":"frustration","translation":"إحباط","type":"noun"},
+      {"word":"frustrated/frustrating","translation":"محبط/محبط","type":"adjective"},
+      {"word":"navigate","translation":"پُجُبْه/پتَنَق","type":"verb"},
+      {"word":"navigation","translation":"الملاحة/التوجيه","type":"noun"},
+      {"word":"navigational","translation":"ملاحي/إرشادي","type":"adjective"},
+      {"word":"observe","translation":"بِلاحظ/بُرَاقِب","type":"verb"},
+      {"word":"observation","translation":"ملاحظة","type":"noun"},
+      {"word":"observer","translation":"مراقب","type":"noun"},
+      {"word":"observant","translation":"مراقب/دقيق الملاحظة","type":"adjective"},
+      {"word":"promote","translation":"بُرَاق/بُرَوِّج","type":"verb"},
+      {"word":"promotion","translation":"ترقية/ترويج","type":"noun"},
+      {"word":"promoter","translation":"مرجع","type":"noun"},
+      {"word":"promotional","translation":"ترويج","type":"adjective"},
+      {"word":"restrict","translation":"پُجُبْت","type":"verb"},
+      {"word":"restriction","translation":"قيد/تقيد","type":"noun"},
+      {"word":"restrictive","translation":"أمان","type":"adjective"},
+      {"word":"stress","translation":"يضغط","type":"verb"},
+      {"word":"stressful/stressed","translation":"مُرفق/متوتر","type":"adjective"},
+      {"word":"transfer","translation":"پُجُبْط/پُجُب","type":"verb"},
+      {"word":"transfer/transference","translation":"انتقال/تحويل","type":"noun"},
+      {"word":"transferable","translation":"قابل للنقل","type":"adjective"},
+      {"word":"vacate","translation":"پُجُبْط/پُجُب","type":"verb"},
+      {"word":"vacation","translation":"إجازة","type":"noun"},
+      {"word":"vacant","translation":"شاهر","type":"adjective"}
+    ],
+    "synonyms_antonyms": [
+      {"word":"approach","synonym":"move toward/tackle/deal with","antonym":"retreat/move away"},
+      {"word":"bustling","synonym":"busy/lively","antonym":"quiet/calm"},
+      {"word":"challenging","synonym":"difficult/tough/hard","antonym":"easy/simple"}
+    ]
+  },
+  "8": {
+    "key_vocabulary": [
+      {"word":"confluence","translation":"منتدى (أنهار/طرق - مصب)"},
+      {"word":"dynasty","translation":"سلطة حاكمة"},
+      {"word":"fertile soil","translation":"تربة خصبة"},
+      {"word":"foundation","translation":"أساس / مؤسسة"},
+      {"word":"gateway","translation":"بوابة"},
+      {"word":"geographical","translation":"جغرافي"},
+      {"word":"innovation","translation":"ابتكار"},
+      {"word":"irrigation system","translation":"نظام رى"},
+      {"word":"legal code","translation":"مدونة / نظام قانوني"},
+      {"word":"maritime","translation":"بحرى"},
+      {"word":"paradise","translation":"جنة"},
+      {"word":"peninsula","translation":"شبه جزيرة"},
+      {"word":"porcelain","translation":"خزف صيني / بورسليين"},
+      {"word":"scribe","translation":"كاتب الكتب (مهنة قديمة)"},
+      {"word":"silk road","translation":"طريق الحير"},
+      {"word":"strategically","translation":"استراتيجيًا"},
+      {"word":"terracotta","translation":"خزف طيني"},
+      {"word":"ziggurat","translation":"زقوة (ترجمة)"}
+    ],
+    "main_vocabulary": [
+      {"word":"abundant","translation":"وافر"},
+      {"word":"archaeological","translation":"أثرى"},
+      {"word":"barren","translation":"جرداء / غير خصبة"},
+      {"word":"base","translation":"أساس"},
+      {"word":"battle","translation":"معركة"},
+      {"word":"birthplace","translation":"مسقط الرأس"},
+      {"word":"bridge","translation":"جسر / بيرط"},
+      {"word":"clay tablets","translation":"ألواح طينية"},
+      {"word":"construct","translation":"بيني / يشيد"},
+      {"word":"continent","translation":"قارة"},
+      {"word":"convince","translation":"يقع"},
+      {"word":"craftsmanship","translation":"جريفة / براعة"},
+      {"word":"crossroads","translation":"تفاعل طريق / منتفى"},
+      {"word":"crucial","translation":"حاسم / بالغ الأهمية"},
+      {"word":"cultural exchange","translation":"تبادل تفاقي"},
+      {"word":"eliminate","translation":"يقضي على / يزيد"},
+      {"word":"emperor","translation":"إمبراطور"},
+      {"word":"empire","translation":"إمبراطورية"},
+      {"word":"faraway","translation":"بعيد"},
+      {"word":"fertile","translation":"خصب"},
+      {"word":"flow","translation":"دفق / تدفق / يتدفق"},
+      {"word":"hanging gardens","translation":"الحدائق المملنة"},
+      {"word":"impressive","translation":"مدهش / مشير للإعجاب"},
+      {"word":"invasion","translation":"غزو"},
+      {"word":"journey","translation":"رحلة"},
+      {"word":"kingdom","translation":"مملكة"},
+      {"word":"lengthy","translation":"طويل"},
+      {"word":"life-sized","translation":"بالحجم الطبيعي"},
+      {"word":"lifeline","translation":"شريان حياة"},
+      {"word":"location","translation":"موقع"},
+      {"word":"logical","translation":"منطقي"},
+      {"word":"mainland","translation":"البازارئيسي"},
+      {"word":"meeting point","translation":"نقطة التقاء"},
+      {"word":"mighty","translation":"عظيم / مهيب"},
+      {"word":"natural bridge","translation":"جسر طبيعي"},
+      {"word":"navigation","translation":"مالححة"},
+      {"word":"northeastern","translation":"شمالي شرقي"},
+      {"word":"originate","translation":"ينشأ"},
+      {"word":"position","translation":"موقع / موضع"},
+      {"word":"powerful","translation":"قوى"},
+      {"word":"region","translation":"إقليم"},
+      {"word":"remarkable","translation":"ملحوظ / اللفت للنظر"},
+      {"word":"revenue","translation":"إيرادات / دخل"},
+      {"word":"revolutionize","translation":"يحدث ثورة"},
+      {"word":"route","translation":"طريق / مسار"},
+      {"word":"ruins","translation":"بقايا / أطالق / آثار"},
+      {"word":"scholars","translation":"علماء"},
+      {"word":"sculptures","translation":"منحوتات"},
+      {"word":"serve","translation":"يخدم / يؤدى دورًا"},
+      {"word":"set of laws","translation":"مجموعة قوانين"},
+      {"word":"shape","translation":"يشكل / شكل"},
+      {"word":"shipping","translation":"الشحن / النقل البحري"},
+      {"word":"smuggler","translation":"مُهزّب"},
+      {"word":"surround","translation":"يحبط بـ"},
+      {"word":"symbol","translation":"رمز"},
+      {"word":"temple tower","translation":"برج معيد"},
+      {"word":"territories","translation":"أقاليم / أراضي"},
+      {"word":"tomb","translation":"قبر"},
+      {"word":"trade","translation":"تجارة / يتاجر"},
+      {"word":"traditions","translation":"تفايد"},
+      {"word":"vast","translation":"شاسع / واسع"},
+      {"word":"warrior","translation":"محارب"},
+      {"word":"water supply","translation":"إمدادات مياه"}
+    ],
+    "synonyms_antonyms": [
+      {"word":"crucial","synonym":"important/vital/essential","antonym":"insignificant/unimportant/minor"},
+      {"word":"fertile","synonym":"rich/productive","antonym":"barren/poor"},
+      {"word":"flow","synonym":"run/movement","antonym":"stop/block"},
+      {"word":"foundation","synonym":"base/basis","antonym":"collapse/destruction"},
+      {"word":"impressive","synonym":"amazing/remarkable","antonym":"boring/weak"},
+      {"word":"influence","synonym":"impact/effect","antonym":"insignificance/irrelevance"},
+      {"word":"innovation","synonym":"invention/creativity","antonym":"tradition/imitation"},
+      {"word":"logical","synonym":"rational/reasonable","antonym":"illogical/absurd"},
+      {"word":"navigation","synonym":"guidance/direction","antonym":"confusion/loss"},
+      {"word":"paradise","synonym":"heaven/haven","antonym":"hell/misery"},
+      {"word":"powerful","synonym":"strong/mighty","antonym":"weak/powerless"},
+      {"word":"preserve","synonym":"protect/conserve","antonym":"damage/harm/destroy"},
+      {"word":"remarkable","synonym":"noticeable/special","antonym":"ordinary/normal"},
+      {"word":"serve","synonym":"help/assist","antonym":"ignore/refuse"},
+      {"word":"similarity","synonym":"resemblance/likeness","antonym":"difference/contrast"},
+      {"word":"traditions","synonym":"customs/habits","antonym":"change/modernity"},
+      {"word":"unique","synonym":"distinctive/special","antonym":"common/ordinary"},
+      {"word":"vast","synonym":"huge/enormous","antonym":"small/limited"}
+    ]
+  },
+  "9": {
+    "key_vocabulary": [
+      {"word":"astronomers","translation":"علماء الفلك"},
+      {"word":"bend","translation":"يتحني/يئني"},
+      {"word":"black holes","translation":"التقوب السوداء"},
+      {"word":"boundary","translation":"حد/حدود"},
+      {"word":"compressed","translation":"مضغوط"},
+      {"word":"cosmic","translation":"كوئ"},
+      {"word":"cosmos","translation":"نظام الكون"},
+      {"word":"curiosity","translation":"فشول"},
+      {"word":"dimension","translation":"بمد"},
+      {"word":"escape","translation":"يهرب/يفلت"},
+      {"word":"galaxy","translation":"مجرة"},
+      {"word":"gateway","translation":"بوابة"},
+      {"word":"gravity","translation":"الجاذبية"},
+      {"word":"invisible","translation":"غيرمرئي"},
+      {"word":"Milky Way","translation":"مجزة درب التباثة"},
+      {"word":"mystery","translation":"لغز/غموض"},
+      {"word":"opportunity","translation":"فرصة"},
+      {"word":"reputation","translation":"سمعة"},
+      {"word":"shadow","translation":"ظل"},
+      {"word":"singularity","translation":"التذكّر"},
+      {"word":"theory","translation":"نظرية"},
+      {"word":"trapdoor","translation":"باب سرى"},
+      {"word":"universe","translation":"الكون"}
+    ],
+    "main_vocabulary": [
+      {"word":"adventure","translation":"مغامرة"},
+      {"word":"aspect","translation":"جانب"},
+      {"word":"beginning","translation":"بداية"},
+      {"word":"capture","translation":"يلتقط/ياسر"},
+      {"word":"chance","translation":"فرصة/احتمال"},
+      {"word":"collapse","translation":"انهيار"},
+      {"word":"density","translation":"كفاءة"},
+      {"word":"desire","translation":"رغبة"},
+      {"word":"discover","translation":"يكتشف"},
+      {"word":"edge","translation":"حافة"},
+      {"word":"existence","translation":"وجود"},
+      {"word":"explain","translation":"يشرح/يفشر"},
+      {"word":"fear","translation":"خوف"},
+      {"word":"fearsome","translation":"مخيف/مرعب"},
+      {"word":"gravitational","translation":"جاذبي"},
+      {"word":"guardian","translation":"حارس"},
+      {"word":"hidden","translation":"مخفي"},
+      {"word":"human","translation":"بشرى"},
+      {"word":"imagine","translation":"يتخيّل"},
+      {"word":"measurement","translation":"قياس"},
+      {"word":"misconception","translation":"فكرة خاطئة"},
+      {"word":"monsters","translation":"وحوش"},
+      {"word":"movie maker","translation":"صانع أفلام"},
+      {"word":"mysterious","translation":"غامض"},
+      {"word":"myth","translation":"أسطورة"},
+      {"word":"observe","translation":"يالحظ/يراقب"},
+      {"word":"planet","translation":"كوكب"},
+      {"word":"remain","translation":"يبقى"},
+      {"word":"remind","translation":"يذكّر"},
+      {"word":"represent","translation":"يمثل"},
+      {"word":"reputation","translation":"سمعة"},
+      {"word":"shadow","translation":"ظل"},
+      {"word":"Solar System","translation":"النظام الشمسي"},
+      {"word":"spiral","translation":"حلزوني"},
+      {"word":"stellar","translation":"نجى"},
+      {"word":"supermassive","translation":"فائق الكتلة"},
+      {"word":"swallow","translation":"يبتلع"}
+    ],
+    "phrases": [
+      {"word":"(be) at risk","translation":"يكون معرضًا للخطر"},
+      {"word":"(be) built on facts","translation":"مبني على الحقائق"},
+      {"word":"capture the first photograph","translation":"التفاعل أول صورة في مواجهة الكون"},
+      {"word":"come to your mind","translation":"يخطر بالك/ بدهنك"},
+      {"word":"door to the unknown","translation":"باب إلى المجهول"},
+      {"word":"have an effect on","translation":"له تأثير على"},
+      {"word":"have strong gravitational pull","translation":"له جاذبية قوية"},
+      {"word":"in the face of the universe","translation":"في مواجهة الكون"},
+      {"word":"sit at the center of","translation":"توجد في مركز"},
+      {"word":"stay in orbit","translation":"تبقى في المدار"}
+    ],
+    "prepositions": [
+      {"word":"edge of","translation":"حافة"},
+      {"word":"run out of","translation":"ينفذ من"},
+      {"word":"escape from","translation":"يعرب من"},
+      {"word":"stay away","translation":"يبقى بعينا"},
+      {"word":"fascinated by","translation":"مفتون ب"},
+      {"word":"look up","translation":"يبحث عن (معلومة)/ يرفع النظر"},
+      {"word":"travel through","translation":"يسافر عبر"},
+      {"word":"float into","translation":"يطلقون داخل/ يدخل بطلب"},
+      {"word":"pull down","translation":"يسحب إلى الأسفل/ يهدم"}
+    ],
+    "derivatives": [
+      {"word":"compress","translation":"يضغط/ يكسب","type":"verb"},
+      {"word":"compression","translation":"ضغط/ انضغاط","type":"noun"},
+      {"word":"compressed","translation":"مكسب/ ضاغط","type":"adjective"},
+      {"word":"desire","translation":"يرفع/ يتمنى","type":"verb"},
+      {"word":"desire","translation":"رغبة","type":"noun"},
+      {"word":"desirable","translation":"مرغوب","type":"adjective"},
+      {"word":"discover","translation":"يكتشف","type":"verb"},
+      {"word":"discovery","translation":"اكتشاف","type":"noun"},
+      {"word":"discovered","translation":"مكتشف","type":"adjective"},
+      {"word":"imagine","translation":"يتحليل/ يتصور","type":"verb"},
+      {"word":"imagination","translation":"خيال/ تصور","type":"noun"},
+      {"word":"imaginable","translation":"ممكن تخيله/ متصور","type":"adjective"},
+      {"word":"measure","translation":"يقيسم","type":"verb"},
+      {"word":"measurement","translation":"قياس","type":"noun"},
+      {"word":"measurable","translation":"قابل للقياس","type":"adjective"},
+      {"word":"mystify","translation":"يحير","type":"verb"},
+      {"word":"mysterious","translation":"غامض","type":"adjective"},
+      {"word":"observe","translation":"يرفع/ يلاحظ","type":"verb"},
+      {"word":"observation","translation":"مراقبة/ ملاحظة","type":"noun"},
+      {"word":"observable","translation":"قابل للملاحظة","type":"adjective"},
+      {"word":"remain","translation":"يبقى/ يظل","type":"verb"},
+      {"word":"remainder","translation":"المتبقي/ الباقي","type":"noun"},
+      {"word":"remaining","translation":"متبق/ باقي","type":"adjective"},
+      {"word":"represent","translation":"يمثل","type":"verb"},
+      {"word":"representation","translation":"تمثيل/ تصوير","type":"noun"},
+      {"word":"representative","translation":"تمثيلي/ نمطي","type":"adjective"}
+    ],
+    "synonyms_antonyms": [
+      {"word":"beginning","synonym":"start/initiation","antonym":"end/conclusion"},
+      {"word":"boundary","synonym":"border/limit","antonym":"center/interior/middle"},
+      {"word":"compressed","synonym":"compact/squeezed","antonym":"expanded/enlarged"},
+      {"word":"curiosity","synonym":"interest/inquisitiveness","antonym":"indifference/disinterest"},
+      {"word":"explore","synonym":"investigate/examine","antonym":"ignore/overlook/neglect"},
+      {"word":"fear","synonym":"fright/terror/anxiety","antonym":"courage/bravery"},
+      {"word":"fearsome","synonym":"frightening/terrifying","antonym":"comforting/reassuring"},
+      {"word":"hidden","synonym":"concealed/secret","antonym":"visible/obvious/clear"},
+      {"word":"invisible","synonym":"unseen/concealed","antonym":"visible/noticeable"},
+      {"word":"mystery","synonym":"secret/enigma/puzzle","antonym":"clarity/explanation"},
+      {"word":"observe","synonym":"notice/watch/remark","antonym":"ignore/overlook"},
+      {"word":"silent","synonym":"mute/speechless","antonym":"noisy/loud"}
+    ]
+  },
+  "10": {
+    "key_vocabulary": [
+      {"word":"appreciate","translation":"يقدّر/ينئن"},
+      {"word":"backpacking","translation":"السفريحيية ظهر"},
+      {"word":"collectivist","translation":"جماعي/اشتراكي"},
+      {"word":"compliment","translation":"جماعلة/إطراء"},
+      {"word":"generosity","translation":"كرم"},
+      {"word":"gestures","translation":"إيماءات/حركات"},
+      {"word":"grateful","translation":"مئتن/شاكر"},
+      {"word":"hospitality","translation":"كرم الضيافة"},
+      {"word":"individualistic","translation":"فردي/رأسمالي"},
+      {"word":"kindness","translation":"لطف"},
+      {"word":"patronizing","translation":"متعال/متكّب/بأسلوب مصطنع"},
+      {"word":"politeness","translation":"أدب/تهذيب"},
+      {"word":"spontaneous","translation":"عفوي/تلقائي"},
+      {"word":"thoughtful","translation":"مُراعى للآخرين/متكّفّر"},
+      {"word":"unhesitatingly","translation":"دون تردّد"}
+    ],
+    "main_vocabulary": [
+      {"word":"appreciate","translation":"يقدّر"},
+      {"word":"behavior","translation":"سلوك"},
+      {"word":"bow","translation":"انحناءة/تحية"},
+      {"word":"budget","translation":"ميزانية"},
+      {"word":"care","translation":"اهتمام/رعاية"},
+      {"word":"common","translation":"شائع/عادي"},
+      {"word":"concept","translation":"مفهوم"},
+      {"word":"culture","translation":"تعلقة"},
+      {"word":"customs","translation":"عادات/تقاليد"},
+      {"word":"dietary","translation":"غذائي"},
+      {"word":"expressions","translation":"تمييزات"},
+      {"word":"generous","translation":"كريم"},
+      {"word":"gift","translation":"هدية"},
+      {"word":"guest","translation":"ضيف"},
+      {"word":"heartfelt","translation":"صادق/من القلب"},
+      {"word":"highly valued","translation":"دوقيمة عالية"},
+      {"word":"honor","translation":"شرف"},
+      {"word":"hospitable","translation":"مضيف/كريم"},
+      {"word":"host","translation":"مضيف"},
+      {"word":"impolite","translation":"غيرمذهب"},
+      {"word":"kindness","translation":"لطف"},
+      {"word":"natural","translation":"طبيعي"},
+      {"word":"overnight","translation":"خلال/ليلة واحدة"},
+      {"word":"overwhelming","translation":"غالب/شديد"},
+      {"word":"quite","translation":"إلى حد كبير"},
+      {"word":"remark","translation":"ملاحظة/تعليق"},
+      {"word":"respectful","translation":"محترم للآخرين/مؤقر"},
+      {"word":"specific","translation":"محدد"},
+      {"word":"spin","translation":"يدور/دوران"},
+      {"word":"thoughtfulness","translation":"مراعاة/اهتمام بالآخرين"},
+      {"word":"unforgettable","translation":"باق/الئنسى"},
+      {"word":"unusual","translation":"غيرمالوف"},
+      {"word":"volunteering","translation":"العمل التطوعي"},
+      {"word":"warmth","translation":"دفء/حرارة"},
+      {"word":"well-fed","translation":"ممتلئ/تثقّف جيّدًا"},
+      {"word":"well-mannered","translation":"مؤدب"}
+    ],
+    "phrases": [
+      {"word":"a one-on-one act","translation":"فعل فردي/شخصي"},
+      {"word":"as a sign of kindness","translation":"كدالوة على الطفل"},
+      {"word":"carry deep meaning","translation":"يحمل معنى عميقًا"},
+      {"word":"feel comfortable","translation":"يشعر بالراحة"},
+      {"word":"for free","translation":"مجانًا"},
+      {"word":"on a budget","translation":"بميزانية محدودة"},
+      {"word":"on a specific event","translation":"في حدث محد"}
+    ],
+    "prepositions": [
+      {"word":"based on","translation":"مبنی علی/استنادا/ای"},
+      {"word":"break down","translation":"يتحلل/يتعطل/پفسرخطوة بخطوة"},
+      {"word":"difference between","translation":"الفرق بين"},
+      {"word":"grateful for","translation":"ممتن ل"},
+      {"word":"hear about","translation":"يسمع عن/يعرف عن"},
+      {"word":"insist on","translation":"یُسریعی"},
+      {"word":"linked to","translation":"مرتبط ب"},
+      {"word":"part of","translation":"جزء من"},
+      {"word":"pay for","translation":"يدفع ثمن ..."},
+      {"word":"reason for","translation":"سبب/مبرر ل"},
+      {"word":"remark about","translation":"يعلق علی/ملاحظة حول"},
+      {"word":"warm ... up","translation":"يسخن/يدفي/يہي"}
+    ],
+    "derivatives": [
+      {"word":"appreciate","translation":"يقدّر/يہنن","type":"verb"},
+      {"word":"appreciation","translation":"تقدير/امتنان","type":"noun"},
+      {"word":"appreciative","translation":"ممتن/معترف بالجميل","type":"adjective"},
+      {"word":"behave","translation":"يتصرف/بسلك سلوكا","type":"verb"},
+      {"word":"behavior","translation":"سلوك/تصرف","type":"noun"},
+      {"word":"behavioral","translation":"سلوكي/متعلق بالسلوک","type":"adjective"},
+      {"word":"care","translation":"يهتم/يعتنی","type":"verb"},
+      {"word":"care","translation":"رعاية/اهتمام","type":"noun"},
+      {"word":"careful","translation":"حذر/متان","type":"adjective"},
+      {"word":"collect","translation":"يجمع","type":"verb"},
+      {"word":"collection","translation":"مجموعة","type":"noun"},
+      {"word":"collectivist","translation":"جماعي/مؤمن بالجماعة","type":"adjective"},
+      {"word":"differentiate","translation":"يفرد","type":"verb"},
+      {"word":"difference","translation":"اجتماعية/نزعة جماعية","type":"noun"},
+      {"word":"honor","translation":"يكرم/يقدّر","type":"verb"},
+      {"word":"honor","translation":"شرف/تكريم","type":"noun"},
+      {"word":"honorable","translation":"مشرف/محترم","type":"adjective"},
+      {"word":"patronize","translation":"يبرعی/يئکبر","type":"verb"},
+      {"word":"patronate","translation":"رعاية/دعم","type":"noun"},
+      {"word":"patronizing","translation":"متعجرف/متصرف بتمال","type":"adjective"},
+      {"word":"volunteer","translation":"يتطلع","type":"verb"},
+      {"word":"volunteer","translation":"متطوع","type":"noun"},
+      {"word":"voluntary","translation":"طوعي/اختياري","type":"adjective"}
+    ],
+    "synonyms_antonyms": [
+      {"word":"appreciate","synonym":"value/respect/admire","antonym":"criticize/underestimate"},
+      {"word":"compliment","synonym":"praise/admiration/flattery","antonym":"insult/criticism"},
+      {"word":"generous","synonym":"giving/charitable","antonym":"stingy/selfish"},
+      {"word":"grateful","synonym":"thankful/appreciative","antonym":"ungrateful/resentful"},
+      {"word":"honor","synonym":"respect/dignity/reputation","antonym":"dishonor/shame/disgrace"},
+      {"word":"hospitality","synonym":"kindness/generosity","antonym":"hostility/unfriendliness"}
+    ]
+  },
+  "11": {
+    "key_vocabulary": [
+      {"word":"poetry","translation":"شعر"},
+      {"word":"prose","translation":"نثر"},
+      {"word":"rejection","translation":"رفض"},
+      {"word":"rhythm","translation":"إيقاع"},
+      {"word":"roots","translation":"جذور/أصول"},
+      {"word":"struggle","translation":"صراع/كفاح/يكاف"},
+      {"word":"tone","translation":"نبرة"},
+      {"word":"wisdom","translation":"حكمة"}
+    ],
+    "main_vocabulary": [
+      {"word":"folktale","translation":"حكاية شعبية"},
+      {"word":"gain","translation":"يكتسب"},
+      {"word":"golden","translation":"ذهبي"},
+      {"word":"historical","translation":"تاريخي"},
+      {"word":"honesty","translation":"صدق/امانة"},
+      {"word":"image","translation":"صورة"},
+      {"word":"imagination","translation":"خيال"},
+      {"word":"legend","translation":"أسطورة"},
+      {"word":"talent","translation":"موهبة"},
+      {"word":"unlike","translation":"على عكس"},
+      {"word":"action","translation":"فعل"},
+      {"word":"emotions","translation":"عواطف"},
+      {"word":"ancestor","translation":"سلف"},
+      {"word":"enhance","translation":"يعزز"},
+      {"word":"audiences","translation":"جماهير"},
+      {"word":"entertainment","translation":"ترفيه"},
+      {"word":"author","translation":"مؤلف"},
+      {"word":"essays","translation":"مقالات"},
+      {"word":"bravery","translation":"شجاعة"},
+      {"word":"experience","translation":"تجربة"},
+      {"word":"celebration","translation":"احتفال"},
+      {"word":"failure","translation":"فشل"},
+      {"word":"classical","translation":"كلاسيكي"},
+      {"word":"feature","translation":"ميزة"},
+      {"word":"crowd","translation":"حشد"},
+      {"word":"flutter","translation":"يرفرف"},
+      {"word":"magical","translation":"سحري"},
+      {"word":"preserve","translation":"يحافظ"},
+      {"word":"mind","translation":"عقل"},
+      {"word":"profession","translation":"مهنة"},
+      {"word":"movement","translation":"حركة"},
+      {"word":"publish","translation":"ينشر"},
+      {"word":"overcome","translation":"يتغلب"},
+      {"word":"purpose","translation":"هدف"},
+      {"word":"peaceful","translation":"سلمي"},
+      {"word":"question","translation":"سؤال"},
+      {"word":"perform","translation":"يؤدي"},
+      {"word":"reflect","translation":"يعكس"},
+      {"word":"serious","translation":"جاد"},
+      {"word":"spirit","translation":"روح"},
+      {"word":"stage","translation":"خشبة مسرح"},
+      {"word":"sway","translation":"يتمايل"}
+    ],
+    "derivatives": [
+      {"word":"isolate","translation":"یمیل","type":"verb"},
+      {"word":"isolation","translation":"عزلة","type":"noun"},
+      {"word":"isolated/isolating","translation":"معزول","type":"adjective"},
+      {"word":"perform","translation":"یونزی","type":"verb"},
+      {"word":"performance","translation":"آدا","type":"noun"},
+      {"word":"performing","translation":"مؤدي","type":"adjective"},
+      {"word":"preserve","translation":"یحافظ علی","type":"verb"},
+      {"word":"preservation","translation":"حفظ/صون","type":"noun"},
+      {"word":"preserved","translation":"محفوظ","type":"adjective"},
+      {"word":"publish","translation":"ینشر","type":"verb"},
+      {"word":"publication","translation":"نشر/منشور","type":"noun"},
+      {"word":"published","translation":"منشور","type":"adjective"},
+      {"word":"reflect","translation":"یمکس/یتانل","type":"verb"},
+      {"word":"reflection","translation":"انعکاس/تانل","type":"noun"},
+      {"word":"reflective","translation":"عاكس","type":"adjective"},
+      {"word":"reject","translation":"یرفض","type":"verb"},
+      {"word":"rejection","translation":"رفض","type":"noun"},
+      {"word":"rejected","translation":"مرفوض","type":"adjective"},
+      {"word":"respond","translation":"یستجیب","type":"verb"},
+      {"word":"response","translation":"استجابة","type":"noun"},
+      {"word":"responsive","translation":"مستجیب","type":"adjective"}
+    ],
+    "synonyms_antonyms": [
+      {"word":"bravery","synonym":"courage/boldness/heroism","antonym":"cowardice"},
+      {"word":"cheerful","synonym":"happy/joyful/optimistic","antonym":"sad/depressed"},
+      {"word":"classical","synonym":"traditional/conventional","antonym":"modern/contemporary"},
+      {"word":"confidence","synonym":"self-assurance/belief/certainty","antonym":"doubt/insecurity"},
+      {"word":"detailed","synonym":"comprehensive/precise","antonym":"vague/simple"},
+      {"word":"discipline","synonym":"self-control/order/regulation","antonym":"chaos/neglect"},
+      {"word":"enhance","synonym":"improve/develop/strengthen","antonym":"weaken/reduce"},
+      {"word":"fiction","synonym":"fantasy/imagination/myth","antonym":"reality/fact"},
+      {"word":"flow","synonym":"stream/run/move smoothly","antonym":"stop/block"},
+      {"word":"isolate","synonym":"separate/detach","antonym":"connect/unite"},
+      {"word":"inspiration","synonym":"motivation/encouragement","antonym":"discouragement"},
+      {"word":"lively","synonym":"energetic/dynamic/active","antonym":"dull/inactive"},
+      {"word":"preserve","synonym":"protect/conserve/maintain","antonym":"damage/destroy"},
+      {"word":"rejection","synonym":"refusal/denial/dismissal","antonym":"acceptance/approval"},
+      {"word":"vividly","synonym":"clearly/brightly/sharply","antonym":"vaguely/dimly"},
+      {"word":"wisdom","synonym":"knowledge/insight/intelligence","antonym":"ignorance/foolishness"}
+    ]
+  },
+  "12": {
+    "key_vocabulary": [
+      {"word":"apprenticeship","translation":"شغف"},
+      {"word":"architecture","translation":"هندسة معماري"},
+      {"word":"biography","translation":"سيرة ذاتية"},
+      {"word":"business studies","translation":"إدارة أعمال"},
+      {"word":"career","translation":"مهنة/مساروظفي"},
+      {"word":"counselors","translation":"مستشارون/مرشدون"},
+      {"word":"cultural awareness","translation":"وصي اتفاقي"},
+      {"word":"dentistry","translation":"طب الأسنان"},
+      {"word":"engineering","translation":"هندسة"},
+      {"word":"ethical","translation":"اخالقي"},
+      {"word":"geology","translation":"علم الجيولوجيا/علم الأرض"},
+      {"word":"hieroglyphics","translation":"الكتابة الهيروغليفية"},
+      {"word":"independence","translation":"استقالل"},
+      {"word":"inspiring","translation":"مُلهم"},
+      {"word":"law","translation":"قانون"},
+      {"word":"nursing","translation":"تمريض"},
+      {"word":"philosophical","translation":"فلسفي"},
+      {"word":"practical","translation":"عملي"},
+      {"word":"psychology","translation":"علم النفس"},
+      {"word":"rehearsal","translation":"بروفة/تدريب"},
+      {"word":"reputation","translation":"سمعة"},
+      {"word":"scroll","translation":"بمرر (على الشاشة)"},
+      {"word":"terrified","translation":"مذعور/خالف بشدة"}
+    ],
+    "main_vocabulary": [
+      {"word":"advertise","translation":"يعلن عن"},
+      {"word":"agency","translation":"وكالة"},
+      {"word":"applicant","translation":"متقدم لوظيفة"},
+      {"word":"campus","translation":"حرم جامعي"},
+      {"word":"college","translation":"كلية"},
+      {"word":"computer science","translation":"علوم الحاسوب"},
+      {"word":"consider","translation":"يعتبر/ينكرفي"},
+      {"word":"degree","translation":"درجة علمية"},
+      {"word":"diverse","translation":"متنوع"},
+      {"word":"diving equipment","translation":"معدات الفوس"},
+      {"word":"education","translation":"التعليم"},
+      {"word":"essential","translation":"أساسي/ضروري"},
+      {"word":"facilities","translation":"مرافق/تسهيلات"},
+      {"word":"factor","translation":"عامل"},
+      {"word":"financial","translation":"مالي"},
+      {"word":"freedom","translation":"حرية"},
+      {"word":"graduation","translation":"التخرج"},
+      {"word":"guarantee","translation":"ضمان/يضمن"},
+      {"word":"guidance","translation":"إرشاد/توجيه"},
+      {"word":"honestly","translation":"بصراحة"},
+      {"word":"internship","translation":"فترة تدريب"},
+      {"word":"jealous","translation":"غيور"},
+      {"word":"lecture","translation":"محاضرة"},
+      {"word":"legacy","translation":"إرث"},
+      {"word":"lifestyle","translation":"أسلوب حياة"},
+      {"word":"literature","translation":"الأدب"},
+      {"word":"match","translation":"يطابق/يناسب"},
+      {"word":"medicine","translation":"الطلب"},
+      {"word":"motivating","translation":"محفز"},
+      {"word":"mummy","translation":"موهباه"},
+      {"word":"opportunity","translation":"فرصة"},
+      {"word":"particular","translation":"معين/محدد"},
+      {"word":"percentage","translation":"نسبة مئوية"},
+      {"word":"Pharaoh","translation":"فرعون"},
+      {"word":"pretty","translation":"إلى حدّ ما/نوّغا ما"},
+      {"word":"rankings","translation":"تصنيفات"},
+      {"word":"require","translation":"يتطلب"},
+      {"word":"scared","translation":"خالف"},
+      {"word":"search","translation":"بحث/يبحث/ينتشف"},
+      {"word":"solid","translation":"صلب/متين/متحد"},
+      {"word":"strengths","translation":"نقاط قوة"},
+      {"word":"temporary","translation":"مؤقت"},
+      {"word":"trilogy","translation":"تالدية"}
+    ],
+    "phrases": [
+      {"word":"ask for advice","translation":"يطلب التصيحة"},
+      {"word":"ask for agreement","translation":"يطلب الموافقة"},
+      {"word":"change your career path","translation":"تغيير مسارك المهني"},
+      {"word":"click right away","translation":"ينسجم/يتفاهم فورا"},
+      {"word":"do a degree","translation":"يدرس للحصول على شهادة جامعية"},
+      {"word":"go much deeper than that","translation":"يتعمق أكثر من ذلك بكثير"},
+      {"word":"graduate with a first-class degree","translation":"يتخرج بدرجة امتياز مع مرتبة الشرف"},
+      {"word":"in conclusion","translation":"في الختام"},
+      {"word":"land a job","translation":"يحصل على وظيفة"},
+      {"word":"make a choice","translation":"يتخذ قرارا"},
+      {"word":"make decisions","translation":"يتخذ قرارات"},
+      {"word":"offer support","translation":"يقدم الدعم"},
+      {"word":"share the same passion for","translation":"يشارك نفس الشغف تجاه"},
+      {"word":"stay close to","translation":"يبقى قريبا من"},
+      {"word":"there's not much to do with it","translation":"لا يوجد الكثير مما يمكن فعله حياله"}
+    ],
+    "prepositions": [
+      {"word":"apprenticeship for","translation":"تدريب مهني في مجال"},
+      {"word":"specialize in","translation":"يتخصص في"},
+      {"word":"fall apart","translation":"ينهار/يتفكك"},
+      {"word":"walk around","translation":"يتجول"},
+      {"word":"get along","translation":"ينسجم/يتوافق"},
+      {"word":"well-known for","translation":"مشهور"},
+      {"word":"jealous of","translation":"غير من"},
+      {"word":"work together","translation":"يعمل معا/يتعاون"},
+      {"word":"learn about","translation":"يتعلم عن"},
+      {"word":"wrapped up","translation":"مندمج تماما/مشغول ب"}
+    ],
+    "derivatives": [
+      {"word":"consider","translation":"يتميير/ينكرفي","type":"verb"},
+      {"word":"consideration","translation":"اعتبار/تفكير","type":"noun"},
+      {"word":"considerate","translation":"مراع للآخرين","type":"adjective"},
+      {"word":"counsel","translation":"يُرشد/يُسدي نصيحة","type":"verb"},
+      {"word":"counselor","translation":"مُرشد/مستشار","type":"noun"},
+      {"word":"counseling","translation":"إرشادي","type":"adjective"},
+      {"word":"finance","translation":"يُموّل","type":"verb"},
+      {"word":"finance","translation":"تمويل","type":"noun"},
+      {"word":"financial","translation":"مالي","type":"adjective"},
+      {"word":"graduate","translation":"يتخرج","type":"verb"},
+      {"word":"graduation","translation":"تخرج","type":"noun"},
+      {"word":"graduate","translation":"خريج","type":"adjective"},
+      {"word":"guarantee","translation":"يضمن","type":"verb"},
+      {"word":"guarantee","translation":"ضمان","type":"noun"},
+      {"word":"guaranteed","translation":"مضمون/مفطى بالتأمين","type":"adjective"},
+      {"word":"guide","translation":"يُرشد","type":"verb"},
+      {"word":"guidance","translation":"إرشاد/توجيه","type":"noun"},
+      {"word":"guide","translation":"دليل","type":"noun"},
+      {"word":"guiding","translation":"إرشادي/مُوجّه","type":"adjective"},
+      {"word":"match","translation":"يُطابق/يناسب","type":"verb"},
+      {"word":"match","translation":"تطابق/مباراة","type":"noun"},
+      {"word":"matching","translation":"متطابق","type":"adjective"},
+      {"word":"motivate","translation":"يُحفز","type":"verb"},
+      {"word":"motivation","translation":"تحفيز","type":"noun"},
+      {"word":"motivating","translation":"مُحفز","type":"adjective"},
+      {"word":"nurse","translation":"يُعرض/يعتنى ب","type":"verb"},
+      {"word":"nursing","translation":"تمريض","type":"noun"},
+      {"word":"nursing","translation":"تمريضي","type":"adjective"},
+      {"word":"rank","translation":"يرتب","type":"verb"},
+      {"word":"ranking","translation":"تصنيف","type":"noun"},
+      {"word":"ranked","translation":"مصنف","type":"adjective"},
+      {"word":"require","translation":"يتطلب","type":"verb"},
+      {"word":"requirement","translation":"متطلب","type":"noun"},
+      {"word":"required","translation":"مطلوب","type":"adjective"},
+      {"word":"scare","translation":"يخيف","type":"verb"},
+      {"word":"scare","translation":"خوف","type":"noun"},
+      {"word":"scared","translation":"خائف","type":"adjective"},
+      {"word":"strengthen","translation":"يقوي","type":"verb"},
+      {"word":"strength","translation":"قوة","type":"noun"},
+      {"word":"strong","translation":"قوي","type":"adjective"}
+    ],
+    "synonyms_antonyms": [
+      {"word":"apprenticeship","synonym":"training/internship/learning","antonym":"unemployment/idleness/neglect period"},
+      {"word":"awareness","synonym":"consciousness/understanding","antonym":"ignorance/unawareness"},
+      {"word":"consider","synonym":"think about/examine/reflect on","antonym":"ignore/neglect/forget"},
+      {"word":"courage","synonym":"bravery/fearlessness","antonym":"cowardice/fear"},
+      {"word":"ethical","synonym":"moral/honest/fair","antonym":"immoral/dishonest/unfair"},
+      {"word":"guidance","synonym":"direction/advice/support","antonym":"misguidance/neglect/confusion"},
+      {"word":"independence","synonym":"freedom/self-reliance/autonomy","antonym":"dependence/reliance/control"},
+      {"word":"inspiring","synonym":"uplifting encouraging/motivating","antonym":"discouraging/depressing/boring"},
+      {"word":"jealous","synonym":"envious/resentful/suspicious","antonym":"content/trusting/satisfied"},
+      {"word":"motivating","synonym":"inspiring/encouraging","antonym":"discouraging/demotivating/boring"},
+      {"word":"particular","synonym":"specific/certain","antonym":"general/common"},
+      {"word":"passion","synonym":"enthusiasm/love/strong interest","antonym":"indifference/boredom/apathy"},
+      {"word":"practical","synonym":"useful/realistic/sensible","antonym":"impractical/unrealistic/useless"},
+      {"word":"scared","synonym":"afraid/frightened/nervous","antonym":"brave/calm/confident"},
+      {"word":"temporary","synonym":"short-term/brief/passing","antonym":"permanent/lasting/external"},
+      {"word":"trusted","synonym":"reliable/dependable","antonym":"untrusted/deceitful"}
+    ]
+  }
+};
+
+    // ------------------------------------------------------------
+    // المنطق الرئيسي للقاموس
+    // ------------------------------------------------------------
+    const unitSelect = document.getElementById('unitSelect');
+    const categorySelect = document.getElementById('categorySelect');
+    const searchInput = document.getElementById('searchInput');
+    const resultsContainer = document.getElementById('resultsContainer');
+    const resultCount = document.getElementById('resultCount');
+
+    // تعيين خيارات الوحدات
+    const unitKeys = Object.keys(data).sort((a,b) => Number(a) - Number(b));
+    unitSelect.innerHTML = '<option value="all">جميع الوحدات</option>';
+    unitKeys.forEach(key => {
+      const opt = document.createElement('option');
+      opt.value = key;
+      opt.textContent = `Unit ${key}`;
+      unitSelect.appendChild(opt);
+    });
+
+    // تعيين خيارات التصنيفات (ثابتة حسب الملف)
+    const categoryMap = {
+      'key_vocabulary': 'المفردات الرئيسية',
+      'main_vocabulary': 'المفردات الأساسية',
+      'phrases': 'العبارات والتعابير',
+      'prepositions': 'حروف الجر',
+      'derivatives': 'المشتقات',
+      'synonyms_antonyms': 'المترادفات والمتضادات'
+    };
+    categorySelect.innerHTML = '<option value="all">جميع التصنيفات</option>';
+    Object.entries(categoryMap).forEach(([key, label]) => {
+      const opt = document.createElement('option');
+      opt.value = key;
+      opt.textContent = label;
+      categorySelect.appendChild(opt);
+    });
+
+    function render() {
+      const selectedUnit = unitSelect.value;
+      const selectedCategory = categorySelect.value;
+      const searchTerm = searchInput.value.trim().toLowerCase();
+
+      let results = [];
+
+      // تحديد الوحدات المراد البحث فيها
+      const unitsToProcess = selectedUnit === 'all' ? unitKeys : [selectedUnit];
+
+      unitsToProcess.forEach(unit => {
+        if (!data[unit]) return;
+        // تحديد التصنيفات
+        const categoriesToProcess = selectedCategory === 'all' ? Object.keys(data[unit]) : [selectedCategory];
+
+        categoriesToProcess.forEach(cat => {
+          if (!data[unit][cat] || !Array.isArray(data[unit][cat])) return;
+          data[unit][cat].forEach(item => {
+            let word = item.word || '';
+            let translation = item.translation || '';
+            let extra = '';
+
+            // تنسيق خاص بالمشتقات
+            if (cat === 'derivatives' && item.type) {
+              extra = ` (${item.type})`;
+            }
+
+            // تنسيق خاص بالمترادفات والمتضادات
+            let synonymText = '';
+            let antonymText = '';
+            if (cat === 'synonyms_antonyms') {
+              synonymText = item.synonym || '';
+              antonymText = item.antonym || '';
+              // نضعها في الترجمة مؤقتاً للبحث والعرض
+              translation = `مرادف: ${synonymText} | مضاد: ${antonymText}`;
+            }
+
+            // بناء النص القابل للبحث
+            const searchable = `${word} ${translation} ${synonymText} ${antonymText}`.toLowerCase();
+            if (searchTerm && !searchable.includes(searchTerm)) return;
+
+            results.push({
+              unit: unit,
+              category: cat,
+              word: word,
+              translation: translation,
+              extra: extra,
+              synonym: synonymText,
+              antonym: antonymText,
+              rawTranslation: item.translation || '' // للعرض النظيف
+            });
+          });
+        });
+      });
+
+      // عرض النتائج
+      if (results.length === 0) {
+        resultsContainer.innerHTML = `<div class="no-results">😕 لا توجد نتائج مطابقة</div>`;
+        resultCount.textContent = '0 كلمة';
+        return;
+      }
+
+      let html = '';
+      results.forEach(item => {
+        let displayTranslation = item.translation;
+        // إذا كانت مترادفات، نعرضها بشكل منسق
+        if (item.category === 'synonyms_antonyms') {
+          displayTranslation = `مرادف: ${item.synonym} &nbsp;|&nbsp; مضاد: ${item.antonym}`;
+        }
+
+        html += `
+          <div class="card">
+            <div class="word">
+              ${item.word}
+              ${item.extra ? `<span class="meta-tag">${item.extra}</span>` : ''}
+              ${item.category === 'derivatives' ? `<span class="meta-tag">${item.word.includes(' ') ? 'عبارة' : 'كلمة'}</span>` : ''}
+            </div>
+            <div class="translation">${displayTranslation}</div>
+            ${item.category === 'synonyms_antonyms' ? '' : ''}
+            <div class="unit-tag">Unit ${item.unit} — ${categoryMap[item.category] || item.category}</div>
+          </div>
+        `;
+      });
+
+      resultsContainer.innerHTML = html;
+      resultCount.textContent = `${results.length} كلمة`;
+    }
+
+    // ربط الأحداث
+    unitSelect.addEventListener('change', render);
+    categorySelect.addEventListener('change', render);
+    searchInput.addEventListener('input', render);
+
+    // العرض الأولي
+    render();
+  </script>
+</body>
+</html>
