@@ -3802,10 +3802,6 @@ ${p.files.html || ''}
   zip.file('index.html', indexHtml);
   zip.file('style.css', p.files.css || '');
   zip.file('script.js', p.files.js || '');
-  // Include any data files (e.g. dictionary-data.json) the program fetches at runtime,
-  // so the extracted folder works standalone exactly like the original.
-  const dataFiles = (p.files && p.files.data) || {};
-  Object.keys(dataFiles).forEach(name => zip.file(name, dataFiles[name]));
 
   try {
     const blob = await zip.generateAsync({ type: 'blob' });
@@ -4104,37 +4100,8 @@ function buildProgramHtml(p) {
 </head>
 <body>
 ${p.files.html || ''}
-<script>${buildDataShimScript(p)}<\/script>
 <script>${p.files.js || ''}<\/script>
 </body></html>`;
-}
-
-// Builds a small shim that lets a sub-program's own relative fetch('xyz.json') calls
-// keep working once the program is detached from its real folder and run from a
-// srcdoc iframe (which has no base URL to resolve relative paths against). We stored
-// the JSON text at import time (see spAddProgram); this just serves it back in-memory,
-// and only intercepts the exact filenames we actually have — anything else still goes
-// through the real network fetch.
-function buildDataShimScript(p) {
-  const data = (p.files && p.files.data) || {};
-  const keys = Object.keys(data);
-  if (!keys.length) return '';
-  return `(function(){
-    var STORED_DATA = ${JSON.stringify(data)};
-    var origFetch = window.fetch.bind(window);
-    window.fetch = function(input, init) {
-      try {
-        var url = (typeof input === 'string') ? input : (input && input.url) || '';
-        var clean = url.split('?')[0].replace(/^\\.\\//, '').replace(/^\\//, '');
-        if (Object.prototype.hasOwnProperty.call(STORED_DATA, clean)) {
-          return Promise.resolve(new Response(STORED_DATA[clean], {
-            status: 200, headers: { 'Content-Type': 'application/json' }
-          }));
-        }
-      } catch (e) {}
-      return origFetch(input, init);
-    };
-  })();`;
 }
 
 function cleanupInjectedProgram() {
@@ -4513,7 +4480,7 @@ function openProgramNewTab(id) {
 }
 
 
-</style></head><body>${p.files.html||''}<script>${buildDataShimScript(p)}<\/script><script>${p.files.js||''}<\/script></body></html>`;
+</style></head><body>${p.files.html||''}<script>${p.files.js||''}<\/script></body></html>`;
   const blob = new Blob([full], {type:'text/html'});
   const url = URL.createObjectURL(blob);
   window.open(url, '_blank', 'noopener');
@@ -7601,25 +7568,7 @@ async function spAddProgram(folder, name, desc) {
     const css = await fetch(base + 'style.css').then(r => r.ok ? r.text() : '').catch(() => '');
     const js = await fetch(base + 'script.js').then(r => r.ok ? r.text() : '').catch(() => '');
     if (!html.trim()) { showToast(_t('لم يتم العثور على index.html لهذا البرنامج', 'index.html not found for this program'), 'error'); return; }
-
-    // ── Also fetch any JSON data files the sub-program needs (e.g. dictionary-data.json). ──
-    // Sub-programs load their own data with a plain relative fetch('some-file.json'), which
-    // works fine when the file is opened directly but breaks once it's imported here, because
-    // it then runs inside a `srcdoc` iframe with no real base URL to resolve relative paths
-    // against. So we scan the HTML for relative .json fetches, pull those files down now while
-    // we still have a real URL to fetch them from, and store them alongside the code.
-    const dataFiles = {};
-    const jsonRefs = new Set();
-    const fetchRe = /fetch\(\s*['"]([^'"]+\.json)['"]/g;
-    let m;
-    while ((m = fetchRe.exec(html + js)) !== null) jsonRefs.add(m[1]);
-    for (const ref of jsonRefs) {
-      const cleanRef = ref.replace(/^\.?\//, '');
-      const text = await fetch(base + cleanRef).then(r => r.ok ? r.text() : null).catch(() => null);
-      if (text !== null) dataFiles[cleanRef] = text;
-    }
-
-    DB.programs.push({ id: genId(), name, desc, files: { html, css, js, data: dataFiles }, createdAt: Date.now() });
+    DB.programs.push({ id: genId(), name, desc, files: { html, css, js }, createdAt: Date.now() });
     saveDB();
     buildSidebarPrograms();
     if (APP.currentView === 'programs') renderProgramsView();
