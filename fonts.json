@@ -1,7 +1,14 @@
 [
+@font-face {
   {
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Black+Ops+One&family=Lemonada:wght@300..700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Reem+Kufi:wght@400..700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  font-family: 'MyCustomFont';
+  src: url(https://fonts.google.com/share?selection.family=Aref+Ruqaa:wght@400;700|Black+Ops+One|Lemonada:wght@300..700|Playfair+Display:ital,wght@0,400..900;1,400..900|Reem+Kufi:wght@400..700|Roboto:ital,wght@0,100..900;1,100..900|Tajawal:wght@200;300;400;500;700;800;900);
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  font-family: 'MyCustomFont', sans-serif;
+}
   }
 ]
