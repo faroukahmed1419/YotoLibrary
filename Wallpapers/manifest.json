@@ -1,0 +1,17 @@
+[
+  {
+    "id": "analog-dark-metal",
+    "labelAr": "معدن غامق",
+    "file": "analog-dark-metal.jpg"
+  },
+  {
+    "id": "analog-light-metal",
+    "labelAr": "ألومنيوم فاتح",
+    "file": "analog-light-metal.jpg"
+  },
+  {
+    "id": "retro-grid",
+    "labelAr": "شبكة ريترو",
+    "file": "retro-grid.jpg"
+  }
+]
