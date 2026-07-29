@@ -12,4 +12,5 @@
     "name":"Pdf Page EXtractor",
     "desc":"مستخرج صفحات ملفات البي دي إف كصور منفصلة في مجلد مجمع او ملف بي دي إف منفصل " , 
     "folder":"pdfpageextractor"
+  }
 ]
