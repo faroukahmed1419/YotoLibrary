@@ -9,7 +9,7 @@
   ,
   {
     "id":"pdf_extractor",
-    "name":"Pdf Image EXtractor",
+    "name":"Pdf Page EXtractor",
     "desc":"مستخرج صفحات ملفات البي دي إف كصور منفصلة في مجلد مجمع او ملف بي دي إف منفصل " , 
-    "folder":"pdfimgextractor"
+    "folder":"pdfpageextractor"
 ]
