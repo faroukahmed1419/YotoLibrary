@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Contact Sheet — PDF Page Extractor</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#1c1b1a;
+    --bg-raised:#242220;
+    --bg-raised-2:#2b2825;
+    --lightbox:#f5f0e6;
+    --lightbox-dim:#ece3d2;
+    --ink:#2b2823;
+    --paper-muted:#9a948c;
+    --paper-faint:#6b6660;
+    --amber:#e8a33d;
+    --amber-dim:#c8862b;
+    --rust:#c4523a;
+    --line:#39352f;
+    --line-soft:#2f2b26;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(ellipse 900px 500px at 50% -10%, #2a2724 0%, transparent 60%),
+      var(--bg);
+    color:var(--lightbox);
+    font-family:'Space Grotesk', sans-serif;
+    min-height:100vh;
+    padding:32px 20px 60px;
+  }
+  .mono{font-family:'JetBrains Mono', monospace;}
+
+  .app{max-width:1120px;margin:0 auto;}
+
+  /* ---------- Header ---------- */
+  header{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:20px;
+    border-bottom:1px solid var(--line);
+    padding-bottom:18px;
+    margin-bottom:28px;
+    flex-wrap:wrap;
+  }
+  .brand-eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:.18em;
+    color:var(--amber);
+    text-transform:uppercase;
+    margin-bottom:6px;
+  }
+  h1{
+    font-size:28px;
+    font-weight:700;
+    letter-spacing:-0.01em;
+    margin:0;
+    color:var(--lightbox);
+  }
+  h1 span{color:var(--paper-muted); font-weight:500;}
+  .frame-counter{
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    color:var(--paper-muted);
+    text-align:right;
+    line-height:1.6;
+  }
+  .frame-counter b{color:var(--amber); font-weight:600;}
+
+  /* ---------- Drop zone ---------- */
+  .dropzone{
+    border:1.5px dashed var(--line);
+    border-radius:4px;
+    background:var(--bg-raised);
+    padding:70px 20px;
+    text-align:center;
+    cursor:pointer;
+    transition:border-color .15s ease, background .15s ease;
+    position:relative;
+  }
+  .dropzone:hover, .dropzone.drag{
+    border-color:var(--amber-dim);
+    background:var(--bg-raised-2);
+  }
+  .dropzone svg{margin-bottom:18px; opacity:.85;}
+  .dropzone h2{
+    font-size:17px; font-weight:600; margin:0 0 8px;
+    color:var(--lightbox);
+  }
+  .dropzone p{
+    font-size:13px; color:var(--paper-faint); margin:0;
+    font-family:'JetBrains Mono', monospace;
+  }
+  .dropzone input{display:none;}
+
+  /* ---------- Toolbar ---------- */
+  .toolbar{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px 14px;
+    align-items:center;
+    background:var(--bg-raised);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:14px 16px;
+    margin-bottom:26px;
+  }
+  .toolbar .file-tag{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    color:var(--paper-muted);
+    padding:5px 10px;
+    background:var(--bg);
+    border:1px solid var(--line);
+    border-radius:3px;
+    max-width:220px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .toolbar .divider{width:1px; align-self:stretch; background:var(--line); margin:0 2px;}
+  .btn{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:13px;
+    font-weight:500;
+    color:var(--lightbox);
+    background:transparent;
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:8px 12px;
+    cursor:pointer;
+    transition:border-color .12s ease, color .12s ease, background .12s ease;
+    white-space:nowrap;
+  }
+  .btn:hover{border-color:var(--paper-muted); background:var(--bg-raised-2);}
+  .btn:disabled{opacity:.35; cursor:not-allowed;}
+  .btn-amber{
+    background:var(--amber);
+    border-color:var(--amber);
+    color:#241d0f;
+    font-weight:600;
+  }
+  .btn-amber:hover{background:var(--amber-dim); border-color:var(--amber-dim);}
+  .btn-ghost-rust{color:var(--rust); border-color:var(--line);}
+  .btn-ghost-rust:hover{border-color:var(--rust);}
+
+  .range-input{
+    display:flex; align-items:center; gap:6px;
+    background:var(--bg); border:1px solid var(--line); border-radius:3px;
+    padding:4px 4px 4px 10px;
+  }
+  .range-input span{font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--paper-faint);}
+  .range-input input{
+    width:130px;
+    background:transparent; border:none; outline:none;
+    color:var(--lightbox); font-family:'JetBrains Mono', monospace; font-size:12px;
+    padding:6px 4px;
+  }
+  .range-input input::placeholder{color:var(--paper-faint);}
+  .range-input button{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    color:var(--ink);
+    background:var(--lightbox-dim);
+    border:none;
+    border-radius:2px;
+    padding:5px 9px;
+    cursor:pointer;
+  }
+  .range-input button:hover{background:var(--lightbox);}
+
+  .spacer{flex:1;}
+
+  /* ---------- Progress ---------- */
+  .progress-wrap{
+    display:none;
+    align-items:center;
+    gap:12px;
+    margin-bottom:22px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    color:var(--paper-muted);
+  }
+  .progress-wrap.active{display:flex;}
+  .progress-track{
+    flex:1; height:3px; background:var(--line); border-radius:2px; overflow:hidden;
+  }
+  .progress-fill{
+    height:100%; width:0%; background:var(--amber);
+    transition:width .12s ease;
+  }
+
+  /* ---------- Film strip / grid ---------- */
+  .strip{
+    position:relative;
+    background:var(--bg-raised);
+    border-radius:6px;
+    padding:26px 22px;
+  }
+  .strip::before, .strip::after{
+    content:"";
+    position:absolute; left:0; right:0; height:20px;
+    background-image: radial-gradient(circle, var(--bg) 3.5px, transparent 3.6px);
+    background-size: 26px 20px;
+    background-position: 10px center;
+    background-repeat: repeat-x;
+    opacity:.9;
+  }
+  .strip::before{top:0;}
+  .strip::after{bottom:0;}
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));
+    gap:22px 18px;
+    margin:10px 0 4px;
+  }
+
+  .frame{
+    cursor:pointer;
+    user-select:none;
+    text-align:center;
+  }
+  .frame .cel{
+    position:relative;
+    background:var(--ink);
+    border-radius:2px;
+    padding:6px;
+    border:1px solid #100f0d;
+    transition:transform .1s ease;
+  }
+  .frame:hover .cel{transform:translateY(-2px);}
+  .frame .photo{
+    display:block;
+    width:100%;
+    height:auto;
+    background:var(--lightbox-dim);
+    border-radius:1px;
+  }
+  .frame .tab{
+    margin-top:7px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    color:var(--paper-muted);
+    letter-spacing:.03em;
+  }
+  .frame.selected .tab{color:var(--amber);}
+  .frame .mark{
+    position:absolute;
+    top:-9px; right:-9px;
+    width:30px; height:30px;
+    border:2.5px solid var(--amber);
+    border-radius:47% 53% 45% 55% / 55% 45% 55% 45%;
+    transform:rotate(-6deg);
+    opacity:0;
+    transition:opacity .1s ease;
+    box-shadow:0 0 0 1px rgba(232,163,61,.15);
+    pointer-events:none;
+  }
+  .frame.selected .mark{opacity:1;}
+  .frame.selected .cel{outline:1px solid var(--amber-dim);}
+
+  .frame .skeleton{
+    width:100%;
+    aspect-ratio:3/4;
+    background:linear-gradient(100deg, var(--lightbox-dim) 30%, #d8cfba 50%, var(--lightbox-dim) 70%);
+    background-size:200% 100%;
+    animation:shimmer 1.3s infinite;
+    border-radius:1px;
+  }
+  @keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+
+  /* ---------- Empty / footer ---------- */
+  .hint{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11.5px;
+    color:var(--paper-faint);
+    margin-top:22px;
+    text-align:center;
+    letter-spacing:.02em;
+  }
+  .hidden{display:none !important;}
+
+  @media (max-width:560px){
+    header{flex-direction:column; align-items:flex-start;}
+    .frame-counter{text-align:left;}
+    .toolbar{padding:12px;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header>
+    <div>
+      <div class="brand-eyebrow">Light Table Utility</div>
+      <h1>Contact Sheet <span>/ PDF page extractor</span></h1>
+    </div>
+    <div class="frame-counter" id="frameCounter"></div>
+  </header>
+
+  <div class="dropzone" id="dropzone">
+    <input type="file" id="fileInput" accept="application/pdf">
+    <svg width="46" height="46" viewBox="0 0 46 46" fill="none">
+      <rect x="8" y="4" width="24" height="34" rx="2" stroke="#e8a33d" stroke-width="1.6"/>
+      <path d="M8 12h24M8 20h24M8 28h16" stroke="#6b6660" stroke-width="1.6"/>
+      <circle cx="36" cy="30" r="7" stroke="#e8a33d" stroke-width="1.6"/>
+      <path d="M36 27v6M33 30h6" stroke="#e8a33d" stroke-width="1.6"/>
+    </svg>
+    <h2>Drop a PDF on the table</h2>
+    <p>or click to browse — pages load as negatives, ready to mark</p>
+  </div>
+
+  <div class="toolbar hidden" id="toolbar">
+    <span class="file-tag mono" id="fileName">—</span>
+    <div class="divider"></div>
+    <button class="btn" id="btnAll">Select all</button>
+    <button class="btn" id="btnNone">Select none</button>
+    <button class="btn" id="btnInvert">Invert</button>
+    <div class="range-input">
+      <span>PAGES</span>
+      <input type="text" id="rangeInput" placeholder="e.g. 1-3, 5, 8-10">
+      <button id="btnApplyRange">Mark</button>
+    </div>
+    <div class="spacer"></div>
+    <button class="btn btn-ghost-rust" id="btnReset">Load different PDF</button>
+    <button class="btn" id="btnExportPdf">Export selection → PDF</button>
+    <button class="btn btn-amber" id="btnExportZip">Extract → Images (.zip)</button>
+  </div>
+
+  <div class="progress-wrap" id="progressWrap">
+    <span id="progressLabel">Rendering pages…</span>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span id="progressPct">0%</span>
+  </div>
+
+  <div class="strip hidden" id="strip">
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <div class="hint" id="hint">Nothing loaded yet — the table is empty.</div>
+
+</div>
+
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+const toolbar = document.getElementById('toolbar');
+const strip = document.getElementById('strip');
+const grid = document.getElementById('grid');
+const hint = document.getElementById('hint');
+const fileNameEl = document.getElementById('fileName');
+const frameCounter = document.getElementById('frameCounter');
+const progressWrap = document.getElementById('progressWrap');
+const progressFill = document.getElementById('progressFill');
+const progressPct = document.getElementById('progressPct');
+const progressLabel = document.getElementById('progressLabel');
+
+let pdfDoc = null;
+let numPages = 0;
+let selected = new Set();
+let lastClicked = null;
+let currentFileLabel = 'document';
+let pageDigits = 2;
+
+function setProgress(pct, label){
+  progressWrap.classList.add('active');
+  progressFill.style.width = pct + '%';
+  progressPct.textContent = Math.round(pct) + '%';
+  if(label) progressLabel.textContent = label;
+}
+function hideProgress(){
+  progressWrap.classList.remove('active');
+  progressFill.style.width = '0%';
+}
+
+function updateCounter(){
+  frameCounter.innerHTML = numPages
+    ? `<b>${selected.size}</b> / ${numPages} frames marked`
+    : '';
+}
+
+function updateSelectionUI(){
+  document.querySelectorAll('.frame').forEach(el=>{
+    const p = parseInt(el.dataset.page, 10);
+    el.classList.toggle('selected', selected.has(p));
+  });
+  updateCounter();
+  const hasSel = selected.size > 0;
+  document.getElementById('btnExportPdf').disabled = !hasSel;
+  document.getElementById('btnExportZip').disabled = !hasSel;
+}
+
+/* ---------- File loading ---------- */
+dropzone.addEventListener('click', ()=> fileInput.click());
+dropzone.addEventListener('dragover', e=>{ e.preventDefault(); dropzone.classList.add('drag'); });
+dropzone.addEventListener('dragleave', ()=> dropzone.classList.remove('drag'));
+dropzone.addEventListener('drop', e=>{
+  e.preventDefault();
+  dropzone.classList.remove('drag');
+  if(e.dataTransfer.files.length) loadFile(e.dataTransfer.files[0]);
+});
+fileInput.addEventListener('change', e=>{
+  if(e.target.files.length) loadFile(e.target.files[0]);
+});
+
+async function loadFile(file){
+  if(file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')){
+    alert('Please choose a PDF file.');
+    return;
+  }
+  currentFileLabel = file.name.replace(/\.pdf$/i, '');
+  fileNameEl.textContent = file.name;
+
+  grid.innerHTML = '';
+  selected = new Set();
+  lastClicked = null;
+
+  const buf = await file.arrayBuffer();
+  setProgress(0, 'Reading document…');
+  dropzone.classList.add('hidden');
+  toolbar.classList.remove('hidden');
+  strip.classList.remove('hidden');
+  hint.classList.add('hidden');
+
+  const loadingTask = pdfjsLib.getDocument({ data: buf });
+  pdfDoc = await loadingTask.promise;
+  numPages = pdfDoc.numPages;
+  pageDigits = String(numPages).length < 2 ? 2 : String(numPages).length;
+  updateCounter();
+
+  // build skeleton frames immediately so grid appears instantly
+  for(let p = 1; p <= numPages; p++){
+    const frame = document.createElement('div');
+    frame.className = 'frame';
+    frame.dataset.page = p;
+    frame.innerHTML = `
+      <div class="cel">
+        <div class="mark"></div>
+        <div class="skeleton"></div>
+      </div>
+      <div class="tab">${String(p).padStart(pageDigits,'0')}</div>
+    `;
+    frame.addEventListener('click', (e)=> handleFrameClick(e, p));
+    grid.appendChild(frame);
+  }
+
+  for(let p = 1; p <= numPages; p++){
+    const dataUrl = await renderPageToDataUrl(p, 0.45);
+    const frame = grid.children[p-1];
+    const cel = frame.querySelector('.cel');
+    const skeleton = cel.querySelector('.skeleton');
+    const img = document.createElement('img');
+    img.className = 'photo';
+    img.src = dataUrl;
+    img.alt = 'Page ' + p;
+    cel.replaceChild(img, skeleton);
+    setProgress((p/numPages)*100, `Rendering page ${p} of ${numPages}…`);
+  }
+  hideProgress();
+}
+
+async function renderPageToDataUrl(pageNum, scale){
+  const page = await pdfDoc.getPage(pageNum);
+  const viewport = page.getViewport({ scale });
+  const canvas = document.createElement('canvas');
+  canvas.width = viewport.width;
+  canvas.height = viewport.height;
+  const ctx = canvas.getContext('2d');
+  await page.render({ canvasContext: ctx, viewport }).promise;
+  return canvas.toDataURL('image/png');
+}
+
+async function renderPageToCanvas(pageNum, scale){
+  const page = await pdfDoc.getPage(pageNum);
+  const viewport = page.getViewport({ scale });
+  const canvas = document.createElement('canvas');
+  canvas.width = viewport.width;
+  canvas.height = viewport.height;
+  const ctx = canvas.getContext('2d');
+  await page.render({ canvasContext: ctx, viewport }).promise;
+  return canvas;
+}
+
+/* ---------- Selection ---------- */
+function handleFrameClick(e, p){
+  if(e.shiftKey && lastClicked !== null){
+    const [a,b] = [lastClicked, p].sort((x,y)=>x-y);
+    for(let i=a;i<=b;i++) selected.add(i);
+  } else {
+    if(selected.has(p)) selected.delete(p);
+    else selected.add(p);
+  }
+  lastClicked = p;
+  updateSelectionUI();
+}
+
+document.getElementById('btnAll').addEventListener('click', ()=>{
+  selected = new Set(Array.from({length:numPages}, (_,i)=>i+1));
+  updateSelectionUI();
+});
+document.getElementById('btnNone').addEventListener('click', ()=>{
+  selected = new Set();
+  updateSelectionUI();
+});
+document.getElementById('btnInvert').addEventListener('click', ()=>{
+  const next = new Set();
+  for(let p=1;p<=numPages;p++) if(!selected.has(p)) next.add(p);
+  selected = next;
+  updateSelectionUI();
+});
+document.getElementById('btnReset').addEventListener('click', ()=>{
+  pdfDoc = null; numPages = 0; selected = new Set(); lastClicked = null;
+  grid.innerHTML = '';
+  toolbar.classList.add('hidden');
+  strip.classList.add('hidden');
+  dropzone.classList.remove('hidden');
+  hint.classList.remove('hidden');
+  fileInput.value = '';
+  updateCounter();
+});
+
+function parseRanges(str, max){
+  const out = new Set();
+  str.split(',').forEach(part=>{
+    part = part.trim();
+    if(!part) return;
+    const m = part.match(/^(\d+)\s*-\s*(\d+)$/);
+    if(m){
+      let a = parseInt(m[1],10), b = parseInt(m[2],10);
+      if(a>b) [a,b]=[b,a];
+      for(let i=a;i<=b;i++) if(i>=1 && i<=max) out.add(i);
+    } else if(/^\d+$/.test(part)){
+      const n = parseInt(part,10);
+      if(n>=1 && n<=max) out.add(n);
+    }
+  });
+  return out;
+}
+
+document.getElementById('btnApplyRange').addEventListener('click', ()=>{
+  const val = document.getElementById('rangeInput').value;
+  if(!val.trim() || !numPages) return;
+  const parsed = parseRanges(val, numPages);
+  parsed.forEach(p=>selected.add(p));
+  updateSelectionUI();
+});
+document.getElementById('rangeInput').addEventListener('keydown', e=>{
+  if(e.key === 'Enter') document.getElementById('btnApplyRange').click();
+});
+
+/* ---------- Export: images as ZIP ---------- */
+document.getElementById('btnExportZip').addEventListener('click', async ()=>{
+  if(!selected.size) return;
+  const pages = Array.from(selected).sort((a,b)=>a-b);
+  const zip = new JSZip();
+  const folder = zip.folder(currentFileLabel + '_pages');
+  let done = 0;
+  setProgress(0, 'Extracting page images…');
+  for(const p of pages){
+    const canvas = await renderPageToCanvas(p, 2.2);
+    const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
+    folder.file(`page_${String(p).padStart(pageDigits,'0')}.png`, blob);
+    done++;
+    setProgress((done/pages.length)*100, `Extracting page ${p}…`);
+  }
+  setProgress(100, 'Packing zip…');
+  const content = await zip.generateAsync({ type:'blob' }, (meta)=>{
+    setProgress(meta.percent, 'Packing zip…');
+  });
+  hideProgress();
+  triggerDownload(content, currentFileLabel + '_pages.zip');
+});
+
+/* ---------- Export: selection as a new PDF ---------- */
+document.getElementById('btnExportPdf').addEventListener('click', async ()=>{
+  if(!selected.size) return;
+  const pages = Array.from(selected).sort((a,b)=>a-b);
+  const { jsPDF } = window.jspdf;
+  let doc = null;
+  let done = 0;
+  setProgress(0, 'Building PDF…');
+  for(const p of pages){
+    const canvas = await renderPageToCanvas(p, 2.2);
+    const imgData = canvas.toDataURL('image/jpeg', 0.92);
+    const w = canvas.width, h = canvas.height;
+    const orientation = w > h ? 'l' : 'p';
+    if(!doc){
+      doc = new jsPDF({ orientation, unit:'px', format:[w,h] });
+    } else {
+      doc.addPage([w,h], orientation);
+    }
+    doc.addImage(imgData, 'JPEG', 0, 0, w, h);
+    done++;
+    setProgress((done/pages.length)*100, `Placing page ${p}…`);
+  }
+  hideProgress();
+  doc.save(currentFileLabel + '_selected.pdf');
+});
+
+function triggerDownload(blob, filename){
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=> URL.revokeObjectURL(url), 4000);
+}
+</script>
+</body>
+</html>
