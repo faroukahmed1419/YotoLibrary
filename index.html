@@ -17,6 +17,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=JetBrains+Mono:wght@400;700&family=Tajawal:wght@400;700;900&family=IBM+Plex+Sans+Arabic:wght@400;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<!-- Hide body until splash covers it -->
+<style id="bodyHideStyle">body>*:not(#splashScreen){visibility:hidden;}</style>
 <style>
 /* ══════════════════════════════════════════════
    OuterSchool — style.css
@@ -37,6 +39,85 @@
   --bg:#0a140d; --surface:#122117; --surface2:#182e20; --surface3:#1f3b29;
   --border:#28472f; --accent:#4ade80; --accent-glow:rgba(74,222,128,0.2);
   --gold:#a3e635; --text:#e5f5ea; --muted:#7fa88c;
+}
+
+/* ── Midnight (deep indigo / purple) ── */
+[data-theme="midnight"] {
+  --bg:#0b0f1a; --surface:#131929; --surface2:#1a2236; --surface3:#222d45;
+  --border:#2e3d5c; --accent:#818cf8; --accent-glow:rgba(129,140,248,0.25);
+  --gold:#fbbf24; --text:#e0e7ff; --muted:#7a85b0;
+}
+[data-theme="midnight"] body::before {
+  content:''; position:fixed; inset:0; z-index:-2;
+  background:radial-gradient(ellipse at 20% 0%,rgba(99,102,241,0.12) 0%,transparent 60%),
+             radial-gradient(ellipse at 80% 100%,rgba(129,140,248,0.06) 0%,transparent 50%),
+             var(--bg);
+}
+
+/* ── Rosewood (dark rose / pink) ── */
+[data-theme="rosewood"] {
+  --bg:#1a0d11; --surface:#251219; --surface2:#321721; --surface3:#401e2b;
+  --border:#5c2840; --accent:#f472b6; --accent-glow:rgba(244,114,182,0.25);
+  --gold:#fb923c; --text:#fde8f0; --muted:#b07090;
+}
+[data-theme="rosewood"] body::before {
+  content:''; position:fixed; inset:0; z-index:-2;
+  background:radial-gradient(ellipse at 70% 0%,rgba(244,114,182,0.1) 0%,transparent 55%),var(--bg);
+}
+
+/* ── Deep Ocean (dark teal / sky blue) ── */
+[data-theme="deepocean"] {
+  --bg:#060d1b; --surface:#0c1628; --surface2:#122035; --surface3:#192b47;
+  --border:#1e3a5f; --accent:#38bdf8; --accent-glow:rgba(56,189,248,0.25);
+  --gold:#34d399; --text:#e0f2fe; --muted:#6b9ab8;
+}
+[data-theme="deepocean"] body::before {
+  content:''; position:fixed; inset:0; z-index:-2;
+  background:radial-gradient(ellipse at 50% 0%,rgba(56,189,248,0.08) 0%,transparent 60%),var(--bg);
+}
+
+/* ── Ember (dark warm orange / red) ── */
+[data-theme="ember"] {
+  --bg:#130d08; --surface:#1e1208; --surface2:#2a1a0c; --surface3:#372310;
+  --border:#5a3215; --accent:#fb923c; --accent-glow:rgba(251,146,60,0.25);
+  --gold:#fbbf24; --text:#fef3e2; --muted:#b08050;
+}
+[data-theme="ember"] body::before {
+  content:''; position:fixed; inset:0; z-index:-2;
+  background:radial-gradient(ellipse at 40% 0%,rgba(251,146,60,0.1) 0%,transparent 55%),var(--bg);
+}
+
+/* ── Violet (dark purple / lavender) ── */
+[data-theme="violet"] {
+  --bg:#0f0b1a; --surface:#170f28; --surface2:#1f1438; --surface3:#281a4a;
+  --border:#3d2670; --accent:#a78bfa; --accent-glow:rgba(167,139,250,0.25);
+  --gold:#f0abfc; --text:#ede9fe; --muted:#9070c0;
+}
+[data-theme="violet"] body::before {
+  content:''; position:fixed; inset:0; z-index:-2;
+  background:radial-gradient(ellipse at 60% 0%,rgba(167,139,250,0.12) 0%,transparent 55%),var(--bg);
+}
+
+/* ── Matcha (dark green / sage) ── */
+[data-theme="matcha"] {
+  --bg:#0d1510; --surface:#131f16; --surface2:#192b1d; --surface3:#1f3724;
+  --border:#294d30; --accent:#86efac; --accent-glow:rgba(134,239,172,0.2);
+  --gold:#d9f99d; --text:#e8fced; --muted:#6a9a74;
+}
+[data-theme="matcha"] body::before {
+  content:''; position:fixed; inset:0; z-index:-2;
+  background:radial-gradient(ellipse at 30% 100%,rgba(134,239,172,0.08) 0%,transparent 55%),var(--bg);
+}
+
+/* ── Slate (cool grey blue) ── */
+[data-theme="slate"] {
+  --bg:#0f172a; --surface:#1e293b; --surface2:#263347; --surface3:#2f3f57;
+  --border:#3a506b; --accent:#94a3b8; --accent-glow:rgba(148,163,184,0.2);
+  --gold:#7dd3fc; --text:#e2e8f0; --muted:#7a8ea6;
+}
+[data-theme="slate"] body::before {
+  content:''; position:fixed; inset:0; z-index:-2;
+  background:radial-gradient(ellipse at 80% 0%,rgba(148,163,184,0.06) 0%,transparent 55%),var(--bg);
 }
 
 /* ── Analog Dark (graphite/gunmetal, made for the Analog 3D UI style) ── */
@@ -81,6 +162,72 @@
 [data-theme="analogsand"] body::before {
   content:''; position:fixed; inset:0; z-index:-2;
   background:radial-gradient(ellipse at 30% 0%,rgba(122,140,74,0.07) 0%,transparent 55%), var(--bg);
+}
+
+/* ── Analog Walnut (dark, warm wood tones — same Analog family) ── */
+[data-theme="walnut3d"] {
+  --bg:#201611; --surface:#2b1f18; --surface2:#35281f; --surface3:#413228;
+  --border:#4f3f30; --accent:#b97a4a; --accent-glow:rgba(185,122,74,0.25);
+  --gold:#d9a066; --text:#efe6da; --muted:#a08d78;
+}
+[data-theme="walnut3d"] body::before {
+  content:''; position:fixed; inset:0; z-index:-2;
+  background:radial-gradient(ellipse at 30% 0%,rgba(185,122,74,0.07) 0%,transparent 55%), var(--bg);
+}
+
+/* ── Analog Charcoal (dark, cool teal accent — same Analog family) ── */
+[data-theme="charcoal3d"] {
+  --bg:#1a1d1d; --surface:#242828; --surface2:#2e3333; --surface3:#3a4040;
+  --border:#474e4e; --accent:#4a9d95; --accent-glow:rgba(74,157,149,0.25);
+  --gold:#7ecec4; --text:#e8ecec; --muted:#8b9695;
+}
+[data-theme="charcoal3d"] body::before {
+  content:''; position:fixed; inset:0; z-index:-2;
+  background:radial-gradient(ellipse at 30% 0%,rgba(74,157,149,0.07) 0%,transparent 55%), var(--bg);
+}
+
+/* ── Analog Olive (dark, mustard-olive accent — same Analog family) ── */
+[data-theme="olive3d"] {
+  --bg:#171a12; --surface:#21261a; --surface2:#2b3121; --surface3:#363d29;
+  --border:#434b31; --accent:#9a9c4a; --accent-glow:rgba(154,156,74,0.25);
+  --gold:#c7c96a; --text:#e9ebdc; --muted:#8f9478;
+}
+[data-theme="olive3d"] body::before {
+  content:''; position:fixed; inset:0; z-index:-2;
+  background:radial-gradient(ellipse at 30% 0%,rgba(154,156,74,0.07) 0%,transparent 55%), var(--bg);
+}
+
+/* ── Analog Porcelain (light, cool navy accent — same Analog family) ── */
+[data-theme="porcelain3d"] {
+  --bg:#e7e9ec; --surface:#f4f5f7; --surface2:#e2e5e9; --surface3:#d3d7dd;
+  --border:#c1c6cd; --accent:#34506e; --accent-glow:rgba(52,80,110,0.18);
+  --gold:#34506e; --text:#23282e; --muted:#6d757e;
+}
+[data-theme="porcelain3d"] body::before {
+  content:''; position:fixed; inset:0; z-index:-2;
+  background:radial-gradient(ellipse at 30% 0%,rgba(52,80,110,0.06) 0%,transparent 55%), var(--bg);
+}
+
+/* ── Analog Clay (light, warm terracotta/rust accent — same Analog family) ── */
+[data-theme="clay3d"] {
+  --bg:#ecdfd2; --surface:#f6ede2; --surface2:#e5d6c4; --surface3:#d6c2a9;
+  --border:#c3ac8d; --accent:#a8532f; --accent-glow:rgba(168,83,47,0.18);
+  --gold:#8a4526; --text:#2e2418; --muted:#7d6e5c;
+}
+[data-theme="clay3d"] body::before {
+  content:''; position:fixed; inset:0; z-index:-2;
+  background:radial-gradient(ellipse at 30% 0%,rgba(168,83,47,0.06) 0%,transparent 55%), var(--bg);
+}
+
+/* ── Analog Moss (light, sage/forest-green accent — same Analog family) ── */
+[data-theme="moss3d"] {
+  --bg:#e2e8dc; --surface:#eef3e7; --surface2:#dde5d2; --surface3:#c9d4b8;
+  --border:#b7c3a1; --accent:#4c6b3a; --accent-glow:rgba(76,107,58,0.18);
+  --gold:#3d5730; --text:#232a1d; --muted:#6c775c;
+}
+[data-theme="moss3d"] body::before {
+  content:''; position:fixed; inset:0; z-index:-2;
+  background:radial-gradient(ellipse at 30% 0%,rgba(76,107,58,0.06) 0%,transparent 55%), var(--bg);
 }
 
 /* ══════════════════════════════════════════════
@@ -143,14 +290,12 @@ img{max-width:100%;}
    TOPBAR
 ══════════════════════════════════════════════ */
 .topbar{
-  position:fixed;top:0;left:0;right:0;z-index:200;
-  background:color-mix(in srgb,var(--surface) 88%,transparent);
-  backdrop-filter:blur(16px);
-  -webkit-backdrop-filter:blur(16px);
+  position:static;
+  background:var(--surface);
   border-bottom:1px solid var(--border);
-  height:62px;
-  display:flex;align-items:center;gap:10px;
-  padding:0 16px;
+  height:72px;
+  display:grid;grid-template-columns:auto auto 1fr auto;align-items:center;gap:8px;
+  padding:0 12px;
   box-shadow:0 2px 20px rgba(0,0,0,0.25);
 }
 .burger-btn{
@@ -160,23 +305,78 @@ img{max-width:100%;}
   transition:color var(--transition),background var(--transition);
   flex-shrink:0;line-height:1;
   display:flex;align-items:center;justify-content:center;
+  justify-self:start;
 }
 .burger-btn:hover{color:var(--accent);background:var(--surface2);}
 .topbar-logo{
-  font-weight:900;font-size:1.25rem;white-space:nowrap;
-  display:flex;align-items:center;gap:6px;
+  font-weight:900;font-size:1.55rem;white-space:nowrap;
+  display:flex;align-items:center;gap:11px;
+  justify-self:center;
+  letter-spacing:.2px;
+}
+.topbar-logo .logo-mark{
   flex-shrink:0;
-  order:-1;
+  transition:transform .2s ease;
 }
-.topbar-logo .logo-outer{color:var(--gold);}
-.topbar-logo .logo-school{color:var(--accent);}
-.topbar-logo .logo-icon{
-  width:32px;height:32px;border-radius:8px;
+.topbar-logo:hover .logo-mark{
+  transform:scale(1.05);
+}
+.topbar-logo .logo-text{ display:inline-flex; align-items:baseline; }
+.topbar-logo .logo-big-o{
+  font-size:1.55em; font-weight:900; line-height:1;
+  color:var(--gold);
+  margin-inline-end:1px;
+}
+.topbar-logo .logo-outer{color:var(--gold); font-weight:900; font-size:1.1rem;}
+.topbar-logo .logo-school{color:var(--accent); font-weight:900; font-size:1.1rem;}
+.logo-wordmark{
+  display:inline-flex; align-items:baseline; gap:0;
+  font-family:'Cairo',sans-serif; font-weight:900; font-size:1.15rem;
+  line-height:1; margin-inline-start:6px;
+  direction:ltr; unicode-bidi:isolate;
+}
+.logo-wordmark .logo-outer{color:var(--gold);}
+.logo-wordmark .logo-school{color:var(--accent);}
+
+/* ── Topbar nav buttons (About / Tour) ── */
+.topbar-nav-btns{
+  display:flex; align-items:center; gap:6px;
+  justify-self:center;
+}
+.topbar-nav-btn{
+  display:flex; align-items:center; gap:6px;
+  padding:7px 14px;
+  background:transparent;
+  border:1px solid transparent;
+  border-radius:10px;
+  color:var(--muted);
+  font-size:.84rem; font-weight:600;
+  font-family:var(--font);
+  cursor:pointer;
+  transition:all .2s ease;
+  white-space:nowrap;
+}
+.topbar-nav-btn i{font-size:.8rem;}
+.topbar-nav-btn:hover{
+  color:var(--accent);
+  background:var(--surface2);
+  border-color:var(--border);
+}
+
+/* Floating menu button — shows once the (non-sticky) topbar is scrolled out of view */
+.menu-fab{
+  position:fixed; top:20px; right:20px; z-index:190;
+  width:50px;height:50px;border-radius:50%;
   background:linear-gradient(135deg,var(--accent),var(--gold));
+  color:#fff;border:none;box-shadow:0 6px 20px rgba(0,0,0,.35);
+  font-size:1.15rem;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
-  color:#fff;font-size:0.8rem;
-  box-shadow:0 2px 8px var(--accent-glow);
+  opacity:0;pointer-events:none;transform:translateY(-14px);
+  transition:opacity .22s ease,transform .22s ease;
 }
+.menu-fab.visible{ opacity:1; pointer-events:auto; transform:translateY(0); }
+.menu-fab:hover{ transform:translateY(-2px); }
+.menu-fab.visible:hover{ transform:translateY(-2px); }
 .sb-search-wrap{
   position:relative;
   margin:2px 16px 6px;
@@ -231,7 +431,7 @@ body.lang-en .sb-search-wrap input{padding:9px 16px 9px 40px;}
 .home-search-dd .hsdd-empty{padding:16px;text-align:center;color:var(--muted);font-size:.85rem;}
 .topbar-right{
   display:flex;align-items:center;gap:8px;
-  margin-right:auto;
+  justify-self:end;
 }
 .user-chip{
   display:flex;align-items:center;gap:8px;
@@ -291,6 +491,7 @@ body.lang-en .sb-search-wrap input{padding:9px 16px 9px 40px;}
 .sb-head-logo{
   font-weight:900;font-size:1.1rem;
   display:flex;align-items:center;gap:8px;
+  direction:ltr;unicode-bidi:isolate;
 }
 .sb-head-logo .logo-outer{color:var(--gold);}
 .sb-head-logo .logo-school{color:var(--accent);}
@@ -361,8 +562,8 @@ body.lang-en .sb-search-wrap input{padding:9px 16px 9px 40px;}
    MAIN CONTENT
 ══════════════════════════════════════════════ */
 .main{
-  margin-top:62px;
-  min-height:calc(100vh - 62px);
+  margin-top:0;
+  min-height:100vh;
   padding:28px 24px;
   max-width:1200px;
   margin-left:auto;
@@ -843,25 +1044,25 @@ body.fake-fullscreen-lock{ overflow:hidden; }
 ══════════════════════════════════════════════ */
 .settings-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-  gap:20px;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:12px;
   min-width:0;
   overflow:hidden;
 }
 .settings-card{
   background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--radius);padding:22px;
+  border-radius:var(--radius);padding:14px 16px;
   min-width:0;
   overflow:hidden;
 }
 .settings-card h3{
-  font-size:1rem;font-weight:700;margin-bottom:16px;
-  display:flex;align-items:center;gap:8px;
-  padding-bottom:12px;border-bottom:1px solid var(--border);
+  font-size:.82rem;font-weight:700;margin-bottom:10px;
+  display:flex;align-items:center;gap:7px;
+  padding-bottom:8px;border-bottom:1px solid var(--border);
 }
 .settings-card h3 i{color:var(--accent);}
-.form-group{margin-bottom:16px;}
-.form-group label{display:block;font-size:.83rem;font-weight:600;color:var(--muted);margin-bottom:6px;}
+.form-group{margin-bottom:10px;}
+.form-group label{display:block;font-size:.78rem;font-weight:600;color:var(--muted);margin-bottom:5px;}
 .form-group input,
 .form-group select,
 .form-group textarea{
@@ -912,6 +1113,28 @@ body.fake-fullscreen-lock{ overflow:hidden; }
   z-index:2;
 }
 .theme-card:hover .theme-del{opacity:1;}
+.theme-grid-row{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(72px,1fr));
+  gap:6px;
+  margin-bottom:4px;
+}
+
+/* Font Cards — replaces the old <select> dropdown with tappable cards */
+.font-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));
+  gap:10px;
+}
+.font-card{
+  border:2px solid var(--border);border-radius:10px;
+  background:var(--surface2);cursor:pointer;padding:10px 6px 8px;
+  text-align:center;transition:border-color var(--transition),transform var(--transition);
+}
+.font-card:hover{transform:translateY(-2px);}
+.font-card.active{border-color:var(--accent);background:var(--accent-glow);}
+.font-card .font-preview{font-size:1.3rem;font-weight:700;line-height:1;margin-bottom:6px;}
+.font-card span{display:block;font-size:.68rem;font-weight:600;color:var(--muted);}
+.font-card.active span{color:var(--accent);}
 
 /* Toggle switch */
 .toggle-wrap{display:flex;align-items:center;justify-content:space-between;padding:8px 0;}
@@ -1155,15 +1378,48 @@ body.fake-fullscreen-lock{ overflow:hidden; }
 
 /* ══════════════════════════════════════════════
    RESPONSIVE
+   Breakpoints: ≥1600 large desktop · 1024 tablet ·
+   768 small tablet / large phone · 480 phone ·
+   360 small phone · plus landscape + safe-area rules,
+   so proportions stay consistent across any device.
 ══════════════════════════════════════════════ */
+
+/* Fluid type scale — interpolates smoothly between breakpoints
+   instead of jumping at fixed widths (replaces the old hard
+   .page-title override at 768px). */
+.page-title{font-size:clamp(1.15rem,1rem + 1.1vw,1.6rem);}
+.topbar-logo .logo-outer,.topbar-logo .logo-school{font-size:clamp(.95rem,.88rem + .3vw,1.1rem);}
+.page-title-icon{width:clamp(34px,7vw,42px);height:clamp(34px,7vw,42px);font-size:clamp(.95rem,2.2vw,1.1rem);}
+
+/* Notched / safe-area devices (iPhone etc.) */
+@supports (padding:max(0px)){
+  .topbar{padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right));}
+  .main{padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right));}
+  .sidebar{padding-top:env(safe-area-inset-top);}
+}
+
+/* ── ≥1600px: large desktop / TV — a bit more breathing room ── */
+@media(min-width:1600px){
+  .main{padding:32px 40px;}
+}
+
+/* ── ≤1024px: tablets — tighten grids before the phone layout kicks in ── */
+@media(max-width:1024px){
+  .main{padding:22px 18px;}
+  .cat-grid{grid-template-columns:repeat(auto-fill,minmax(165px,1fr));}
+  .cloud-grid{grid-template-columns:repeat(auto-fill,minmax(190px,1fr));}
+}
+
 @media(max-width:768px){
   .main{padding:18px 14px;}
   .cat-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));}
   .stats-bar{grid-template-columns:repeat(2,1fr);}
   .settings-grid{grid-template-columns:1fr;}
   .user-chip span{display:none;}
-  .page-title{font-size:1.3rem;}
   .cloud-grid{grid-template-columns:1fr 1fr;}
+  /* On mobile: hide nav buttons, collapse topbar to burger | logo | [space] | right */
+  .topbar-nav-btns{display:none !important;}
+  .topbar{grid-template-columns:auto auto 1fr auto !important;}
 }
 @media(max-width:480px){
   .stats-bar{grid-template-columns:1fr 1fr;}
@@ -1171,6 +1427,22 @@ body.fake-fullscreen-lock{ overflow:hidden; }
   .cloud-grid{grid-template-columns:1fr;}
   .item-row{gap:10px;}
   .item-thumb{width:44px;height:36px;}
+}
+
+/* ── ≤360px: very small / older phones — avoid overflow & cramped touch targets ── */
+@media(max-width:360px){
+  :root{--sidebar-w:min(88vw,290px);}
+  .main{padding:14px 10px;}
+  .topbar{height:64px;padding:0 8px;}
+  .cat-grid{grid-template-columns:repeat(auto-fill,minmax(105px,1fr));}
+  .page-actions{gap:6px;}
+  .btn{padding:8px 12px;font-size:.8rem;}
+}
+
+/* ── Short / landscape phones — the fixed 72px topbar and splash logo
+     eat too much vertical space when height is limited ── */
+@media(max-height:420px) and (orientation:landscape){
+  .topbar{height:56px;}
 }
 
 /* ══════════════════════════════════════════════
@@ -1240,18 +1512,6 @@ body.fake-fullscreen-lock{ overflow:hidden; }
 .icon-opt.selected{background:var(--accent-glow);border-color:var(--accent);color:var(--accent);}
 
 /* ══════════════════════════════════════════════
-   NEON GLOW EFFECTS (theme-specific accents)
-══════════════════════════════════════════════ */
-[data-theme="neon"] .btn-primary,
-[data-theme="neon"] .stat-icon,
-[data-theme="neon"] .cat-icon{
-  box-shadow:0 0 20px var(--accent-glow);
-}
-[data-theme="matrix"] .btn-primary{
-  box-shadow:0 0 15px rgba(0,255,65,0.4);
-}
-
-/* ══════════════════════════════════════════════
    SCROLLBAR for sidebar
 ══════════════════════════════════════════════ */
 .sb-body::-webkit-scrollbar{width:4px;}
@@ -1271,34 +1531,9 @@ body.fake-fullscreen-lock{ overflow:hidden; }
   transition:background var(--transition);
 }
 .playlist-header:hover{background:var(--surface3);}
-.playlist-toggle{
+.playlist-open-icon{
   margin-right:auto;margin-left:0;
   color:var(--muted);font-size:.85rem;
-  transition:transform .2s;
-}
-.playlist-header.open .playlist-toggle{transform:rotate(90deg);}
-.playlist-body{
-  border-top:1px solid var(--border);
-  overflow:hidden;max-height:0;
-  transition:max-height .3s ease;
-}
-.playlist-body.open{max-height:2000px;}
-.playlist-item{
-  display:flex;align-items:center;gap:10px;
-  padding:10px 16px;
-  cursor:pointer;
-  transition:background var(--transition);
-  border-bottom:1px solid var(--border);
-  font-size:.875rem;
-}
-.playlist-item:last-child{border-bottom:0;}
-.playlist-item:hover{background:var(--surface3);}
-.playlist-item-num{
-  width:24px;height:24px;border-radius:50%;
-  background:var(--accent-glow);color:var(--accent);
-  font-size:.7rem;font-weight:700;
-  display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;
 }
 
 /* ══════════════════════════════════════════════
@@ -1454,10 +1689,8 @@ html,body{overscroll-behavior-y:none;}
    v3.1 — Burger left / iframe size / HSL picker / CT color tabs
 ══════════════════════════════════════════════ */
 
-/* ── Topbar burger always on the far left (right edge in RTL = left in ltr layout) ──*/
+/* ── Topbar burger sits in the grid's first column (see .topbar / .burger-btn) ──*/
 .topbar-burger-right {
-  /* In RTL: this is the FIRST item = rightmost visual position */
-  order: -1;
   margin-left: 0;
   margin-right: 0;
 }
@@ -1943,23 +2176,6 @@ html,body{overscroll-behavior-y:none;}
   to { box-shadow: 0 0 0 3px var(--accent-glow); }
 }
 
-/* ── Neon scan line effect for Matrix theme ── */
-[data-theme="matrix"] .topbar::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0,255,65,0.03) 2px,
-    rgba(0,255,65,0.03) 4px
-  );
-  pointer-events: none;
-}
-[data-theme="neon"] .btn-primary {
-  text-shadow: 0 0 10px rgba(255,255,255,0.6);
-}
 
 /* ── Smooth color transition on all themed elements ── */
 .cat-card, .stat-card, .cloud-card, .item-row, .settings-card,
@@ -2067,12 +2283,36 @@ html,body{overscroll-behavior-y:none;}
 .cat-dd-more{padding:7px 13px;font-size:.77rem;color:var(--accent);text-align:center;cursor:pointer;background:var(--surface2);}
 
 /* ══ SETTINGS TABS ══ */
-.sett-tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:20px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:5px;grid-column:1/-1;}
-.sett-tab{flex:1;min-width:70px;padding:8px 10px;border-radius:calc(var(--radius) - 3px);border:none;background:none;color:var(--muted);font-size:.8rem;font-weight:700;cursor:pointer;font-family:var(--font);transition:background .15s,color .15s;display:flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap;}
-.sett-tab:hover{color:var(--accent);}
-.sett-tab.active{background:var(--accent);color:#fff;}
 .sett-panel{display:none;grid-column:1/-1;}
 .sett-panel.active{display:contents;}
+
+/* ══ SETTINGS HOME — big tappable cards, each opens its own full page ══ */
+.settings-home-grid{
+  grid-column:1/-1;display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;
+}
+.settings-nav-card{
+  position:relative;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:20px 18px;cursor:pointer;
+  transition:border-color var(--transition),transform var(--transition);
+}
+.settings-nav-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.settings-nav-card .snc-icon{
+  width:44px;height:44px;border-radius:12px;background:var(--accent-glow);
+  color:var(--accent);display:flex;align-items:center;justify-content:center;
+  font-size:1.2rem;margin-bottom:12px;
+}
+.settings-nav-card h4{font-size:1rem;font-weight:800;margin-bottom:4px;}
+.settings-nav-card p{font-size:.78rem;color:var(--muted);}
+.settings-nav-card .snc-arrow{position:absolute;top:20px;left:18px;color:var(--muted);font-size:.85rem;}
+
+.sett-back-btn{
+  grid-column:1/-1;display:flex;align-items:center;gap:8px;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:10px 16px;color:var(--text);font-family:var(--font);font-size:.85rem;font-weight:700;
+  cursor:pointer;width:fit-content;transition:border-color var(--transition);
+}
+.sett-back-btn:hover{border-color:var(--accent);color:var(--accent);}
 .lang-switch-row{display:flex;gap:10px;}
 .lang-switch-btn{flex:1;padding:12px;border-radius:var(--radius);border:2px solid var(--border);background:var(--surface2);color:var(--text);font-family:var(--font);font-size:.9rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:border-color .15s,background .15s;}
 .lang-switch-btn span{font-size:1.2rem;}
@@ -2087,7 +2327,6 @@ html,body{overscroll-behavior-y:none;}
 /* ══════════════════════════════════════════════
    PATCH: bigger, easier-to-tap controls in Settings
 ══════════════════════════════════════════════ */
-.sett-tab{padding:12px 16px;font-size:.9rem;min-width:90px;}
 .lang-switch-btn{padding:16px;font-size:1rem;}
 .theme-grid{grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:14px;}
 .theme-card{border-radius:12px;}
@@ -2165,7 +2404,7 @@ body.lang-en .nt-index-search i,body.lang-en .clp-row .clp-url{right:auto;}
 body.lang-en .nt-index-search i{left:14px;}
 body.lang-en .nt-index-search input{padding:10px 14px 10px 40px;}
 body.lang-en .clp-fab{inset-inline-start:auto;inset-inline-end:26px;}
-body.lang-en .btn,body.lang-en .sett-tab,body.lang-en .nt-tab,body.lang-en .lang-switch-btn,body.lang-en .type-tab,body.lang-en .theme-card span,body.lang-en .ct-ctab{
+body.lang-en .btn,body.lang-en .nt-tab,body.lang-en .lang-switch-btn,body.lang-en .type-tab,body.lang-en .theme-card span,body.lang-en .ct-ctab{
   white-space:normal;text-align:center;line-height:1.3;word-break:break-word;
 }
 body.lang-en .btn{min-height:34px;}
@@ -2181,12 +2420,12 @@ body.lang-en .page-actions .btn,body.lang-en .modal-footer .btn{flex-shrink:0;}
   const manifest={name:"OuterSchool",short_name:"OuterSchool",display:"fullscreen",display_override:["fullscreen","standalone","minimal-ui"],orientation:"any",background_color:"#0D1117",theme_color:"#0D1117",start_url:".",lang:"ar",dir:"rtl",icons:[
     {src:"./icon.png",sizes:"512x512",type:"image/png",purpose:"any maskable"},
     {src:"./icon.png",sizes:"192x192",type:"image/png",purpose:"any maskable"},
-    {src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%230D1117'/%3E%3Ctext y='380' x='56' font-size='400'%3E%F0%9F%8E%93%3C/text%3E%3C/svg%3E",sizes:"512x512",type:"image/svg+xml",purpose:"any maskable"}
+    {src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%231b1b1b'/%3E%3Cpath d='M256 150 L400 210 L256 270 L112 210 Z' fill='%23d98324'/%3E%3Cpath d='M170 235 V310 Q256 350 342 310 V235' fill='none' stroke='%23d98324' stroke-width='20' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cline x1='400' y1='210' x2='400' y2='300' stroke='%23d98324' stroke-width='20' stroke-linecap='round'/%3E%3Ccircle cx='400' cy='320' r='18' fill='%23d98324'/%3E%3C/svg%3E",sizes:"512x512",type:"image/svg+xml",purpose:"any maskable"}
   ]};
   try{const b=new Blob([JSON.stringify(manifest)],{type:'application/manifest+json'});document.getElementById('pwaManifest').href=URL.createObjectURL(b);}catch(e){}
   // If icon.png is missing from the host, fall back to the inline SVG icon for the favicon too.
   const iconLink=document.querySelector('link[rel="icon"]');
-  if(iconLink){const test=new Image();test.onerror=()=>{iconLink.href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%230D1117'/%3E%3Ctext y='380' x='56' font-size='400'%3E%F0%9F%8E%93%3C/text%3E%3C/svg%3E";document.querySelector('link[rel="apple-touch-icon"]').href=iconLink.href;};test.src="./icon.png";}
+  if(iconLink){const test=new Image();test.onerror=()=>{iconLink.href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%231b1b1b'/%3E%3Cpath d='M256 150 L400 210 L256 270 L112 210 Z' fill='%23d98324'/%3E%3Cpath d='M170 235 V310 Q256 350 342 310 V235' fill='none' stroke='%23d98324' stroke-width='20' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cline x1='400' y1='210' x2='400' y2='300' stroke='%23d98324' stroke-width='20' stroke-linecap='round'/%3E%3Ccircle cx='400' cy='320' r='18' fill='%23d98324'/%3E%3C/svg%3E";document.querySelector('link[rel="apple-touch-icon"]').href=iconLink.href;};test.src="./icon.png";}
 })();
 </script>
 </head>
@@ -2198,17 +2437,58 @@ body.lang-en .page-actions .btn,body.lang-en .modal-footer .btn{flex-shrink:0;}
 <canvas id="matrixCanvas"></canvas>
 <canvas id="bubbleCanvas"></canvas>
 
-<!-- ══════════ TOPBAR ══════════ -->
+<!-- ══════════ SPLASH (injected first, covers everything) ══════════ -->
+<div id="splashScreen" style="position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#0d1117;overflow:hidden;opacity:1;">
+  <canvas id="splashCanvas" style="position:absolute;inset:0;z-index:0;"></canvas>
+  <div style="position:absolute;inset:0;z-index:1;display:flex;align-items:center;justify-content:center;pointer-events:none;">
+    <div style="width:160px;height:160px;border-radius:50%;border:2px solid rgba(217,131,36,.15);position:absolute;animation:splashRingPulse 2.5s ease-out infinite;"></div>
+    <div style="width:240px;height:240px;border-radius:50%;border:2px solid rgba(217,131,36,.08);position:absolute;animation:splashRingPulse 2.5s ease-out .5s infinite;"></div>
+    <div style="width:330px;height:330px;border-radius:50%;border:1px solid rgba(217,131,36,.05);position:absolute;animation:splashRingPulse 2.5s ease-out 1s infinite;"></div>
+  </div>
+  <div id="splashLogo" style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:20px;opacity:0;transform:scale(.6) translateY(20px);transition:opacity .8s cubic-bezier(.34,1.56,.64,1),transform .8s cubic-bezier(.34,1.56,.64,1);">
+    <svg viewBox="0 0 64 64" width="88" height="88" aria-label="OuterSchool">
+      <rect x="5" y="5" width="54" height="54" rx="16" fill="#d98324"/>
+      <path d="M32 21c-4-3-11-4-15-2v24c4-2 11-1 15 2c4-3 11-4 15-2V19c-4-2-11-1-15 2Z" fill="#fff"/>
+      <path d="M32 21v24" stroke="#ffb84d" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <div style="text-align:center;">
+      <div style="font-family:'Cairo',sans-serif;font-weight:900;font-size:2.4rem;letter-spacing:.02em;line-height:1;margin-bottom:8px;direction:ltr;">
+        <span style="color:#ffb84d;">Outer</span><span style="color:#d98324;">School</span>
+      </div>
+      <div id="splashTagline" style="font-family:'Cairo',sans-serif;font-size:1rem;color:rgba(255,255,255,.5);letter-spacing:.04em;opacity:0;transform:translateY(8px);transition:opacity .6s ease .4s,transform .6s ease .4s;">مكتبتك التعليمية الذكية</div>
+    </div>
+  </div>
+  <div id="splashBar" style="position:absolute;bottom:60px;z-index:2;width:200px;height:2px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden;opacity:0;transition:opacity .4s .3s;">
+    <div id="splashBarFill" style="height:100%;width:0%;background:linear-gradient(90deg,#d98324,#ffb84d);border-radius:2px;transition:width 1.6s cubic-bezier(.4,0,.2,1);"></div>
+  </div>
+</div>
+
 <header class="topbar">
   <!-- Burger on the far RIGHT edge in RTL (order: -1 makes it first in flex = rightmost visually) -->
   <button class="burger-btn topbar-burger-right" onclick="toggleSidebar()" title="القائمة">
     <i class="fas fa-bars"></i>
   </button>
 
-  <!-- Logo -->
-  <div class="topbar-logo">
-    <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
-    <span><span class="logo-outer">Outer</span><span class="logo-school">School</span></span>
+  <!-- Logo — standalone icon only, no text -->
+  <div class="topbar-logo" onclick="navigate('home')" title="OuterSchool — الرئيسية" style="cursor:pointer;">
+    <svg class="logo-mark" viewBox="0 0 64 64" width="40" height="40" aria-label="OuterSchool">
+      <rect x="5" y="5" width="54" height="54" rx="16" fill="var(--accent)"/>
+      <path d="M32 21c-4-3-11-4-15-2v24c4-2 11-1 15 2c4-3 11-4 15-2V19c-4-2-11-1-15 2Z" fill="#fff"/>
+      <path d="M32 21v24" stroke="var(--gold)" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <span class="logo-wordmark"><span class="logo-outer">Outer</span><span class="logo-school">School</span></span>
+  </div>
+
+  <!-- Center nav buttons -->
+  <div class="topbar-nav-btns">
+    <button class="topbar-nav-btn" onclick="openSiteTour()" title="شرح الموقع">
+      <i class="fas fa-map-signs"></i>
+      <span data-ar="جولة" data-en="Tour">جولة</span>
+    </button>
+    <button class="topbar-nav-btn" onclick="openAboutModal()" title="عن الموقع">
+      <i class="fas fa-info-circle"></i>
+      <span data-ar="عن الموقع" data-en="About">عن الموقع</span>
+    </button>
   </div>
 
   <!-- Left: fullscreen + user chip -->
@@ -2221,13 +2501,18 @@ body.lang-en .page-actions .btn,body.lang-en .modal-footer .btn{flex-shrink:0;}
   </div>
 </header>
 
+<!-- Floating menu button — appears once the (non-sticky) topbar scrolls out of view -->
+<button class="menu-fab" id="menuFab" onclick="toggleSidebar()" title="القائمة">
+  <i class="fas fa-bars"></i>
+</button>
+
 <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 
 <!-- ══════════ SIDEBAR ══════════ -->
 <nav class="sidebar" id="sidebar">
   <div class="sb-head">
     <div class="sb-head-logo">
-      <span class="logo-outer">Outer</span><span class="logo-school">School</span>
+      <bdi style="direction:ltr;unicode-bidi:isolate;display:flex;align-items:center;gap:0;"><span class="logo-outer">Outer</span><span class="logo-school">School</span></bdi>
     </div>
     <button class="sb-close" onclick="closeSidebar()"><i class="fas fa-times"></i></button>
   </div>
@@ -2279,7 +2564,7 @@ body.lang-en .page-actions .btn,body.lang-en .modal-footer .btn{flex-shrink:0;}
     <!-- Programs -->
     <div class="sb-section">
       <div class="sb-item" id="nav-programs-toggle" onclick="navigate('programs')">
-        <i class="fas fa-cubes"></i> <span data-i18n="nav_programs">البرامج الفرعية</span>
+        <i class="fas fa-cubes"></i> <span data-i18n="nav_programs">الأدوات المساعدة</span>
         <i class="fas fa-chevron-left sb-arrow"></i>
       </div>
       <div class="sb-dropdown" id="sbProgramsDrop">
@@ -2438,7 +2723,7 @@ body.lang-en .page-actions .btn,body.lang-en .modal-footer .btn{flex-shrink:0;}
         <div class="page-title-icon" style="background:linear-gradient(135deg,#f59e0b,#ef4444);">
           <i class="fas fa-cubes"></i>
         </div>
-        <span data-i18n="title_programs">البرامج الفرعية</span>
+        <span data-i18n="title_programs">الأدوات المساعدة</span>
       </div>
       <div class="page-actions">
         <button class="btn btn-primary" onclick="openAddProgramModal()">
@@ -2572,19 +2857,49 @@ body.lang-en .page-actions .btn,body.lang-en .modal-footer .btn{flex-shrink:0;}
       </div>
     </div>
 
-    <div class="settings-grid">
-      <!-- Settings Tabs -->
-      <div class="sett-tabs">
-        <button class="sett-tab active" onclick="switchSettTab('profile',this)"><i class="fas fa-user"></i> <span data-i18n="settab_profile">الحساب</span></button>
-        <button class="sett-tab" onclick="switchSettTab('appearance',this)"><i class="fas fa-palette"></i> <span data-i18n="settab_appearance">المظهر</span></button>
-        <button class="sett-tab" onclick="switchSettTab('background',this)"><i class="fas fa-image"></i> <span data-i18n="settab_background">الخلفية</span></button>
-        <button class="sett-tab" onclick="switchSettTab('download',this)"><i class="fas fa-download"></i> <span data-i18n="settab_download">التحميل</span></button>
-        <button class="sett-tab" onclick="switchSettTab('data',this)"><i class="fas fa-database"></i> <span data-i18n="settab_data">البيانات</span></button>
+    <div class="settings-grid" id="settingsGrid">
+      <!-- Settings Home: tap a card to open its full page -->
+      <div class="settings-home-grid" id="settingsHomeGrid">
+        <div class="settings-nav-card" onclick="openSettSection('profile')">
+          <div class="snc-icon"><i class="fas fa-user"></i></div>
+          <h4 data-i18n="settab_profile">الحساب</h4>
+          <p>الاسم والصورة والبريد الإلكتروني</p>
+          <i class="fas fa-chevron-left snc-arrow"></i>
+        </div>
+        <div class="settings-nav-card" onclick="openSettSection('appearance')">
+          <div class="snc-icon"><i class="fas fa-palette"></i></div>
+          <h4 data-i18n="settab_appearance">المظهر</h4>
+          <p>الثيم، الخط، حجم الواجهة</p>
+          <i class="fas fa-chevron-left snc-arrow"></i>
+        </div>
+        <div class="settings-nav-card" onclick="openSettSection('background')">
+          <div class="snc-icon"><i class="fas fa-image"></i></div>
+          <h4 data-i18n="settab_background">الخلفية</h4>
+          <p>خلفية البرنامج وتأثيراتها</p>
+          <i class="fas fa-chevron-left snc-arrow"></i>
+        </div>
+        <div class="settings-nav-card" onclick="openSettSection('download')">
+          <div class="snc-icon"><i class="fas fa-download"></i></div>
+          <h4 data-i18n="settab_download">التحميل</h4>
+          <p>أدوات تحميل الفيديوهات</p>
+          <i class="fas fa-chevron-left snc-arrow"></i>
+        </div>
+        <div class="settings-nav-card" onclick="openSettSection('data')">
+          <div class="snc-icon"><i class="fas fa-database"></i></div>
+          <h4 data-i18n="settab_data">البيانات</h4>
+          <p>النسخ الاحتياطي والاستيراد</p>
+          <i class="fas fa-chevron-left snc-arrow"></i>
+        </div>
       </div>
 
+      <!-- Back button shown only while a section page is open -->
+      <button class="sett-back-btn" id="settBackBtn" onclick="closeSettSection()" style="display:none;">
+        <i class="fas fa-arrow-right"></i> <span data-i18n="settings_back">رجوع للإعدادات</span>
+      </button>
+
       <!-- PANEL: profile -->
-      <div class="sett-panel active" data-sett="profile">
-      <div class="settings-card">
+      <div class="sett-panel" data-sett="profile">
+      <div class="settings-card" style="grid-column:1/-1;max-width:480px;">
         <h3><i class="fas fa-user-circle"></i> الملف الشخصي</h3>
         <div class="profile-avatar-wrap">
           <div class="profile-avatar-big" id="profileAvatarBig" onclick="document.getElementById('avatarUpload').click()">
@@ -2600,16 +2915,17 @@ body.lang-en .page-actions .btn,body.lang-en .modal-footer .btn{flex-shrink:0;}
         <button class="btn btn-primary" style="width:100%;" onclick="saveProfile()"><i class="fas fa-save"></i> حفظ الملف الشخصي</button>
       </div>
       <!-- About -->
-      <div class="settings-card">
-        <h3><i class="fas fa-info-circle"></i> حول التطبيق</h3>
-        <div style="text-align:center;padding:10px 0;">
-          <div style="font-size:2.5rem;margin-bottom:10px;">🎓</div>
-          <div style="font-size:1.3rem;font-weight:900;color:var(--accent);">OuterSchool</div>
-          <div style="font-size:.85rem;color:var(--muted);margin-top:4px;">نظام إدارة محتوى تعليمي</div>
-          <div style="font-size:.78rem;color:var(--muted);margin-top:14px;line-height:1.8;">الإصدار 5.0 · يعمل بدون إنترنت · البيانات محفوظة في متصفحك</div>
-        </div>
-        <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
-          <button class="btn btn-danger btn-sm" style="width:100%;" onclick="clearAllData()"><i class="fas fa-trash-alt"></i> مسح كل البيانات</button>
+      <div class="settings-card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px;">
+        <h3 style="width:100%;"><i class="fas fa-info-circle"></i> حول التطبيق</h3>
+        <svg viewBox="0 0 64 64" width="40" height="40" aria-hidden="true">
+          <rect x="5" y="5" width="54" height="54" rx="16" fill="var(--accent)"/>
+          <path d="M32 21c-4-3-11-4-15-2v24c4-2 11-1 15 2c4-3 11-4 15-2V19c-4-2-11-1-15 2Z" fill="#fff"/>
+          <path d="M32 21v24" stroke="var(--gold)" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <div style="font-size:1rem;font-weight:900;direction:ltr;"><span style="color:var(--gold);">Outer</span><span style="color:var(--accent);">School</span></div>
+        <div style="font-size:.75rem;color:var(--muted);">الإصدار 5.0 · بدون إنترنت · بياناتك محلية</div>
+        <div style="width:100%;margin-top:6px;padding-top:10px;border-top:1px solid var(--border);">
+          <button class="btn btn-danger btn-sm" style="width:100%;font-size:.78rem;padding:7px;" onclick="clearAllData()"><i class="fas fa-trash-alt"></i> مسح كل البيانات</button>
         </div>
       </div>
       </div>
@@ -2621,13 +2937,7 @@ body.lang-en .page-actions .btn,body.lang-en .modal-footer .btn{flex-shrink:0;}
         <h3><i class="fas fa-palette"></i> المظهر والثيم</h3>
         <div class="form-group"><label>اختر الثيم</label><div class="theme-grid" id="themeGrid"></div></div>
         <div class="form-group" style="margin-top:12px;"><label>الخط</label>
-          <select id="fontSelector" onchange="changeFont(this.value)">
-            <option value="Cairo">Cairo (القاهرة)</option>
-            <option value="Tajawal">Tajawal (تجوال)</option>
-            <option value="IBM Plex Sans Arabic">IBM Plex Sans Arabic</option>
-            <option value="JetBrains Mono">JetBrains Mono</option>
-            <option value="Inter">Inter</option>
-          </select>
+          <div class="font-grid" id="fontGrid"></div>
         </div>
       </div>
       <!-- Interface Size -->
@@ -2642,7 +2952,7 @@ body.lang-en .page-actions .btn,body.lang-en .modal-footer .btn{flex-shrink:0;}
       <div class="sett-panel" data-sett="background">
       <div class="settings-card">
         <h3><i class="fas fa-image"></i> خلفية البرنامج</h3>
-        <p style="font-size:.8rem;color:var(--muted);margin-bottom:12px;">اختر من الخلفيات الجاهزة (تُضاف عن طريق فولدر Wallpapers على الموقع).</p>
+        <p style="font-size:.8rem;color:var(--muted);margin-bottom:12px;">اختر خلفية من المجموعة الجاهزة.</p>
         <div class="theme-grid" id="wallpaperGrid"></div>
         <div class="form-group" style="margin-top:6px;"><button class="btn btn-sm" style="width:100%;color:var(--danger);border-color:var(--danger);" onclick="removeBgImage()"><i class="fas fa-trash"></i> بدون خلفية</button></div>
         <div class="form-group"><label>ضبابية: <span class="range-val" id="bgBlurVal">0px</span></label><input type="range" id="bgBlurRange" min="0" max="20" value="0" oninput="updateBgBlur(this.value)"></div>
@@ -2654,12 +2964,6 @@ body.lang-en .page-actions .btn,body.lang-en .modal-footer .btn{flex-shrink:0;}
         <div class="toggle-wrap"><span>تأثير الجسيمات</span><label class="toggle"><input type="checkbox" id="toggleParticles" onchange="toggleParticlesEffect(this.checked)"><span class="toggle-slider"></span></label></div>
         <div class="toggle-wrap"><span>مطر الماتريكس</span><label class="toggle"><input type="checkbox" id="toggleMatrix" onchange="toggleMatrixEffect(this.checked)"><span class="toggle-slider"></span></label></div>
         <div class="toggle-wrap"><span>الكرات المتحركة</span><label class="toggle"><input type="checkbox" id="toggleBubbles" onchange="toggleBubblesEffect(this.checked)"><span class="toggle-slider"></span></label></div>
-        </div>
-      </div>
-      <div class="settings-card">
-        <h3><i class="fas fa-border-all"></i> تأثيرات الخلفية — ثابتة</h3>
-        <div id="fxStaticGroup">
-          <p style="font-size:.78rem;color:var(--muted);" id="fxStaticEmptyMsg">لا توجد تأثيرات ثابتة بعد — تُضاف عبر Effects/effects.json</p>
         </div>
       </div>
       </div>
@@ -2774,8 +3078,8 @@ body.lang-en .page-actions .btn,body.lang-en .modal-footer .btn{flex-shrink:0;}
         <div class="hsl-hex-row">
           <span class="hsl-hash">#</span>
           <input type="text" id="catHexInp" class="hsl-hex-inp" maxlength="6" value="3B82F6" oninput="hexInpChanged('cat')" onblur="hexInpBlur('cat')">
-          <button class="hsl-random-btn" onclick="hslRandom('cat')" title="لون عشوائي">🎲</button>
-          <button class="hsl-neon-btn" id="catNeonBtn" onclick="toggleNeon('cat')" title="توهج نيون">✨</button>
+          <button class="hsl-random-btn" onclick="hslRandom('cat')" title="لون عشوائي"><i class="fas fa-shuffle"></i></button>
+          <button class="hsl-neon-btn" id="catNeonBtn" onclick="toggleNeon('cat')" title="توهج نيون"><i class="fas fa-star"></i></button>
         </div>
         <!-- Quick preset swatches (small row) -->
         <div class="hsl-preset-row" id="catPresetRow"></div>
@@ -3024,9 +3328,9 @@ const DEFAULT_DATA = {
     avatar: null,
     theme: 'analogdark',
     font: 'Cairo',
-    backgroundImage: null,
+    backgroundImage: './Wallpapers/analog-dark-metal.jpg',
     bgBlur: 0,
-    bgOpacity: 50,
+    bgOpacity: 65,
   },
   categories: [],
   links: [],
@@ -3499,16 +3803,6 @@ function closeVideoModal() {
 }
 
 // ══════════════════════════════════════════════
-//  PLAYLIST MODAL — shows the real youtube.com/playlist page
-//  (reuses the generic iframe-viewer modal, see openIframeViewer())
-// ══════════════════════════════════════════════
-function openPlaylistModal(linkId) {
-  const link = DB.links.find(l => l.id === linkId);
-  if (!link) return;
-  openIframeViewer(link.title, link.url);
-}
-
-// ══════════════════════════════════════════════
 //  CLIPBOARD HELPER
 // ══════════════════════════════════════════════
 function copyTextToClipboard(text) {
@@ -3626,8 +3920,8 @@ function renderCategoryView(catId) {
 
 function renderPlaylistRow(link) {
   return `<div class="playlist-wrap">
-    <div class="playlist-header" onclick="togglePlaylistHeader(this)">
-      <div style="font-size:1.5rem;">📋</div>
+    <div class="playlist-header" onclick="openUrl('${encodeURIComponent(link.url)}')" style="cursor:pointer;" title="فتح قائمة التشغيل في تاب خارجي">
+      <div style="font-size:1.5rem;"><i class="fas fa-list" style="color:var(--accent);"></i></div>
       <div style="flex:1;min-width:0;">
         <div style="font-weight:700;font-size:.93rem;">${escHtml(link.title)}</div>
         ${link.desc ? `<div style="font-size:.8rem;color:var(--muted);">${escHtml(link.desc)}</div>` : ''}
@@ -3639,26 +3933,9 @@ function renderPlaylistRow(link) {
         <button class="btn-icon btn btn-sm" onclick="editLink('${link.id}')"><i class="fas fa-edit"></i></button>
         <button class="btn-icon btn btn-sm" style="color:var(--danger);border-color:var(--danger);" onclick="deleteLink('${link.id}')"><i class="fas fa-trash"></i></button>
       </div>
-      <i class="fas fa-chevron-left playlist-toggle"></i>
-    </div>
-    <div class="playlist-body">
-      <div class="playlist-item" onclick="openPlaylistModal('${link.id}')">
-        <div class="playlist-item-num"><i class="fas fa-play"></i></div>
-        <div>تصفح القائمة واختر فيديو (داخل التطبيق)</div>
-        <i class="fas fa-chevron-left" style="color:var(--muted);margin-right:auto;"></i>
-      </div>
-      <div class="playlist-item" onclick="openUrl('${encodeURIComponent(link.url)}')">
-        <div class="playlist-item-num">▶</div>
-        <div>فتح قائمة التشغيل كاملة في تاب خارجي</div>
-        <i class="fas fa-external-link-alt" style="color:var(--muted);margin-right:auto;"></i>
-      </div>
+      <i class="fas fa-external-link-alt playlist-open-icon"></i>
     </div>
   </div>`;
-}
-
-function togglePlaylistHeader(el) {
-  el.classList.toggle('open');
-  el.nextElementSibling.classList.toggle('open');
 }
 
 function buildBreadcrumb(catId) {
@@ -3704,7 +3981,7 @@ function renderCloud() {
     return;
   }
   grid.innerHTML = DB.cloud.map(item => {
-    let icon = '☁️', tagClass = 'tag-other', tagLabel = 'رابط';
+    let icon = '<i class="fas fa-link" style="color:var(--muted);font-size:1.8rem;"></i>', tagClass = 'tag-other', tagLabel = 'رابط';
     if (item.type === 'drive') { icon = '<i class="fab fa-google-drive" style="color:#4285f4;font-size:1.8rem;"></i>'; tagClass='tag-drive'; tagLabel='Google Drive'; }
     else if (item.type === 'dropbox') { icon = '<i class="fab fa-dropbox" style="color:#0061ff;font-size:1.8rem;"></i>'; tagClass='tag-dropbox'; tagLabel='Dropbox'; }
     return `<div class="cloud-card">
@@ -3733,7 +4010,7 @@ function renderProgramsGrid(container, limit) {
     container.innerHTML = `<div class="empty-state" style="grid-column:1/-1;padding:30px 0;">
       <i class="fas fa-cubes"></i>
       <h3>لا يوجد برامج فرعية بعد</h3>
-      <p>أضف برنامجك الأول بلصق أو رفع ملفات HTML / CSS / JS</p>
+      <p>أضف أداتك المساعدة الأولى</p>
     </div>`;
     return;
   }
@@ -3747,7 +4024,6 @@ function renderProgramsGrid(container, limit) {
         <button class="btn btn-primary btn-sm" style="flex:1;justify-content:center;" onclick="navigate('program-run','${p.id}')">
           <i class="fas fa-play"></i> تشغيل
         </button>
-        <button class="btn btn-sm" onclick="downloadProgramFiles('${p.id}')" title="تحميل الملفات (HTML/CSS/JS)"><i class="fas fa-file-zipper"></i></button>
         <button class="btn btn-sm" style="color:var(--danger);border-color:var(--danger);" onclick="deleteProgram('${p.id}')"><i class="fas fa-trash"></i></button>
       </div>
     </div>
@@ -3820,15 +4096,10 @@ ${p.files.html || ''}
   }
 }
 
-function buildProgramHtml(p) {
-  return `<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${escHtml(p.name)}</title>
-<style>${p.files.css || ''}
-/* ══════════════════════════════════════════════
+// Shared CSS effects block reused by both the ZIP export (buildProgramHtml)
+// and the 'open in new tab' preview (openProgramNewTab), so it only needs to
+// be maintained in one place instead of two duplicated copies.
+const PROGRAM_EFFECTS_CSS = `/* ══════════════════════════════════════════════
    ✨ BEAUTIFUL EFFECTS — v4
 ══════════════════════════════════════════════ */
 
@@ -4066,23 +4337,6 @@ function buildProgramHtml(p) {
   to { box-shadow: 0 0 0 3px var(--accent-glow); }
 }
 
-/* ── Neon scan line effect for Matrix theme ── */
-[data-theme="matrix"] .topbar::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0,255,65,0.03) 2px,
-    rgba(0,255,65,0.03) 4px
-  );
-  pointer-events: none;
-}
-[data-theme="neon"] .btn-primary {
-  text-shadow: 0 0 10px rgba(255,255,255,0.6);
-}
 
 /* ── Smooth color transition on all themed elements ── */
 .cat-card, .stat-card, .cloud-card, .item-row, .settings-card,
@@ -4093,9 +4347,17 @@ function buildProgramHtml(p) {
     color var(--transition),
     box-shadow 0.3s ease,
     transform 0.25s ease !important;
-}
+}`;
 
-
+function buildProgramHtml(p) {
+  return `<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${escHtml(p.name)}</title>
+<style>${p.files.css || ''}
+${PROGRAM_EFFECTS_CSS}
 </style>
 </head>
 <body>
@@ -4212,274 +4474,7 @@ function openProgramNewTab(id) {
   const p = DB.programs.find(x => x.id === id);
   if (!p) return;
   const full = `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>${escHtml(p.name)}</title><style>${p.files.css||''}
-/* ══════════════════════════════════════════════
-   ✨ BEAUTIFUL EFFECTS — v4
-══════════════════════════════════════════════ */
-
-/* ── Ripple effect on buttons ── */
-.btn, .cat-card, .stat-card, .cloud-card, .item-row, .sb-item {
-  position: relative;
-  overflow: hidden;
-}
-.ripple-circle {
-  position: absolute;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.25);
-  transform: scale(0);
-  animation: ripple-anim 0.55s ease-out forwards;
-  pointer-events: none;
-  z-index: 10;
-}
-@keyframes ripple-anim {
-  to { transform: scale(4); opacity: 0; }
-}
-
-/* ── Glow pulse on accent buttons ── */
-.btn-primary {
-  animation: glow-pulse 3s ease-in-out infinite;
-}
-@keyframes glow-pulse {
-  0%, 100% { box-shadow: 0 0 8px var(--accent-glow); }
-  50% { box-shadow: 0 0 20px var(--accent-glow), 0 0 40px var(--accent-glow); }
-}
-.btn-primary:hover {
-  animation: none;
-  box-shadow: 0 0 25px var(--accent-glow), 0 6px 20px rgba(0,0,0,0.3) !important;
-  transform: translateY(-1px);
-}
-
-/* ── Shimmer loading effect for stat cards ── */
-@keyframes shimmer {
-  0% { background-position: -400px 0; }
-  100% { background-position: 400px 0; }
-}
-.stat-card {
-  background: var(--surface);
-  position: relative;
-  overflow: hidden;
-}
-.stat-card::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.04) 50%, transparent 100%);
-  background-size: 400px 100%;
-  animation: shimmer 3s linear infinite;
-  pointer-events: none;
-}
-
-/* ── Floating animation for logo icon ── */
-.logo-icon {
-  animation: float-logo 4s ease-in-out infinite;
-}
-@keyframes float-logo {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-3px); }
-}
-
-/* ── Slide-in animation for views ── */
-@keyframes slideInUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.view.active {
-  animation: slideInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
-}
-
-/* ── Card hover with glow border ── */
-.cat-card:hover {
-  box-shadow: 0 8px 24px rgba(0,0,0,0.35), 0 0 0 1px var(--accent), 0 0 20px var(--accent-glow) !important;
-}
-.stat-card:hover {
-  box-shadow: 0 6px 20px rgba(0,0,0,0.3), 0 0 15px var(--accent-glow) !important;
-}
-.cloud-card:hover {
-  box-shadow: 0 6px 20px rgba(0,0,0,0.3), 0 0 12px var(--accent-glow) !important;
-}
-
-/* ── Toast enhanced with slide + scale ── */
-.toast.show {
-  transform: translateX(-50%) translateY(0) scale(1) !important;
-}
-.toast {
-  transform: translateX(-50%) translateY(80px) scale(0.9) !important;
-  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
-}
-
-/* ── Sidebar items slide in when sidebar opens ── */
-.sidebar.open .sb-item {
-  animation: sbItemIn 0.3s ease both;
-}
-.sidebar.open .sb-section:nth-child(1) .sb-item { animation-delay: 0.05s; }
-.sidebar.open .sb-section:nth-child(2) .sb-item { animation-delay: 0.08s; }
-.sidebar.open .sb-section:nth-child(3) .sb-item { animation-delay: 0.11s; }
-.sidebar.open .sb-section:nth-child(4) .sb-item { animation-delay: 0.14s; }
-.sidebar.open .sb-section:nth-child(5) .sb-item { animation-delay: 0.17s; }
-@keyframes sbItemIn {
-  from { opacity: 0; transform: translateX(20px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-/* ── Topbar logo text shimmer ── */
-.topbar-logo .logo-outer {
-  background: linear-gradient(90deg, var(--gold), #fff, var(--gold));
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: text-shimmer 3s linear infinite;
-}
-@keyframes text-shimmer {
-  to { background-position: 200% center; }
-}
-
-/* ── Stats counter animation (number count-up feel) ── */
-.stat-num {
-  display: inline-block;
-  animation: countUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-@keyframes countUp {
-  from { opacity: 0; transform: translateY(10px) scale(0.8); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-/* ── Modal slide-in enhanced ── */
-.modal-bg.show .modal {
-  animation: modalIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
-}
-@keyframes modalIn {
-  from { opacity: 0; transform: translateY(30px) scale(0.96); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-/* ── Item rows slide in staggered ── */
-.items-list .item-row {
-  animation: itemRowIn 0.3s ease both;
-}
-.items-list .item-row:nth-child(1) { animation-delay: 0s; }
-.items-list .item-row:nth-child(2) { animation-delay: 0.04s; }
-.items-list .item-row:nth-child(3) { animation-delay: 0.08s; }
-.items-list .item-row:nth-child(4) { animation-delay: 0.12s; }
-.items-list .item-row:nth-child(5) { animation-delay: 0.16s; }
-.items-list .item-row:nth-child(6) { animation-delay: 0.20s; }
-@keyframes itemRowIn {
-  from { opacity: 0; transform: translateX(-12px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-/* ── Cat grid cards stagger-in ── */
-.cat-grid .cat-card {
-  animation: catCardIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-.cat-grid .cat-card:nth-child(1) { animation-delay: 0s; }
-.cat-grid .cat-card:nth-child(2) { animation-delay: 0.05s; }
-.cat-grid .cat-card:nth-child(3) { animation-delay: 0.10s; }
-.cat-grid .cat-card:nth-child(4) { animation-delay: 0.15s; }
-.cat-grid .cat-card:nth-child(5) { animation-delay: 0.20s; }
-.cat-grid .cat-card:nth-child(6) { animation-delay: 0.25s; }
-.cat-grid .cat-card:nth-child(n+7) { animation-delay: 0.30s; }
-@keyframes catCardIn {
-  from { opacity: 0; transform: scale(0.9) translateY(10px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
-}
-
-/* ── Active sidebar item indicator pulse ── */
-.sb-item.active::before {
-  animation: indicatorPulse 2s ease-in-out infinite;
-}
-@keyframes indicatorPulse {
-  0%, 100% { box-shadow: 0 0 4px var(--accent); opacity: 1; }
-  50% { box-shadow: 0 0 12px var(--accent); opacity: 0.8; }
-}
-
-/* ── HSL/RGB picker swatch glow ── */
-.hsl-preview-swatch {
-  transition: background .15s, box-shadow .15s !important;
-}
-.hsl-preview-swatch:not([style*="background: rgb(0, 0, 0)"]) {
-  box-shadow: 0 4px 16px currentColor, 0 0 0 2px var(--border) !important;
-}
-
-/* ── Note cards bounce in ── */
-.note-card {
-  animation: noteIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-@keyframes noteIn {
-  from { opacity: 0; transform: scale(0.92) rotate(-1deg); }
-  to { opacity: 1; transform: scale(1) rotate(0); }
-}
-
-/* ── Theme cards hover scale ── */
-.theme-card:hover {
-  transform: translateY(-4px) scale(1.04) !important;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.4) !important;
-}
-
-/* ── Scroll-triggered subtle parallax for page header icon ── */
-.page-title-icon {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.page-title-icon:hover {
-  transform: rotate(-5deg) scale(1.1);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.4), 0 0 20px var(--accent-glow);
-}
-
-/* ── Settings card hover ── */
-.settings-card {
-  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition) !important;
-}
-.settings-card:hover {
-  border-color: var(--accent) !important;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.25), 0 0 10px var(--accent-glow) !important;
-  transform: translateY(-1px);
-}
-
-/* ── Topbar subtle glow on scroll ── */
-.topbar {
-  transition: box-shadow 0.3s ease !important;
-}
-
-/* ── Input focus ring animation ── */
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-  animation: focusRing 0.3s ease !important;
-}
-@keyframes focusRing {
-  from { box-shadow: 0 0 0 0 var(--accent-glow); }
-  to { box-shadow: 0 0 0 3px var(--accent-glow); }
-}
-
-/* ── Neon scan line effect for Matrix theme ── */
-[data-theme="matrix"] .topbar::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0,255,65,0.03) 2px,
-    rgba(0,255,65,0.03) 4px
-  );
-  pointer-events: none;
-}
-[data-theme="neon"] .btn-primary {
-  text-shadow: 0 0 10px rgba(255,255,255,0.6);
-}
-
-/* ── Smooth color transition on all themed elements ── */
-.cat-card, .stat-card, .cloud-card, .item-row, .settings-card,
-.sidebar, .topbar, .modal, .note-card, .todo-item {
-  transition: 
-    background var(--transition),
-    border-color var(--transition),
-    color var(--transition),
-    box-shadow 0.3s ease,
-    transform 0.25s ease !important;
-}
-
-
+${PROGRAM_EFFECTS_CSS}
 </style></head><body>${p.files.html||''}<script>${p.files.js||''}<\/script></body></html>`;
   const blob = new Blob([full], {type:'text/html'});
   const url = URL.createObjectURL(blob);
@@ -4572,7 +4567,7 @@ function renderAchievements() {
     <div class="ach-stat-card"><div class="n">${doneTodos.length}</div><div class="l">مهام منجزة</div></div>
     <div class="ach-stat-card"><div class="n">${totalTodos-doneTodos.length}</div><div class="l">مهام معلقة</div></div>
     <div class="ach-stat-card"><div class="n">${pct}%</div><div class="l">نسبة الإنجاز</div></div>
-    <div class="ach-stat-card"><div class="n">${streak}</div><div class="l">أيام متتالية 🔥</div></div>
+    <div class="ach-stat-card"><div class="n">${streak}</div><div class="l">أيام متتالية</div></div>
     <div class="ach-stat-card"><div class="n">${totalNotes}</div><div class="l">ملاحظات</div></div>
   `;
 
@@ -4744,13 +4739,13 @@ const I18N = {
   ar: {
     nav_home: 'الصفحة الرئيسية', nav_categories: 'التصنيفات', nav_add_category: 'إضافة تصنيف جديد',
     nav_cloud: 'الملفات السحابية', nav_add_cloud: 'إضافة رابط سحابي',
-    nav_programs: 'البرامج الفرعية', nav_add_program: 'إضافة برنامج جديد',
+    nav_programs: 'الأدوات المساعدة', nav_add_program: 'إضافة أداة جديدة',
     nav_notes: 'الملاحظات والمهام', nav_settings: 'الإعدادات',
     sb_footer_tagline: 'مكتبتك التعليمية',
     search_placeholder: 'ابحث في المكتبة...', home_search_placeholder: 'ابحث عن تصنيف، رابط، برنامج، ملاحظة...',
     home_welcome: 'مرحباً', btn_add_link: 'إضافة رابط', btn_new_category: 'تصنيف جديد',
     home_pinned_widgets: 'عناصر مثبتة', btn_add_widget: 'إضافة ويدجت', home_categories: 'التصنيفات',
-    title_cloud: 'الملفات السحابية', title_programs: 'البرامج الفرعية', title_notes: 'الملاحظات والمهام',
+    title_cloud: 'الملفات السحابية', title_programs: 'الأدوات المساعدة', title_notes: 'الملاحظات والمهام',
     title_settings: 'الإعدادات', title_search: 'نتائج البحث',
     tab_notes: 'الملاحظات', tab_todo: 'المهام', tab_index: 'الفهرس', tab_achievements: 'الإنجازات',
     settab_profile: 'الحساب', settab_appearance: 'المظهر', settab_background: 'الخلفية',
@@ -4760,13 +4755,13 @@ const I18N = {
   en: {
     nav_home: 'Home', nav_categories: 'Categories', nav_add_category: 'Add new category',
     nav_cloud: 'Cloud Files', nav_add_cloud: 'Add cloud link',
-    nav_programs: 'Sub-programs', nav_add_program: 'Add new program',
+    nav_programs: 'Tools', nav_add_program: 'Add new tool',
     nav_notes: 'Notes & Tasks', nav_settings: 'Settings',
     sb_footer_tagline: 'Your learning library',
     search_placeholder: 'Search the library...', home_search_placeholder: 'Search category, link, program, note...',
     home_welcome: 'Welcome', btn_add_link: 'Add Link', btn_new_category: 'New Category',
     home_pinned_widgets: 'Pinned Items', btn_add_widget: 'Add Widget', home_categories: 'Categories',
-    title_cloud: 'Cloud Files', title_programs: 'Sub-programs', title_notes: 'Notes & Tasks',
+    title_cloud: 'Cloud Files', title_programs: 'Tools', title_notes: 'Notes & Tasks',
     title_settings: 'Settings', title_search: 'Search Results',
     tab_notes: 'Notes', tab_todo: 'Tasks', tab_index: 'Index', tab_achievements: 'Achievements',
     settab_profile: 'Account', settab_appearance: 'Appearance', settab_background: 'Background',
@@ -4985,7 +4980,8 @@ function renderNotesGrid() {
         <button onclick="editNote('${n.id}')" title="تعديل"><i class="fas fa-edit"></i></button>
         <button onclick="deleteNote('${n.id}')" title="حذف"><i class="fas fa-trash"></i></button>
       </div>
-      <p>${escHtml(n.text)}</p>
+      ${n.image ? `<img class="note-img" src="${n.image}" loading="lazy">` : ''}
+      ${n.text ? `<p>${escHtml(n.text)}</p>` : ''}
       <div class="note-date">${new Date(n.createdAt).toLocaleDateString('ar-EG')}</div>
     </div>`;
   }).join('');
@@ -4994,10 +4990,11 @@ function renderNotesGrid() {
 function addQuickNote() {
   const input = document.getElementById('quickNoteInput');
   const text = input.value.trim();
-  if (!text) return;
-  DB.notes.push({ id: genId(), text, colorIdx: DB.notes.length % NOTE_COLORS.length, createdAt: Date.now() });
+  if (!text && !_noteImg) return;
+  DB.notes.push({ id: genId(), text, image: _noteImg || null, colorIdx: DB.notes.length % NOTE_COLORS.length, createdAt: Date.now() });
   saveDB();
   input.value = '';
+  clearNoteImg();
   renderNotesGrid();
   if (APP.currentView === 'home') renderHomeNtWidget();
   showToast('تمت إضافة الملاحظة ✓', 'success');
@@ -5091,7 +5088,7 @@ function renderHomeNtWidget() {
       </div>`).join('');
 
   const todosHtml = pendingTodos.length === 0
-    ? `<div class="nt-widget-empty">لا يوجد مهام معلقة 🎉</div>`
+    ? `<div class="nt-widget-empty">لا يوجد مهام معلقة</div>`
     : pendingTodos.map(t => `<div class="todo-item" style="padding:8px 10px;margin-bottom:6px;">
         <div class="todo-check" onclick="toggleTodo('${t.id}');renderHomeNtWidget();"><i class="fas fa-check"></i></div>
         <div class="todo-text" style="font-size:.85rem;">${escHtml(t.text)}</div>
@@ -5117,12 +5114,26 @@ const THEMES = [
   { id:'analoglight', label:'Analog Light', bg:'#e9e5da', accent:'#b5651d', surface:'#f4f1e8' },
   { id:'analogsteel', label:'Analog Steel', bg:'#1c1f22', accent:'#5b8fd9', surface:'#262a2e' },
   { id:'analogsand',  label:'Analog Sand',  bg:'#eae3d3', accent:'#7a8c4a', surface:'#f5f0e2' },
+  { id:'walnut3d',    label:'Analog Walnut',    bg:'#201611', accent:'#b97a4a', surface:'#2b1f18' },
+  { id:'charcoal3d',  label:'Analog Charcoal',  bg:'#1a1d1d', accent:'#4a9d95', surface:'#242828' },
+  { id:'olive3d',     label:'Analog Olive',     bg:'#171a12', accent:'#9a9c4a', surface:'#21261a' },
+  { id:'porcelain3d', label:'Analog Porcelain', bg:'#e7e9ec', accent:'#34506e', surface:'#f4f5f7' },
+  { id:'clay3d',      label:'Analog Clay',      bg:'#ecdfd2', accent:'#a8532f', surface:'#f6ede2' },
+  { id:'moss3d',      label:'Analog Moss',      bg:'#e2e8dc', accent:'#4c6b3a', surface:'#eef3e7' },
   { id:'forest',      label:'Forest',       bg:'#0a140d', accent:'#4ade80', surface:'#122117' },
+  { id:'midnight',    label:'Midnight',     bg:'#0b0f1a', accent:'#818cf8', surface:'#131929' },
+  { id:'rosewood',    label:'Rosewood',     bg:'#1a0d11', accent:'#f472b6', surface:'#251219' },
+  { id:'deepocean',   label:'Deep Ocean',   bg:'#060d1b', accent:'#38bdf8', surface:'#0c1628' },
+  { id:'ember',       label:'Ember',        bg:'#130d08', accent:'#fb923c', surface:'#1e1208' },
+  { id:'violet',      label:'Violet',       bg:'#0f0b1a', accent:'#a78bfa', surface:'#170f28' },
+  { id:'matcha',      label:'Matcha',       bg:'#0d1510', accent:'#86efac', surface:'#131f16' },
+  { id:'slate',       label:'Slate',        bg:'#0f172a', accent:'#94a3b8', surface:'#1e293b' },
 ];
 
 const BUILT_IN_FONTS = ['Cairo','Tajawal','IBM Plex Sans Arabic','JetBrains Mono','Inter'];
 
 function renderSettings() {
+  closeSettSection();
   document.getElementById('settDisplayName').value = DB.profile.displayName || '';
   document.getElementById('settUsername').value = DB.profile.username || '';
   document.getElementById('settEmail').value = DB.profile.email || '';
@@ -5146,21 +5157,63 @@ function renderSettings() {
 
 function renderThemeGrid() {
   const themeGrid = document.getElementById('themeGrid');
-  const builtInHtml = THEMES.map(t => `
-    <div class="theme-card ${DB.profile.theme === t.id ? 'active' : ''}" onclick="changeTheme('${t.id}')">
-      <div class="theme-preview" style="background:${t.bg};">
-        <div style="position:absolute;top:6px;right:6px;bottom:6px;left:6px;border-radius:6px;background:${t.surface};border:1px solid ${t.accent}44;">
-          <div style="height:4px;background:${t.accent};border-radius:3px 3px 0 0;"></div>
-          <div style="display:flex;gap:3px;padding:4px;">
-            ${[1,2,3].map(()=>`<div style="flex:1;height:14px;border-radius:3px;background:${t.accent}22;"></div>`).join('')}
-          </div>
-        </div>
-      </div>
-      <span>${t.label}</span>
-    </div>
-  `).join('');
 
-  themeGrid.innerHTML = builtInHtml;
+  // Group themes
+  const groups = [
+    { label: 'Analog', ids: ['analogdark','analoglight','analogsteel','analogsand','walnut3d','charcoal3d','olive3d','porcelain3d','clay3d','moss3d'] },
+    { label: 'ألوان غامقة', ids: ['forest','midnight','rosewood','deepocean','ember','violet','matcha','slate'] },
+    { label: 'ضوء Light', ids: ['daylight','paper'] },
+  ];
+
+  let html = '';
+  groups.forEach(g => {
+    const items = THEMES.filter(t => g.ids.includes(t.id));
+    if (!items.length) return;
+    html += `<div style="font-size:.72rem;font-weight:800;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin:12px 0 6px;padding-top:8px;border-top:1px solid var(--border);">${g.label}</div>`;
+    html += `<div class="theme-grid-row">`;
+    items.forEach(t => {
+      const isActive = DB.profile.theme === t.id;
+      const bg = t.bg || '#1b1b1b';
+      const surface = t.surface || '#262626';
+      const accent = t.accent || t.accentGlow || '#d98324';
+      const accentSolid = accent.startsWith('rgba') ? (t.accent || '#d98324') : accent;
+      html += `
+        <div class="theme-card ${isActive ? 'active' : ''}" onclick="changeTheme('${t.id}')">
+          <div class="theme-preview" style="background:${bg};">
+            <div style="position:absolute;top:5px;right:5px;bottom:5px;left:5px;border-radius:5px;background:${surface};border:1px solid ${accentSolid}44;">
+              <div style="height:3px;background:${accentSolid};border-radius:3px 3px 0 0;"></div>
+              <div style="display:flex;gap:2px;padding:3px;">
+                ${[1,2,3].map(()=>`<div style="flex:1;height:10px;border-radius:2px;background:${accentSolid}22;"></div>`).join('')}
+              </div>
+            </div>
+          </div>
+          <span>${t.label}</span>
+        </div>`;
+    });
+    html += `</div>`;
+  });
+
+  // Custom themes
+  if (DB.customThemes && DB.customThemes.length) {
+    html += `<div style="font-size:.72rem;font-weight:800;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin:12px 0 6px;padding-top:8px;border-top:1px solid var(--border);">مخصص</div>`;
+    html += `<div class="theme-grid-row">`;
+    DB.customThemes.forEach(t => {
+      const isActive = DB.profile.theme === ('custom-' + t.id);
+      html += `
+        <div class="theme-card ${isActive ? 'active' : ''}">
+          <div class="theme-preview" style="background:${t.bg};" onclick="changeTheme('custom-${t.id}')">
+            <div style="position:absolute;top:5px;right:5px;bottom:5px;left:5px;border-radius:5px;background:${t.surface};border:1px solid ${t.accent}44;">
+              <div style="height:3px;background:${t.accent};border-radius:3px 3px 0 0;"></div>
+            </div>
+          </div>
+          <span onclick="changeTheme('custom-${t.id}')">${t.name}</span>
+          <button class="theme-del" onclick="event.stopPropagation();deleteCustomTheme('${t.id}')"><i class="fas fa-times"></i></button>
+        </div>`;
+    });
+    html += `</div>`;
+  }
+
+  themeGrid.innerHTML = html;
 }
 
 // ══════════════════════════════════════════════
@@ -5382,15 +5435,25 @@ function changeFont(fontName) {
   document.documentElement.style.setProperty('--font', `'${fontName}', sans-serif`);
   DB.profile.font = fontName;
   saveDB();
+  renderFontSelector();
 }
 
 function renderFontSelector() {
-  const sel = document.getElementById('fontSelector');
-  if (!sel) return;
-  let html = BUILT_IN_FONTS.map(f => `<option value="${f}">${f}</option>`).join('');
-  EMBEDDED_FONTS.forEach(f => { html += `<option value="${escHtml(f.family)}">${escHtml(f.labelAr || f.family)}</option>`; });
-  sel.innerHTML = html;
-  sel.value = DB.profile.font || 'Cairo';
+  const grid = document.getElementById('fontGrid');
+  if (!grid) return;
+  const current = DB.profile.font || 'Cairo';
+  const labels = {
+    'Cairo': 'Cairo (القاهرة)', 'Tajawal': 'Tajawal (تجوال)',
+    'IBM Plex Sans Arabic': 'IBM Plex Sans Arabic',
+    'JetBrains Mono': 'JetBrains Mono', 'Inter': 'Inter'
+  };
+  const all = [...BUILT_IN_FONTS.map(f => ({ family: f, label: labels[f] || f })),
+    ...EMBEDDED_FONTS.map(f => ({ family: f.family, label: f.labelAr || f.family }))];
+  grid.innerHTML = all.map(f => `
+    <div class="font-card ${f.family === current ? 'active' : ''}" onclick="changeFont('${escHtml(f.family).replace(/'/g,"\\'")}')" title="${escHtml(f.label)}">
+      <div class="font-preview" style="font-family:'${f.family}',sans-serif;">Aa أب</div>
+      <span>${escHtml(f.label)}</span>
+    </div>`).join('');
 }
 
 // ══════════════════════════════════════════════
@@ -5446,7 +5509,7 @@ function renderWallpaperGrid() {
   if (!grid) return;
   const current = DB.profile.backgroundImage || '';
   if (!WALLPAPERS.length) {
-    grid.innerHTML = `<p style="font-size:.8rem;color:var(--muted);">لا توجد خلفيات — أضف صورًا في فولدر Wallpapers مع manifest.json.</p>`;
+    grid.innerHTML = `<p style="font-size:.8rem;color:var(--muted);">لا توجد خلفيات متاحة حاليًا.</p>`;
     return;
   }
   grid.innerHTML = WALLPAPERS.map(w => {
@@ -6637,21 +6700,26 @@ window.renderCategoryView=function(catId){
 };
 
 // ── 4. SETTINGS TABS ──
-function switchSettTab(tab,btn){
-  document.querySelectorAll('.sett-tab').forEach(t=>t.classList.remove('active'));
-  if(btn) btn.classList.add('active');
+function openSettSection(tab){
+  document.getElementById('settingsHomeGrid').style.display='none';
+  document.getElementById('settBackBtn').style.display='flex';
   document.querySelectorAll('.sett-panel').forEach(p=>{
     const isActive = p.dataset.sett===tab;
     p.classList.toggle('active', isActive);
     p.style.display = isActive ? 'contents' : 'none';
   });
 }
-// Init panels visibility after DOM ready (already fired, so run now)
-(function(){
+function closeSettSection(){
+  document.getElementById('settingsHomeGrid').style.display='grid';
+  document.getElementById('settBackBtn').style.display='none';
   document.querySelectorAll('.sett-panel').forEach(p=>{
-    const isActive = p.classList.contains('active');
-    p.style.display = isActive ? 'contents' : 'none';
+    p.classList.remove('active');
+    p.style.display='none';
   });
+}
+// Init: show the settings home grid, all section pages hidden, on load
+(function(){
+  document.querySelectorAll('.sett-panel').forEach(p=>{ p.style.display='none'; });
 })();
 
 // ── 5. PLAYLIST FETCH (bulk import) ──
@@ -6737,32 +6805,7 @@ function clearNoteImg(){
   const p=document.getElementById('noteImgPreview');if(p)p.style.display='none';
   const inp=document.getElementById('quickNoteImg');if(inp)inp.value='';
 }
-const _origAQN=addQuickNote;
-window.addQuickNote=function(){
-  const input=document.getElementById('quickNoteInput');
-  const text=input.value.trim();
-  if(!text&&!_noteImg) return;
-  DB.notes.push({id:genId(),text:text||'',image:_noteImg||null,colorIdx:DB.notes.length%NOTE_COLORS.length,createdAt:Date.now()});
-  saveDB(); input.value=''; clearNoteImg();
-  renderNotesGrid();
-  if(APP.currentView==='home') renderHomeNtWidget();
-  showToast('تمت إضافة الملاحظة ✓','success');
-};
-const _origRNG=renderNotesGrid;
-window.renderNotesGrid=function(){
-  const grid=document.getElementById('notesGrid'); if(!grid) return;
-  if(!DB.notes.length){grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1;"><i class="fas fa-note-sticky"></i><h3>لا يوجد ملاحظات بعد</h3></div>`;return;}
-  const sorted=[...DB.notes].sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
-  grid.innerHTML=sorted.map(n=>{
-    const idx=n.colorIdx||0;
-    return `<div class="note-card" style="background:${NOTE_COLORS[idx%NOTE_COLORS.length]};border-color:${NOTE_BORDERS[idx%NOTE_BORDERS.length]}55;">
-      <div class="note-actions"><button onclick="editNote('${n.id}')"><i class="fas fa-edit"></i></button><button onclick="deleteNote('${n.id}')"><i class="fas fa-trash"></i></button></div>
-      ${n.image?`<img class="note-img" src="${n.image}" loading="lazy">`:''}
-      ${n.text?`<p>${escHtml(n.text)}</p>`:''}
-      <div class="note-date">${new Date(n.createdAt).toLocaleDateString('ar-EG')}</div>
-    </div>`;
-  }).join('');
-};
+
 
 // ══════════════════════════════════════════════
 // PATCH v11 — checklists, light themes, clipboard scanner, auto-translate
@@ -6993,28 +7036,41 @@ function clpProcessText(text) {
     document.getElementById('clpFooter').style.display = 'none';
     return;
   }
-  let vIdx = 0;
   _clpDetected = found.map(url => {
-    const isVideo = /(?:youtube\.com\/(?:watch\?v=|shorts\/|live\/)|youtu\.be\/)[a-zA-Z0-9_-]{6,}/.test(url);
-    if (isVideo) vIdx++;
-    return { url, isVideo, title: isVideo ? (_t('فيديو ', 'Video ') + vIdx) : url, include: true };
+    const vid = extractYtId(url);
+    const isVideo = !!vid;
+    return { url, isVideo, vid, title: isVideo ? _t('جاري التحميل...', 'Loading...') : url, thumb: isVideo ? `https://img.youtube.com/vi/${vid}/hqdefault.jpg` : null, include: true };
   });
   document.getElementById('clpCatWrap').style.display = 'block';
   document.getElementById('clpFooter').style.display = 'flex';
   clpRenderList();
+  // Fetch each video's real title + thumbnail (YouTube oEmbed returns both in one call).
+  _clpDetected.forEach((it, i) => {
+    if (!it.isVideo) return;
+    fetch(`https://www.youtube.com/oembed?url=https://youtube.com/watch?v=${it.vid}&format=json`)
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (data) {
+          _clpDetected[i].title = data.title || it.url;
+          if (data.thumbnail_url) _clpDetected[i].thumb = data.thumbnail_url;
+          clpRenderList();
+        }
+      }).catch(() => {});
+  });
 }
 
 function clpRenderList() {
   const wrap = document.getElementById('clpList');
   document.getElementById('clpStatus').textContent = _t(`تم العثور على ${_clpDetected.length} رابط — عدّل الاسم واختر ما تريد إضافته:`, `Found ${_clpDetected.length} link(s) — edit the name and choose what to add:`);
   wrap.innerHTML = _clpDetected.map((it, i) => `
-    <div class="clp-row">
+    <div class="clp-row" style="align-items:center;gap:12px;">
       <input type="checkbox" ${it.include ? 'checked' : ''} onchange="_clpDetected[${i}].include=this.checked">
-      <div class="clp-row-main">
-        <input type="text" value="${escHtml(it.title)}" oninput="_clpDetected[${i}].title=this.value">
+      ${it.thumb ? `<img src="${it.thumb}" loading="lazy" style="width:128px;height:96px;object-fit:cover;border-radius:8px;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.25);">` : `<div style="width:128px;height:96px;border-radius:8px;flex-shrink:0;background:var(--surface2);display:flex;align-items:center;justify-content:center;color:var(--muted);"><i class="fas fa-globe" style="font-size:1.6rem;"></i></div>`}
+      <div class="clp-row-main" style="flex:1;min-width:0;">
+        <input type="text" value="${escHtml(it.title)}" oninput="_clpDetected[${i}].title=this.value" style="font-size:.95rem;font-weight:600;">
         <span class="clp-url">${escHtml(it.url)}</span>
       </div>
-      <span style="font-size:.75rem;color:${it.isVideo ? '#f00' : 'var(--muted)'};flex-shrink:0;"><i class="fa ${it.isVideo ? 'fa-brands fa-youtube' : 'fas fa-globe'}"></i></span>
+      <span style="font-size:.9rem;color:${it.isVideo ? '#f00' : 'var(--muted)'};flex-shrink:0;"><i class="fa ${it.isVideo ? 'fa-brands fa-youtube' : 'fas fa-globe'}"></i></span>
     </div>`).join('');
 }
 
@@ -7143,7 +7199,7 @@ const AR_EN_PHRASES = {
   'فتح في يوتيوب': 'Open on YouTube', 'للأمام': 'Forward', 'لون عشوائي': 'Random color', 'نسخ الرابط': 'Copy link',
 
   // Explanatory / description text (settings & modals)
-  'أضف برنامجك الأول بلصق أو رفع ملفات HTML / CSS / JS': 'Add your first program by pasting or uploading HTML / CSS / JS files',
+  'أضف أداتك المساعدة الأولى': 'Add your first tool',
   'أضف روابط Google Drive أو Dropbox': 'Add Google Drive or Dropbox links', 'أضف مهمتك الأولى بالأعلى': 'Add your first task above',
   'ابدأ بإضافة أول رابط تعليمي': 'Start by adding your first educational link', 'ابدأ بإضافة تصنيف جديد': 'Start by adding a new category',
   'احفظ عدة نسخ منفصلة من بياناتك (مثلاً: نسخة للعمل، نسخة شخصية) وبدّل بينها بضغطة واحدة. كل شيء يعمل من دون إنترنت.': 'Save several separate copies of your data (e.g. a work copy, a personal copy) and switch between them in one tap. Everything works offline.',
@@ -7452,46 +7508,6 @@ function makeFxEffect(canvasId, settingsKey, opts) {
   };
 }
 
-// ── F. Neon Pulse & Glass Frost — extra distinct theme variants ──
-const EXTRA_SPECIAL_THEMES = [
-  { id: 'neonpulse', label: 'Neon Pulse', bg: '#08010f', surface: '#12061f', surface2: '#1b0a2c', surface3: '#250e3a', border: 'rgba(255,0,200,.28)', accent: '#ff00c8', accentGlow: 'rgba(255,0,200,.35)', gold: '#00fff2', text: '#f5e8ff', muted: '#b48ecb', glow: true },
-  { id: 'glassfrost', label: 'Glass Frost', bg: '#0d1420', surface: 'rgba(255,255,255,.06)', surface2: 'rgba(255,255,255,.09)', surface3: 'rgba(255,255,255,.13)', border: 'rgba(255,255,255,.18)', accent: '#7dd3fc', accentGlow: 'rgba(125,211,252,.3)', gold: '#e2e8f0', text: '#eef4fb', muted: '#9fb3c8', frost: true },
-];
-EXTRA_SPECIAL_THEMES.forEach(t => { if (!THEMES.find(x => x.id === t.id)) THEMES.push(t); });
-
-document.head.insertAdjacentHTML('beforeend', `<style>
-body.theme-frost .sidebar,body.theme-frost .card,body.theme-frost .settings-card,body.theme-frost .modal,body.theme-frost .cl-card,body.theme-frost .stat-card{backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%);}
-body.theme-neonglow .btn-primary,body.theme-neonglow .cl-ring{box-shadow:0 0 16px var(--accent-glow),0 0 34px var(--accent-glow);}
-body.theme-neonglow h1,body.theme-neonglow h2,body.theme-neonglow h3{text-shadow:0 0 10px var(--accent-glow);}
-</style>`);
-
-const _origChangeTheme2 = window.changeTheme;
-window.changeTheme = function (themeId) {
-  const st = EXTRA_SPECIAL_THEMES.find(t => t.id === themeId);
-  if (!st) {
-    document.body.classList.remove('theme-frost', 'theme-neonglow');
-    return _origChangeTheme2(themeId);
-  }
-  if (typeof clearCustomThemeInlineStyle === 'function') clearCustomThemeInlineStyle();
-  document.body.setAttribute('data-theme', themeId);
-  document.body.classList.remove('theme-light', 'theme-frost', 'theme-neonglow');
-  if (st.frost) document.body.classList.add('theme-frost');
-  if (st.glow) document.body.classList.add('theme-neonglow');
-  document.body.style.setProperty('--bg', st.bg);
-  document.body.style.setProperty('--surface', st.surface);
-  document.body.style.setProperty('--surface2', st.surface2);
-  document.body.style.setProperty('--surface3', st.surface3);
-  document.body.style.setProperty('--border', st.border);
-  document.body.style.setProperty('--accent', st.accent);
-  document.body.style.setProperty('--accent-glow', st.accentGlow);
-  document.body.style.setProperty('--gold', st.gold);
-  document.body.style.setProperty('--text', st.text);
-  document.body.style.setProperty('--muted', st.muted);
-  DB.profile.theme = themeId;
-  saveDB();
-  if (typeof renderThemeGrid === 'function') renderThemeGrid();
-};
-
 // ── H. Button label overflow fix is handled in CSS patch; re-run auto-translate once more now that new UI exists ──
 
 _scheduleAutoTranslate();
@@ -7555,8 +7571,8 @@ async function spOpenBrowser() {
       </div>`).join('');
   } catch (e) {
     statusEl.textContent = _t(
-      'تعذر تحميل برامج الموقع — تأكد إن المستضيف (مثلاً GitHub Pages) فيه فولدر SUBPROGRAM يحتوي على manifest.json بجانب هذا الملف.',
-      'Could not load site programs — make sure the host (e.g. GitHub Pages) has a SUBPROGRAM folder with a manifest.json next to this file.'
+      'تعذر تحميل مكتبة البرامج حاليًا. جرّب مرة أخرى لاحقًا.',
+      'Could not load the program library right now. Please try again later.'
     );
   }
 }
@@ -7714,7 +7730,7 @@ async function loadExternalEffects() {
     const defs = await res.json();
     if (!Array.isArray(defs) || !defs.length) return;
     const animatedContainer = document.getElementById('fxAnimatedGroup');
-    const staticContainer = document.getElementById('fxStaticGroup');
+    const staticContainer = document.getElementById('fxStaticGroup'); // may be null (removed from UI)
     const staticEmptyMsg = document.getElementById('fxStaticEmptyMsg');
     let addedAnimatedLabel = false;
     defs.forEach(def => {
@@ -7744,57 +7760,7 @@ async function loadExternalEffects() {
 }
 loadExternalEffects();
 
-// ══════════════════════════════════════════════
-// PATCH v15 — collapsible "accordion" settings cards (replaces the long/wide
-// stacked list look), keeps everything else about each card unchanged
-// ══════════════════════════════════════════════
-document.head.insertAdjacentHTML('beforeend', `<style>
-.settings-card h3{cursor:pointer;user-select:none;}
-.settings-card h3 .sc-chevron{margin-inline-start:auto;font-size:.72rem;color:var(--muted);transition:transform .2s;}
-.settings-card.collapsed h3 .sc-chevron{transform:rotate(-90deg);}
-.settings-card-body{overflow:hidden;max-height:2400px;opacity:1;transition:max-height .28s ease,opacity .2s ease;}
-.settings-card.collapsed .settings-card-body{max-height:0;opacity:0;}
-</style>`);
 
-(function makeSettingsCardsCollapsible() {
-  document.querySelectorAll('.settings-card').forEach((card, idx) => {
-    if (card.dataset.accordioned) return;
-    card.dataset.accordioned = '1';
-    const h3 = card.querySelector('h3');
-    if (!h3) return;
-    const body = document.createElement('div');
-    body.className = 'settings-card-body';
-    // move every sibling after h3 into the collapsible body
-    while (h3.nextSibling) body.appendChild(h3.nextSibling);
-    card.appendChild(body);
-    const chev = document.createElement('i');
-    chev.className = 'fas fa-chevron-down sc-chevron';
-    h3.appendChild(chev);
-    if (idx > 0) card.classList.add('collapsed'); // first card per panel starts open, rest start collapsed
-    h3.addEventListener('click', () => card.classList.toggle('collapsed'));
-  });
-})();
-// re-run whenever settings tab switches, in case new cards get added later
-const _origSwitchSettTab = window.switchSettTab;
-if (typeof _origSwitchSettTab === 'function') {
-  window.switchSettTab = function (...args) {
-    _origSwitchSettTab(...args);
-    setTimeout(() => document.querySelectorAll('.settings-card:not([data-accordioned])').forEach(card => {
-      card.dataset.accordioned = '1';
-      const h3 = card.querySelector('h3');
-      if (!h3) return;
-      const body = document.createElement('div');
-      body.className = 'settings-card-body';
-      while (h3.nextSibling) body.appendChild(h3.nextSibling);
-      card.appendChild(body);
-      const chev = document.createElement('i');
-      chev.className = 'fas fa-chevron-down sc-chevron';
-      h3.appendChild(chev);
-      card.classList.add('collapsed');
-      h3.addEventListener('click', () => card.classList.toggle('collapsed'));
-    }), 0);
-  };
-}
 
 // ══════════════════════════════════════════════
 //  UI STYLE — the site's single, fixed visual "skin" (Analog 3D): shape and
@@ -7806,7 +7772,7 @@ if (typeof _origSwitchSettTab === 'function') {
 //  hasn't been fetched yet (e.g. very first offline load).
 // ══════════════════════════════════════════════
 const UI_STYLE_ID = 'analog3d';
-const UI_STYLE_FALLBACK_CSS = "[data-ui-style=analog3d]{--bevel-hi:rgba(255,255,255,.10);--bevel-lo:rgba(0,0,0,.28);}[data-ui-style=analog3d] .btn,[data-ui-style=analog3d] .lc-btn,[data-ui-style=analog3d] .lang-switch-btn,[data-ui-style=analog3d] .type-tab,[data-ui-style=analog3d] .nt-tab{border-radius:12px!important;background-color:var(--surface3)!important;background-image:linear-gradient(160deg,var(--bevel-hi),var(--bevel-lo))!important;color:var(--text)!important;border:1px solid var(--border)!important;box-shadow:0 3px 6px rgba(0,0,0,.3),inset 0 1px 0 var(--bevel-hi),inset 0 -2px 3px var(--bevel-lo)!important;text-shadow:0 1px 1px rgba(0,0,0,.25)!important;transition:box-shadow .12s,transform .12s!important;}[data-ui-style=analog3d] .btn:active,[data-ui-style=analog3d] .lc-btn:active,[data-ui-style=analog3d] .type-tab:active{box-shadow:inset 0 2px 5px rgba(0,0,0,.45)!important;transform:translateY(1px);}[data-ui-style=analog3d] .btn-primary,[data-ui-style=analog3d] .type-tab.active,[data-ui-style=analog3d] .nt-tab.active{background-color:var(--accent)!important;background-image:linear-gradient(160deg,rgba(255,255,255,.22),rgba(0,0,0,.15))!important;color:#1a1a1a!important;border-color:rgba(0,0,0,.35)!important;box-shadow:0 2px 5px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.3)!important;}[data-ui-style=analog3d] .settings-card,[data-ui-style=analog3d] .cl-card,[data-ui-style=analog3d] .modal,[data-ui-style=analog3d] .theme-card,[data-ui-style=analog3d] .cat-card,[data-ui-style=analog3d] .stat-card{border-radius:16px!important;background-color:var(--surface)!important;background-image:linear-gradient(160deg,var(--bevel-hi),transparent 40%)!important;border:1px solid var(--border)!important;box-shadow:0 8px 18px rgba(0,0,0,.28),inset 0 1px 0 var(--bevel-hi)!important;}[data-ui-style=analog3d] input,[data-ui-style=analog3d] select,[data-ui-style=analog3d] textarea{border-radius:10px!important;background:var(--surface2)!important;border:1px solid var(--border)!important;box-shadow:inset 0 2px 5px rgba(0,0,0,.3)!important;color:var(--text)!important;}[data-ui-style=analog3d] .toggle-slider{border-radius:20px!important;box-shadow:inset 0 2px 4px rgba(0,0,0,.35)!important;}[data-ui-style=analog3d] .toggle input:checked + .toggle-slider{box-shadow:inset 0 2px 4px rgba(0,0,0,.35),0 0 8px var(--accent-glow)!important;}[data-ui-style=analog3d] .topbar{background-color:var(--surface)!important;background-image:linear-gradient(180deg,var(--bevel-hi),transparent 60%)!important;box-shadow:0 2px 10px rgba(0,0,0,.3),inset 0 -1px 0 var(--bevel-lo)!important;}[data-ui-style=analog3d] .sidebar{background-color:var(--surface)!important;background-image:linear-gradient(180deg,var(--bevel-hi),transparent 30%)!important;border-inline-end:1px solid var(--border)!important;}[data-ui-style=analog3d] .sb-item{border-radius:10px!important;margin:3px 10px!important;padding:9px 14px!important;transition:background .12s,box-shadow .12s,color .12s!important;}[data-ui-style=analog3d] .sb-item:hover{background-color:var(--surface2)!important;background-image:linear-gradient(160deg,var(--bevel-hi),transparent 60%)!important;box-shadow:0 2px 5px rgba(0,0,0,.22)!important;}[data-ui-style=analog3d] .sb-item.active{background-color:var(--surface3)!important;background-image:linear-gradient(160deg,var(--bevel-hi),transparent 60%)!important;box-shadow:inset 0 1px 4px rgba(0,0,0,.35),0 0 0 1px var(--accent-glow)!important;}[data-ui-style=analog3d] .sett-tabs{background:var(--surface2)!important;border-radius:14px!important;box-shadow:inset 0 2px 5px rgba(0,0,0,.3)!important;border:1px solid var(--border)!important;}[data-ui-style=analog3d] .sett-tab{border-radius:10px!important;}[data-ui-style=analog3d] .sett-tab.active{background-color:var(--accent)!important;background-image:linear-gradient(160deg,rgba(255,255,255,.22),rgba(0,0,0,.15))!important;box-shadow:0 2px 5px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.25)!important;}";
+const UI_STYLE_FALLBACK_CSS = "[data-ui-style=analog3d]{--bevel-hi:rgba(255,255,255,.10);--bevel-lo:rgba(0,0,0,.28);}[data-ui-style=analog3d] .btn,[data-ui-style=analog3d] .lc-btn,[data-ui-style=analog3d] .lang-switch-btn,[data-ui-style=analog3d] .type-tab,[data-ui-style=analog3d] .nt-tab{border-radius:12px!important;background-color:var(--surface3)!important;background-image:linear-gradient(160deg,var(--bevel-hi),var(--bevel-lo))!important;color:var(--text)!important;border:1px solid var(--border)!important;box-shadow:0 3px 6px rgba(0,0,0,.3),inset 0 1px 0 var(--bevel-hi),inset 0 -2px 3px var(--bevel-lo)!important;text-shadow:0 1px 1px rgba(0,0,0,.25)!important;transition:box-shadow .12s,transform .12s!important;}[data-ui-style=analog3d] .btn:active,[data-ui-style=analog3d] .lc-btn:active,[data-ui-style=analog3d] .type-tab:active{box-shadow:inset 0 2px 5px rgba(0,0,0,.45)!important;transform:translateY(1px);}[data-ui-style=analog3d] .btn-primary,[data-ui-style=analog3d] .type-tab.active,[data-ui-style=analog3d] .nt-tab.active{background-color:var(--accent)!important;background-image:linear-gradient(160deg,rgba(255,255,255,.22),rgba(0,0,0,.15))!important;color:#1a1a1a!important;border-color:rgba(0,0,0,.35)!important;box-shadow:0 2px 5px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.3)!important;}[data-ui-style=analog3d] .settings-card,[data-ui-style=analog3d] .cl-card,[data-ui-style=analog3d] .modal,[data-ui-style=analog3d] .theme-card,[data-ui-style=analog3d] .cat-card,[data-ui-style=analog3d] .stat-card{border-radius:16px!important;background-color:var(--surface)!important;background-image:linear-gradient(160deg,var(--bevel-hi),transparent 40%)!important;border:1px solid var(--border)!important;box-shadow:0 8px 18px rgba(0,0,0,.28),inset 0 1px 0 var(--bevel-hi)!important;}[data-ui-style=analog3d] input,[data-ui-style=analog3d] select,[data-ui-style=analog3d] textarea{border-radius:10px!important;background:var(--surface2)!important;border:1px solid var(--border)!important;box-shadow:inset 0 2px 5px rgba(0,0,0,.3)!important;color:var(--text)!important;}[data-ui-style=analog3d] .toggle-slider{border-radius:20px!important;box-shadow:inset 0 2px 4px rgba(0,0,0,.35)!important;}[data-ui-style=analog3d] .toggle input:checked + .toggle-slider{box-shadow:inset 0 2px 4px rgba(0,0,0,.35),0 0 8px var(--accent-glow)!important;}[data-ui-style=analog3d] .topbar{background-color:var(--surface)!important;background-image:linear-gradient(180deg,var(--bevel-hi),transparent 60%)!important;box-shadow:0 2px 10px rgba(0,0,0,.3),inset 0 -1px 0 var(--bevel-lo)!important;}[data-ui-style=analog3d] .sidebar{background-color:var(--surface)!important;background-image:linear-gradient(180deg,var(--bevel-hi),transparent 30%)!important;border-inline-end:1px solid var(--border)!important;}[data-ui-style=analog3d] .sb-item{border-radius:10px!important;margin:3px 10px!important;padding:9px 14px!important;transition:background .12s,box-shadow .12s,color .12s!important;}[data-ui-style=analog3d] .sb-item:hover{background-color:var(--surface2)!important;background-image:linear-gradient(160deg,var(--bevel-hi),transparent 60%)!important;box-shadow:0 2px 5px rgba(0,0,0,.22)!important;}[data-ui-style=analog3d] .sb-item.active{background-color:var(--surface3)!important;background-image:linear-gradient(160deg,var(--bevel-hi),transparent 60%)!important;box-shadow:inset 0 1px 4px rgba(0,0,0,.35),0 0 0 1px var(--accent-glow)!important;}";
 
 function applyUiStyle() {
   document.body.setAttribute('data-ui-style', UI_STYLE_ID);
@@ -7834,6 +7800,24 @@ async function loadUiStyles() {
   } catch (e) { /* ui.json unreachable — the baked-in fallback above already applied, so nothing breaks */ }
 }
 
+// ══════════════════════════════════════════════
+//  FLOATING MENU BUTTON — since the topbar is no longer sticky, this floating
+//  button appears once the topbar has scrolled out of view, so the sidebar
+//  toggle is always reachable.
+// ══════════════════════════════════════════════
+(function () {
+  const fab = document.getElementById('menuFab');
+  const topbar = document.querySelector('.topbar');
+  if (!fab || !topbar) return;
+  const update = () => {
+    const threshold = topbar.offsetHeight || 72;
+    fab.classList.toggle('visible', window.scrollY > threshold);
+  };
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+})();
+
 loadWallpapers();
 loadEmbeddedFonts();
 loadUiStyles();
@@ -7850,5 +7834,422 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
+
+
+<!-- ══════════════════════════════════════════════
+     ABOUT MODAL
+══════════════════════════════════════════════ -->
+<div id="aboutModal" style="
+  position:fixed;inset:0;z-index:500;display:none;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.72);backdrop-filter:blur(10px);
+  padding:16px;
+">
+  <div style="
+    background:var(--surface);border:1px solid var(--border);border-radius:24px;
+    max-width:460px;width:100%;padding:40px 32px 32px;position:relative;
+    box-shadow:0 32px 80px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.08);
+    animation:aboutIn .4s cubic-bezier(.34,1.56,.64,1);
+    text-align:center;
+  ">
+    <button onclick="closeAboutModal()" style="position:absolute;top:14px;left:14px;background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer;padding:4px 8px;border-radius:8px;" onmouseover="this.style.color='var(--danger)'" onmouseout="this.style.color='var(--muted)'">
+      <i class="fas fa-times"></i>
+    </button>
+
+    <!-- Logo -->
+    <div style="margin-bottom:28px;display:flex;flex-direction:column;align-items:center;gap:12px;">
+      <svg viewBox="0 0 64 64" width="52" height="52" aria-hidden="true">
+        <rect x="5" y="5" width="54" height="54" rx="16" fill="#d98324"/>
+        <path d="M32 21c-4-3-11-4-15-2v24c4-2 11-1 15 2c4-3 11-4 15-2V19c-4-2-11-1-15 2Z" fill="#fff"/>
+        <path d="M32 21v24" stroke="#ffb84d" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <div style="font-family:'Cairo',sans-serif;font-weight:900;font-size:1.6rem;line-height:1;direction:ltr;">
+        <span style="color:var(--gold);">Outer</span><span style="color:var(--accent);">School</span>
+      </div>
+    </div>
+
+    <!-- Decorative quote mark -->
+    <div style="font-size:3.5rem;line-height:.6;color:var(--accent);opacity:.25;font-family:Georgia,serif;margin-bottom:6px;">"</div>
+
+    <!-- Quote -->
+    <blockquote style="
+      font-family:'Cairo',sans-serif;
+      font-size:1.05rem;
+      font-weight:700;
+      color:var(--text);
+      line-height:1.85;
+      margin:0 0 10px;
+      padding:0 8px;
+    ">
+      مكانٌ واحد لكل ما تعرفه،<br>
+      ترتيبٌ يعكس طريقة تفكيرك،<br>
+      ومحتوى يبقى معك أينما كنت.
+    </blockquote>
+
+    <!-- Closing quote mark -->
+    <div style="font-size:3.5rem;line-height:.6;color:var(--accent);opacity:.25;font-family:Georgia,serif;margin-bottom:22px;">"</div>
+
+    <!-- Tagline -->
+    <p style="font-size:.82rem;color:var(--muted);margin-bottom:28px;line-height:1.7;">
+      OuterSchool هو مكتبتك التعليمية الشخصية — صمّم ليتكيّف مع أسلوبك في التعلم والتعليم.
+    </p>
+
+    <!-- Divider -->
+    <div style="height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin-bottom:22px;"></div>
+
+    <!-- Actions -->
+    <div style="display:flex;gap:10px;justify-content:center;">
+      <button onclick="closeAboutModal();openSiteTour();" style="
+        padding:10px 22px;background:var(--accent);color:#1a1a1a;
+        border:none;border-radius:12px;font-family:var(--font);font-weight:700;
+        font-size:.88rem;cursor:pointer;display:flex;align-items:center;gap:7px;
+        transition:opacity .2s;
+      " onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+        <i class="fas fa-compass"></i> استكشف الموقع
+      </button>
+      <button onclick="closeAboutModal()" style="
+        padding:10px 20px;background:transparent;color:var(--muted);
+        border:1px solid var(--border);border-radius:12px;
+        font-family:var(--font);font-weight:600;font-size:.88rem;cursor:pointer;
+        transition:border-color .2s,color .2s;
+      " onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--text)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">
+        إغلاق
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     TOUR MODAL
+══════════════════════════════════════════════ -->
+<div id="tourModal" style="
+  position:fixed;inset:0;z-index:500;display:none;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.72);backdrop-filter:blur(10px);
+  padding:16px;
+">
+  <div id="tourBox" style="
+    background:var(--surface);border:1px solid var(--border);border-radius:24px;
+    max-width:520px;width:100%;position:relative;
+    box-shadow:0 32px 80px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.08);
+    overflow:hidden;
+  ">
+    <!-- Gradient header band -->
+    <div id="tourHeader" style="
+      padding:28px 28px 22px;
+      background:linear-gradient(135deg,var(--surface2),var(--surface));
+      border-bottom:1px solid var(--border);
+      display:flex;align-items:center;gap:14px;
+      transition:all .4s ease;
+    ">
+      <div id="tourIconWrap" style="
+        width:56px;height:56px;border-radius:16px;flex-shrink:0;
+        display:flex;align-items:center;justify-content:center;
+        font-size:1.6rem;
+        background:var(--surface3);
+        box-shadow:0 4px 16px rgba(0,0,0,.25);
+        transition:all .4s cubic-bezier(.34,1.56,.64,1);
+      "></div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;" id="tourStepLabel"></div>
+        <div id="tourTitle" style="font-weight:900;font-size:1.2rem;line-height:1.2;transition:opacity .3s;"></div>
+      </div>
+      <button onclick="closeTourModal()" style="position:absolute;top:14px;left:14px;background:none;border:none;color:var(--muted);font-size:1.1rem;cursor:pointer;padding:6px;border-radius:8px;" onmouseover="this.style.color='var(--danger)'" onmouseout="this.style.color='var(--muted)'">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Content area -->
+    <div style="padding:24px 28px 20px;min-height:120px;">
+      <div id="tourDesc" style="font-size:.92rem;color:var(--muted);line-height:1.8;transition:opacity .3s,transform .3s;"></div>
+    </div>
+
+    <!-- Progress + nav -->
+    <div style="padding:0 28px 24px;display:flex;flex-direction:column;gap:16px;">
+      <!-- Dot progress -->
+      <div id="tourDots" style="display:flex;gap:5px;justify-content:center;"></div>
+      <!-- Nav buttons -->
+      <div style="display:flex;gap:10px;align-items:center;">
+        <button id="tourPrev" onclick="tourStep(-1)" style="
+          padding:10px 18px;background:var(--surface2);color:var(--text);
+          border:1px solid var(--border);border-radius:12px;
+          font-family:var(--font);font-weight:600;font-size:.87rem;cursor:pointer;
+          display:flex;align-items:center;gap:6px;transition:all .2s;
+        " onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <i class="fas fa-arrow-right"></i> السابق
+        </button>
+        <button id="tourNext" onclick="tourStep(1)" style="
+          flex:1;padding:10px 18px;background:var(--accent);color:#1a1a1a;
+          border:none;border-radius:12px;
+          font-family:var(--font);font-weight:700;font-size:.87rem;cursor:pointer;
+          display:flex;align-items:center;justify-content:center;gap:6px;transition:opacity .2s;
+        " onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+          التالي <i class="fas fa-arrow-left"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+@keyframes splashRingPulse{
+  0%{transform:scale(.7);opacity:.8;}
+  100%{transform:scale(1.6);opacity:0;}
+}
+@keyframes aboutIn{
+  from{opacity:0;transform:scale(.92) translateY(16px);}
+  to{opacity:1;transform:scale(1) translateY(0);}
+}
+@keyframes splashFadeOut{
+  to{opacity:0;pointer-events:none;}
+}
+</style>
+
+<script>
+// ══════════════════════════════════════════════
+//  SPLASH SCREEN
+// ══════════════════════════════════════════════
+(function initSplash(){
+  // Remove the body-hide style immediately — splash covers everything
+  const hideStyle = document.getElementById('bodyHideStyle');
+  if(hideStyle) hideStyle.remove();
+
+  const splash = document.getElementById('splashScreen');
+  const logo   = document.getElementById('splashLogo');
+  const tagline= document.getElementById('splashTagline');
+  const bar    = document.getElementById('splashBar');
+  const fill   = document.getElementById('splashBarFill');
+  const canvas = document.getElementById('splashCanvas');
+  const ctx    = canvas.getContext('2d');
+
+  // ── Particle system ──
+  let particles = [];
+  function resizeCanvas(){
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  for(let i=0;i<70;i++){
+    particles.push({
+      x: Math.random()*canvas.width,
+      y: Math.random()*canvas.height,
+      r: Math.random()*2.2+.4,
+      vx:(Math.random()-.5)*.4,
+      vy:(Math.random()-.5)*.4,
+      a: Math.random()*.7+.1,
+      hue: Math.random()<.5 ? '#d98324' : '#ffb84d'
+    });
+  }
+
+  let animRunning = true;
+  function drawParticles(){
+    if(!animRunning) return;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    for(const p of particles){
+      p.x += p.vx; p.y += p.vy;
+      if(p.x<0) p.x=canvas.width;
+      if(p.x>canvas.width) p.x=0;
+      if(p.y<0) p.y=canvas.height;
+      if(p.y>canvas.height) p.y=0;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=p.hue;
+      ctx.globalAlpha=p.a;
+      ctx.fill();
+    }
+    ctx.globalAlpha=1;
+    requestAnimationFrame(drawParticles);
+  }
+  drawParticles();
+
+  // ── Sound — play intro.mp3 from same folder ──
+  function playIntroSound(){
+    try{
+      const audio = new Audio('./intro.mp3');
+      audio.volume = 0.7;
+      audio.play().catch(()=>{}); // silently ignore if blocked or file missing
+    }catch(e){}
+  }
+
+  // ── Sequence ──
+  setTimeout(()=>{
+    playIntroSound();
+    logo.style.opacity='1';
+    logo.style.transform='scale(1) translateY(0)';
+    tagline.style.opacity='1';
+    tagline.style.transform='translateY(0)';
+    bar.style.opacity='1';
+    setTimeout(()=>{ fill.style.width='100%'; }, 100);
+  }, 200);
+
+  function dismissSplash(){
+    animRunning = false;
+    splash.style.transition='opacity .7s ease';
+    splash.style.opacity='0';
+    splash.style.pointerEvents='none';
+    setTimeout(()=>{ splash.style.display='none'; }, 700);
+  }
+
+  setTimeout(dismissSplash, 2600);
+  splash.addEventListener('click', dismissSplash);
+})();
+
+// ══════════════════════════════════════════════
+//  ABOUT MODAL
+// ══════════════════════════════════════════════
+function openAboutModal(){
+  const m = document.getElementById('aboutModal');
+  m.style.display='flex';
+}
+function closeAboutModal(){
+  document.getElementById('aboutModal').style.display='none';
+}
+document.getElementById('aboutModal').addEventListener('click',function(e){
+  if(e.target===this) closeAboutModal();
+});
+
+// ══════════════════════════════════════════════
+//  TOUR MODAL — correct content, animated steps
+// ══════════════════════════════════════════════
+const TOUR_STEPS = [
+  {
+    icon:'fa-home', color:'#d98324', bg:'rgba(217,131,36,.15)',
+    title:'الصفحة الرئيسية',
+    desc:'انطلق من هنا — ستجد إحصاءات محتواك دفعةً واحدة، مع شريط بحث سريع يصل لأي درس أو ملاحظة في ثوانٍ.',
+    nav:()=>navigate('home')
+  },
+  {
+    icon:'fa-layer-group', color:'#a78bfa', bg:'rgba(167,139,250,.15)',
+    title:'الفئات والتصنيفات',
+    desc:'نظّم محتواك في فئات رئيسية وفرعية بأعماق غير محدودة — مثل: «ثانوية ← كيمياء ← الفصل الأول».',
+    nav:()=>navigate('categories')
+  },
+  {
+    icon:'fa-book-open', color:'#4ade80', bg:'rgba(74,222,128,.15)',
+    title:'مكتبة الدروس',
+    desc:'أضف دروسك بنص غني، فيديو، ملف PDF، أو رابط خارجي — كلها منظّمة ومفهرسة ضمن تصنيفاتك.',
+    nav:()=>navigate('library')
+  },
+  {
+    icon:'fa-sticky-note', color:'#60a5fa', bg:'rgba(96,165,250,.15)',
+    title:'الملاحظات',
+    desc:'دوّن أفكارك السريعة أو ملاحظاتك المطوّلة مع تنسيق كامل، وابحث فيها بسهولة في أي وقت.',
+    nav:()=>navigate('notes')
+  },
+  {
+    icon:'fa-check-square', color:'#f472b6', bg:'rgba(244,114,182,.15)',
+    title:'قوائم المهام',
+    desc:'حدّد مهامك ونظّم أعمالك — مع مؤشر دائري يعرض نسبة إنجازك بصرياً لكل قائمة.',
+    nav:()=>navigate('checklists')
+  },
+  {
+    icon:'fa-cubes', color:'#fb923c', bg:'rgba(251,146,60,.15)',
+    title:'الأدوات المساعدة',
+    desc:'مجموعة أدوات تعليمية جاهزة مدمجة في الموقع — تشغّلها مباشرةً من المتصفح بدون أي تثبيت.',
+    nav:()=>navigate('programs')
+  }
+];
+
+let tourIndex = 0;
+let tourAnimating = false;
+
+function renderTourStep(dir=0){
+  const step = TOUR_STEPS[tourIndex];
+  const total = TOUR_STEPS.length;
+
+  // Update header icon + color
+  const iconWrap = document.getElementById('tourIconWrap');
+  iconWrap.style.transform='scale(.7) rotate(-10deg)';
+  iconWrap.style.opacity='0';
+  setTimeout(()=>{
+    iconWrap.innerHTML=`<i class="fas ${step.icon}" style="color:${step.color};"></i>`;
+    iconWrap.style.background=step.bg;
+    iconWrap.style.transform='scale(1) rotate(0deg)';
+    iconWrap.style.opacity='1';
+    iconWrap.style.transition='all .4s cubic-bezier(.34,1.56,.64,1)';
+  },80);
+
+  // Step label
+  document.getElementById('tourStepLabel').textContent=`الخطوة ${tourIndex+1} من ${total}`;
+
+  // Title animate
+  const titleEl=document.getElementById('tourTitle');
+  titleEl.style.opacity='0'; titleEl.style.transform=`translateX(${dir>0?'-':'+'}20px)`;
+  setTimeout(()=>{
+    titleEl.textContent=step.title;
+    titleEl.style.transition='opacity .3s,transform .3s';
+    titleEl.style.opacity='1'; titleEl.style.transform='translateX(0)';
+  },100);
+
+  // Desc animate
+  const descEl=document.getElementById('tourDesc');
+  descEl.style.opacity='0'; descEl.style.transform=`translateX(${dir>0?'-':'+'}20px)`;
+  setTimeout(()=>{
+    descEl.textContent=step.desc;
+    descEl.style.transition='opacity .35s .05s,transform .35s .05s';
+    descEl.style.opacity='1'; descEl.style.transform='translateX(0)';
+  },120);
+
+  // Dots
+  const dots=document.getElementById('tourDots');
+  dots.innerHTML=TOUR_STEPS.map((_,i)=>`
+    <div onclick="goTourStep(${i})" style="
+      height:6px;
+      width:${i===tourIndex?'24':'6'}px;
+      border-radius:3px;
+      background:${i===tourIndex?'var(--accent)':'var(--border)'};
+      cursor:pointer;
+      transition:all .35s cubic-bezier(.34,1.56,.64,1);
+    "></div>
+  `).join('');
+
+  // Prev button
+  const prev=document.getElementById('tourPrev');
+  prev.style.opacity=tourIndex===0?'.35':'1';
+  prev.style.pointerEvents=tourIndex===0?'none':'auto';
+
+  // Next button
+  const next=document.getElementById('tourNext');
+  if(tourIndex===total-1){
+    next.innerHTML='إنهاء <i class="fas fa-check"></i>';
+    next.onclick=closeTourModal;
+  } else {
+    next.innerHTML='التالي <i class="fas fa-arrow-left"></i>';
+    next.onclick=()=>tourStep(1);
+  }
+
+  tourAnimating=false;
+}
+
+function tourStep(dir){
+  if(tourAnimating) return;
+  tourAnimating=true;
+  tourIndex=Math.max(0,Math.min(TOUR_STEPS.length-1,tourIndex+dir));
+  renderTourStep(dir);
+}
+function goTourStep(i){
+  if(i===tourIndex) return;
+  const dir=i>tourIndex?1:-1;
+  tourIndex=i;
+  renderTourStep(dir);
+}
+
+function openSiteTour(){
+  tourIndex=0;
+  tourAnimating=false;
+  const m=document.getElementById('tourModal');
+  m.style.display='flex';
+  const box=document.getElementById('tourBox');
+  box.style.animation='aboutIn .4s cubic-bezier(.34,1.56,.64,1)';
+  renderTourStep(0);
+}
+function closeTourModal(){
+  document.getElementById('tourModal').style.display='none';
+}
+document.getElementById('tourModal').addEventListener('click',function(e){
+  if(e.target===this) closeTourModal();
+});
+</script>
+
 </body>
 </html>
