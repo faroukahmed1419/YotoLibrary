@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>OuterSchool — مكتبتك التعليمية</title>
+<title>مَوْئِل — مكتبتك التعليمية</title>
 <meta name="theme-color" content="#0D1117">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="OuterSchool">
+<meta name="apple-mobile-web-app-title" content="مَوْئِل">
 <link rel="manifest" id="pwaManifest">
 <link rel="icon" type="image/png" href="./icon.png">
 <link rel="apple-touch-icon" href="./icon.png">
@@ -16,12 +16,13 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=JetBrains+Mono:wght@400;700&family=Tajawal:wght@400;700;900&family=IBM+Plex+Sans+Arabic:wght@400;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <!-- Hide body until splash covers it -->
 <style id="bodyHideStyle">body>*:not(#splashScreen){visibility:hidden;}</style>
 <style>
 /* ══════════════════════════════════════════════
-   OuterSchool — style.css
+   مَوْئِل — style.css
 ══════════════════════════════════════════════ */
 
 /* ── Base palette (default = Analog Dark) ── */
@@ -244,6 +245,53 @@ body{
   transition:background var(--transition),color var(--transition);
   line-height:1.6;
 }
+
+/* ══════════════════════════════════════════════
+   MOBILE PERFORMANCE — GPU-accelerated layers,
+   reduced paint areas, tap-friendly targets
+══════════════════════════════════════════════ */
+@media (max-width:768px){
+  /* Reduce main padding on small screens */
+  .main{padding:16px 14px;}
+
+  /* Prevent layout thrash on stat/cat cards */
+  .stat-card,.cat-card,.cloud-card,.item-row{contain:layout style;}
+
+  /* Disable heavy transitions on mobile to cut jank */
+  .view.active{animation:none!important;}
+  .cat-card{transition:none!important;transform:none!important;}
+  .cloud-card{transition:none!important;transform:none!important;}
+
+  /* Promote sidebar to GPU layer for smooth slide */
+  .sidebar{will-change:transform;}
+
+  /* Bigger tap targets for checklist items */
+  .cl-item{padding:12px 14px;}
+  .cl-item-check{width:28px;height:28px;border-radius:8px;}
+
+  /* Smaller stats bar → 2-col grid */
+  .stats-bar{grid-template-columns:repeat(2,1fr)!important;gap:10px!important;}
+
+  /* Reduce font-awesome icon sizes that are decorative */
+  .page-title-icon{width:36px;height:36px;font-size:.95rem;}
+
+  /* Disable particle/bubble/matrix canvases on mobile to save battery */
+  #bgCanvas,#matrixCanvas,#bubbleCanvas{display:none!important;}
+
+  /* Smaller modal for tiny screens */
+  .modal{padding:20px 16px;}
+  .modal h2{font-size:1.05rem;}
+
+  /* Touch-friendly buttons */
+  .btn{padding:10px 14px;}
+  .btn-sm{padding:7px 10px;}
+
+  /* Lazy-load YouTube thumbnails don't block layout */
+  .item-thumb img{width:56px!important;height:42px!important;}
+}
+
+/* Fast tap — remove 300ms delay on all interactive elements */
+a,button,.sb-item,.cat-card,.cloud-card,.cl-card,.item-row,.ach-tf-btn{touch-action:manipulation;}
 ::-webkit-scrollbar{width:6px;height:6px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
@@ -330,13 +378,12 @@ img{max-width:100%;}
 .topbar-logo .logo-outer{color:var(--gold); font-weight:900; font-size:1.1rem;}
 .topbar-logo .logo-school{color:var(--accent); font-weight:900; font-size:1.1rem;}
 .logo-wordmark{
-  display:inline-flex; align-items:baseline; gap:0;
-  font-family:'Cairo',sans-serif; font-weight:900; font-size:1.15rem;
+  display:inline-flex; align-items:baseline;
+  font-family:'Amiri',serif; font-weight:700; font-size:1.25rem;
+  color:var(--accent);
   line-height:1; margin-inline-start:6px;
-  direction:ltr; unicode-bidi:isolate;
+  direction:rtl; unicode-bidi:isolate;
 }
-.logo-wordmark .logo-outer{color:var(--gold);}
-.logo-wordmark .logo-school{color:var(--accent);}
 
 /* ── Topbar nav buttons (About / Tour) ── */
 .topbar-nav-btns{
@@ -722,6 +769,27 @@ body.lang-en .sb-search-wrap input{padding:9px 16px 9px 40px;}
   opacity:0;transition:opacity var(--transition);
 }
 .cat-card:hover::before{opacity:1;}
+/* ── Floating background icons: faded, oversized copies of the category's
+   own icon scattered inside the card, tinted with the category color ── */
+.cat-bg-icons{
+  position:absolute;inset:0;z-index:-1;
+  overflow:hidden;border-radius:inherit;
+  pointer-events:none;
+}
+.cat-bg-icons i{
+  position:absolute;
+  opacity:.12;
+  transition:opacity var(--transition),transform var(--transition);
+}
+.cat-card:hover .cat-bg-icons i{opacity:.18;}
+.cat-bg-icons i:nth-child(1){font-size:64px;top:-16px;inset-inline-end:-14px;transform:rotate(-14deg);}
+.cat-bg-icons i:nth-child(2){font-size:30px;bottom:8px;inset-inline-start:-6px;transform:rotate(16deg);opacity:.09;}
+.cat-bg-icons i:nth-child(3){font-size:18px;top:44%;inset-inline-end:22%;transform:rotate(-10deg);opacity:.08;}
+.cat-bg-icons i:nth-child(4){font-size:42px;bottom:-14px;inset-inline-end:32%;transform:rotate(22deg);opacity:.07;}
+.cat-grid.layout-boxes .cat-bg-icons i:nth-child(1){font-size:42px;}
+.cat-grid.layout-boxes .cat-bg-icons i:nth-child(2){font-size:20px;}
+.cat-grid.layout-boxes .cat-bg-icons i:nth-child(3){font-size:13px;}
+.cat-grid.layout-boxes .cat-bg-icons i:nth-child(4){font-size:28px;}
 .cat-icon{
   width:52px;height:52px;border-radius:12px;
   display:flex;align-items:center;justify-content:center;
@@ -856,7 +924,34 @@ body.lang-en .sb-search-wrap input{padding:9px 16px 9px 40px;}
   padding:24px;
   margin-bottom:24px;
   display:flex;align-items:center;gap:18px;
+  position:relative;overflow:hidden;
 }
+.cat-view-header .cat-bg-icons i:nth-child(1){font-size:110px;top:-30px;inset-inline-end:-20px;}
+.cat-view-header .cat-bg-icons i:nth-child(2){font-size:52px;bottom:-14px;inset-inline-start:6%;}
+.cat-view-header .cat-bg-icons i:nth-child(3){font-size:30px;top:12%;inset-inline-end:26%;}
+.cat-view-header .cat-bg-icons i:nth-child(4){font-size:74px;bottom:-24px;inset-inline-end:38%;}
+
+/* ── Whole-page floating icon background for the category page ── */
+#view-category{position:relative;}
+.cat-page-bg{
+  position:absolute;inset:0;z-index:-1;
+  overflow:hidden;pointer-events:none;
+}
+.cat-page-bg i{
+  position:absolute;opacity:.06;
+  animation:catPageBgFloat 16s ease-in-out infinite;
+}
+@keyframes catPageBgFloat{
+  0%,100%{transform:translate(0,0) rotate(var(--r,0deg));}
+  50%{transform:translate(16px,-22px) rotate(calc(var(--r, 0deg) + 8deg));}
+}
+.cat-page-bg i:nth-child(1){font-size:150px;top:2%;inset-inline-end:4%;--r:-10deg;animation-delay:0s;}
+.cat-page-bg i:nth-child(2){font-size:90px;top:30%;inset-inline-start:3%;--r:14deg;animation-delay:-3s;}
+.cat-page-bg i:nth-child(3){font-size:60px;top:55%;inset-inline-end:22%;--r:-6deg;animation-delay:-6s;}
+.cat-page-bg i:nth-child(4){font-size:120px;top:68%;inset-inline-start:18%;--r:20deg;animation-delay:-9s;}
+.cat-page-bg i:nth-child(5){font-size:44px;top:12%;inset-inline-start:38%;--r:-16deg;animation-delay:-2s;}
+.cat-page-bg i:nth-child(6){font-size:76px;top:85%;inset-inline-end:8%;--r:10deg;animation-delay:-11s;}
+@media (prefers-reduced-motion:reduce){.cat-page-bg i{animation:none;}}
 .cat-view-icon{
   width:64px;height:64px;border-radius:14px;
   display:flex;align-items:center;justify-content:center;
@@ -991,7 +1086,7 @@ body.fake-fullscreen-lock{ overflow:hidden; }
     backdrop-filter:none;
     -webkit-backdrop-filter:none;
   }
-  body.ui-blur-on .cat-card,body.ui-blur-on .item-row,body.ui-blur-on .settings-card,
+  body.ui-blur-on .cat-card,body.ui-blur-on .item-row,
   body.ui-blur-on .stat-card,body.ui-blur-on .cloud-card,body.ui-blur-on .note-card,
   body.ui-blur-on .modal,body.ui-blur-on .sidebar,body.ui-blur-on .topbar,
   body.ui-blur-on .todo-item,body.ui-blur-on .cat-view-header,body.ui-blur-on .nt-widget-card{
@@ -1049,18 +1144,40 @@ body.fake-fullscreen-lock{ overflow:hidden; }
   min-width:0;
   overflow:hidden;
 }
-.settings-card{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--radius);padding:14px 16px;
+/* Dialog section — flat, no card box, just a divider between groups.
+   Dedicated to the settings dialog only, so it never inherits the
+   page-level .cat-card/.settings-card hover-glow effects. */
+.sett-group{
   min-width:0;
-  overflow:hidden;
+  padding-top:20px;margin-top:20px;
+  border-top:1px solid var(--border);
 }
-.settings-card h3{
-  font-size:.82rem;font-weight:700;margin-bottom:10px;
+.sett-group:first-child{padding-top:0;margin-top:0;border-top:none;}
+.sett-group h3{
+  font-size:.8rem;font-weight:700;color:var(--muted);margin-bottom:12px;
   display:flex;align-items:center;gap:7px;
-  padding-bottom:8px;border-bottom:1px solid var(--border);
+  text-transform:uppercase;letter-spacing:.03em;
 }
-.settings-card h3 i{color:var(--accent);}
+.sett-group h3 i{color:var(--accent);}
+
+/* Update-available indicator dot (sidebar + data nav card) */
+.update-dot{
+  position:absolute;top:8px;left:8px;
+  width:9px;height:9px;border-radius:50%;
+  background:var(--danger,#ef4444);
+  box-shadow:0 0 0 2px var(--surface),0 0 6px rgba(239,68,68,.6);
+  animation:updateDotPulse 1.8s ease-in-out infinite;
+}
+@keyframes updateDotPulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.55;transform:scale(1.25);}}
+
+/* In-dialog "update available" banner */
+.update-banner{
+  display:flex;align-items:center;gap:10px;
+  background:var(--accent-glow);border:1px solid var(--accent);
+  border-radius:var(--radius);padding:12px 14px;margin-bottom:14px;
+  font-size:.85rem;
+}
+.update-banner i{color:var(--accent);font-size:1.1rem;flex-shrink:0;}
 .form-group{margin-bottom:10px;}
 .form-group label{display:block;font-size:.78rem;font-weight:600;color:var(--muted);margin-bottom:5px;}
 .form-group input,
@@ -1278,9 +1395,9 @@ body.fake-fullscreen-lock{ overflow:hidden; }
 
 .quick-add-row{display:flex;gap:8px;margin-bottom:18px;}
 .quick-add-row input{flex:1;}
-.settings-card .quick-add-row{flex-wrap:wrap;}
-.settings-card .quick-add-row input{flex:1 1 100%;min-width:0;}
-.settings-card .quick-add-row button{flex:1 1 100%;justify-content:center;}
+.sett-group .quick-add-row{flex-wrap:wrap;}
+.sett-group .quick-add-row input{flex:1 1 100%;min-width:0;}
+.sett-group .quick-add-row button{flex:1 1 100%;justify-content:center;}
 
 .nt-composer{
   background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
@@ -1541,7 +1658,7 @@ body.fake-fullscreen-lock{ overflow:hidden; }
    background image, google fonts, pdf, workspace
 ══════════════════════════════════════════════ */
 :root{ --ui-blur:0px; }
-body.ui-blur-on .cat-card,body.ui-blur-on .item-row,body.ui-blur-on .settings-card,
+body.ui-blur-on .cat-card,body.ui-blur-on .item-row,
 body.ui-blur-on .stat-card,body.ui-blur-on .cloud-card,body.ui-blur-on .note-card,
 body.ui-blur-on .modal,body.ui-blur-on .sidebar,body.ui-blur-on .topbar,
 body.ui-blur-on .todo-item,body.ui-blur-on .cat-view-header,body.ui-blur-on .nt-widget-card{
@@ -2150,16 +2267,6 @@ html,body{overscroll-behavior-y:none;}
   box-shadow: 0 8px 24px rgba(0,0,0,0.4), 0 0 20px var(--accent-glow);
 }
 
-/* ── Settings card hover ── */
-.settings-card {
-  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition) !important;
-}
-.settings-card:hover {
-  border-color: var(--accent) !important;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.25), 0 0 10px var(--accent-glow) !important;
-  transform: translateY(-1px);
-}
-
 /* ── Topbar subtle glow on scroll ── */
 .topbar {
   transition: box-shadow 0.3s ease !important;
@@ -2178,7 +2285,7 @@ html,body{overscroll-behavior-y:none;}
 
 
 /* ── Smooth color transition on all themed elements ── */
-.cat-card, .stat-card, .cloud-card, .item-row, .settings-card,
+.cat-card, .stat-card, .cloud-card, .item-row,
 .sidebar, .topbar, .modal, .note-card, .todo-item {
   transition: 
     background var(--transition),
@@ -2283,10 +2390,10 @@ html,body{overscroll-behavior-y:none;}
 .cat-dd-more{padding:7px 13px;font-size:.77rem;color:var(--accent);text-align:center;cursor:pointer;background:var(--surface2);}
 
 /* ══ SETTINGS TABS ══ */
-.sett-panel{display:none;grid-column:1/-1;}
-.sett-panel.active{display:contents;}
+.sett-panel{display:none;}
+.sett-panel.active{display:block;}
 
-/* ══ SETTINGS HOME — big tappable cards, each opens its own full page ══ */
+/* ══ SETTINGS HOME — big tappable cards, each opens its section in a dialog ══ */
 .settings-home-grid{
   grid-column:1/-1;display:grid;
   grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;
@@ -2306,13 +2413,11 @@ html,body{overscroll-behavior-y:none;}
 .settings-nav-card p{font-size:.78rem;color:var(--muted);}
 .settings-nav-card .snc-arrow{position:absolute;top:20px;left:18px;color:var(--muted);font-size:.85rem;}
 
-.sett-back-btn{
-  grid-column:1/-1;display:flex;align-items:center;gap:8px;
-  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
-  padding:10px 16px;color:var(--text);font-family:var(--font);font-size:.85rem;font-weight:700;
-  cursor:pointer;width:fit-content;transition:border-color var(--transition);
-}
-.sett-back-btn:hover{border-color:var(--accent);color:var(--accent);}
+/* ══ SETTINGS SECTION DIALOG — Chrome-style centered modal, fixed size,
+   scrolls internally instead of stretching the page ══ */
+.sett-modal{max-width:560px;width:100%;}
+.sett-panel-scroll{max-height:70vh;overflow-y:auto;overflow-x:hidden;margin:0 -6px;padding:0 6px;}
+
 .lang-switch-row{display:flex;gap:10px;}
 .lang-switch-btn{flex:1;padding:12px;border-radius:var(--radius);border:2px solid var(--border);background:var(--surface2);color:var(--text);font-family:var(--font);font-size:.9rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:border-color .15s,background .15s;}
 .lang-switch-btn span{font-size:1.2rem;}
@@ -2320,6 +2425,15 @@ html,body{overscroll-behavior-y:none;}
 
 /* ══ SIDEBAR SCROLL FIX ══ */
 .sb-body{flex:1;overflow-y:auto;overflow-x:hidden;padding:10px 0 20px;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y;}
+
+/* ══ ACHIEVEMENT TIME FILTER BUTTONS ══ */
+.ach-tf-btn{
+  padding:5px 12px;font-size:.75rem;font-weight:700;font-family:var(--font);
+  border:1px solid var(--border);border-radius:20px;background:var(--surface2);
+  color:var(--muted);cursor:pointer;transition:all .15s ease;white-space:nowrap;
+}
+.ach-tf-btn:hover{border-color:var(--accent);color:var(--accent);}
+.ach-tf-btn.active{background:var(--accent);color:#1a1a1a;border-color:var(--accent);}
 
 /* ══ NOTE IMAGE ══ */
 .note-card img.note-img{width:100%;border-radius:6px;margin-bottom:6px;max-height:150px;object-fit:cover;display:block;}
@@ -2331,9 +2445,9 @@ html,body{overscroll-behavior-y:none;}
 .theme-grid{grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:14px;}
 .theme-card{border-radius:12px;}
 .theme-card span{padding:8px 6px;font-size:.85rem;}
-.settings-card .btn{padding:12px 18px;font-size:.92rem;}
-.settings-card .toggle{width:52px;height:30px;}
-.settings-card .toggle-slider::before{height:22px;width:22px;}
+.sett-group .btn{padding:12px 18px;font-size:.92rem;}
+.sett-group .toggle{width:52px;height:30px;}
+.sett-group .toggle-slider::before{height:22px;width:22px;}
 
 /* ══════════════════════════════════════════════
    PATCH: "quick view" dropdown button removed site-wide
@@ -2417,7 +2531,7 @@ body.lang-en .page-actions .btn,body.lang-en .modal-footer .btn{flex-shrink:0;}
 <script src="https://cdn.jsdelivr.net/npm/rss-parser@3.13.0/dist/rss-parser.min.js"></script>
 <script>
 (function(){
-  const manifest={name:"OuterSchool",short_name:"OuterSchool",display:"fullscreen",display_override:["fullscreen","standalone","minimal-ui"],orientation:"any",background_color:"#0D1117",theme_color:"#0D1117",start_url:".",lang:"ar",dir:"rtl",icons:[
+  const manifest={name:"مَوْئِل",short_name:"مَوْئِل",display:"fullscreen",display_override:["fullscreen","standalone","minimal-ui"],orientation:"any",background_color:"#0D1117",theme_color:"#0D1117",start_url:".",lang:"ar",dir:"rtl",icons:[
     {src:"./icon.png",sizes:"512x512",type:"image/png",purpose:"any maskable"},
     {src:"./icon.png",sizes:"192x192",type:"image/png",purpose:"any maskable"},
     {src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%231b1b1b'/%3E%3Cpath d='M256 150 L400 210 L256 270 L112 210 Z' fill='%23d98324'/%3E%3Cpath d='M170 235 V310 Q256 350 342 310 V235' fill='none' stroke='%23d98324' stroke-width='20' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cline x1='400' y1='210' x2='400' y2='300' stroke='%23d98324' stroke-width='20' stroke-linecap='round'/%3E%3Ccircle cx='400' cy='320' r='18' fill='%23d98324'/%3E%3C/svg%3E",sizes:"512x512",type:"image/svg+xml",purpose:"any maskable"}
@@ -2446,14 +2560,14 @@ body.lang-en .page-actions .btn,body.lang-en .modal-footer .btn{flex-shrink:0;}
     <div style="width:330px;height:330px;border-radius:50%;border:1px solid rgba(217,131,36,.05);position:absolute;animation:splashRingPulse 2.5s ease-out 1s infinite;"></div>
   </div>
   <div id="splashLogo" style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:20px;opacity:0;transform:scale(.6) translateY(20px);transition:opacity .8s cubic-bezier(.34,1.56,.64,1),transform .8s cubic-bezier(.34,1.56,.64,1);">
-    <svg viewBox="0 0 64 64" width="88" height="88" aria-label="OuterSchool">
+    <svg viewBox="0 0 64 64" width="88" height="88" aria-label="مَوْئِل">
       <rect x="5" y="5" width="54" height="54" rx="16" fill="#d98324"/>
       <path d="M32 21c-4-3-11-4-15-2v24c4-2 11-1 15 2c4-3 11-4 15-2V19c-4-2-11-1-15 2Z" fill="#fff"/>
       <path d="M32 21v24" stroke="#ffb84d" stroke-width="2" stroke-linecap="round"/>
     </svg>
     <div style="text-align:center;">
-      <div style="font-family:'Cairo',sans-serif;font-weight:900;font-size:2.4rem;letter-spacing:.02em;line-height:1;margin-bottom:8px;direction:ltr;">
-        <span style="color:#ffb84d;">Outer</span><span style="color:#d98324;">School</span>
+      <div style="font-family:'Amiri',serif;font-weight:700;font-size:2.6rem;letter-spacing:.01em;line-height:1;margin-bottom:8px;color:#d98324;direction:rtl;">
+        مَوْئِل
       </div>
       <div id="splashTagline" style="font-family:'Cairo',sans-serif;font-size:1rem;color:rgba(255,255,255,.5);letter-spacing:.04em;opacity:0;transform:translateY(8px);transition:opacity .6s ease .4s,transform .6s ease .4s;">مكتبتك التعليمية الذكية</div>
     </div>
@@ -2470,13 +2584,13 @@ body.lang-en .page-actions .btn,body.lang-en .modal-footer .btn{flex-shrink:0;}
   </button>
 
   <!-- Logo — standalone icon only, no text -->
-  <div class="topbar-logo" onclick="navigate('home')" title="OuterSchool — الرئيسية" style="cursor:pointer;">
-    <svg class="logo-mark" viewBox="0 0 64 64" width="40" height="40" aria-label="OuterSchool">
+  <div class="topbar-logo" onclick="navigate('home')" title="مَوْئِل — الرئيسية" style="cursor:pointer;">
+    <svg class="logo-mark" viewBox="0 0 64 64" width="40" height="40" aria-label="مَوْئِل">
       <rect x="5" y="5" width="54" height="54" rx="16" fill="var(--accent)"/>
       <path d="M32 21c-4-3-11-4-15-2v24c4-2 11-1 15 2c4-3 11-4 15-2V19c-4-2-11-1-15 2Z" fill="#fff"/>
       <path d="M32 21v24" stroke="var(--gold)" stroke-width="2" stroke-linecap="round"/>
     </svg>
-    <span class="logo-wordmark"><span class="logo-outer">Outer</span><span class="logo-school">School</span></span>
+    <span class="logo-wordmark">مَوْئِل</span>
   </div>
 
   <!-- Center nav buttons -->
@@ -2512,7 +2626,7 @@ body.lang-en .page-actions .btn,body.lang-en .modal-footer .btn{flex-shrink:0;}
 <nav class="sidebar" id="sidebar">
   <div class="sb-head">
     <div class="sb-head-logo">
-      <bdi style="direction:ltr;unicode-bidi:isolate;display:flex;align-items:center;gap:0;"><span class="logo-outer">Outer</span><span class="logo-school">School</span></bdi>
+      <bdi style="font-family:'Amiri',serif;font-weight:700;color:var(--accent);direction:rtl;unicode-bidi:isolate;">مَوْئِل</bdi>
     </div>
     <button class="sb-close" onclick="closeSidebar()"><i class="fas fa-times"></i></button>
   </div>
@@ -2588,15 +2702,16 @@ body.lang-en .page-actions .btn,body.lang-en .modal-footer .btn{flex-shrink:0;}
     <div class="sb-divider"></div>
 
     <div class="sb-section">
-      <div class="sb-item" id="nav-settings" onclick="navigate('settings')">
+      <div class="sb-item" id="nav-settings" onclick="navigate('settings')" style="position:relative;">
         <i class="fas fa-cog"></i> <span data-i18n="nav_settings">الإعدادات</span>
+        <span id="sbUpdateDot" class="update-dot" style="display:none;" title="يوجد تحديث جديد"></span>
       </div>
     </div>
   </div>
 
   <div class="sb-footer">
     <div style="font-size:.75rem;color:var(--muted);text-align:center;">
-      OuterSchool v3.0 — <span data-i18n="sb_footer_tagline">مكتبتك التعليمية</span>
+      مَوْئِل — <span data-i18n="sb_footer_tagline">مكتبتك التعليمية</span>
     </div>
   </div>
 </nav>
@@ -2674,6 +2789,7 @@ body.lang-en .page-actions .btn,body.lang-en .modal-footer .btn{flex-shrink:0;}
 
   <!-- ── CATEGORY VIEW ── -->
   <div class="view" id="view-category">
+    <div class="cat-page-bg" id="catPageBg" aria-hidden="true"></div>
     <div class="breadcrumb" id="catBreadcrumb"></div>
 
     <div class="cat-view-header" id="catViewHeader"></div>
@@ -2838,8 +2954,20 @@ body.lang-en .page-actions .btn,body.lang-en .modal-footer .btn{flex-shrink:0;}
     <!-- Achievements panel -->
     <div class="nt-panel" id="ntPanel-achievements">
       <div class="ach-stats-row" id="achStatsRow"></div>
+
+      <!-- ── Time filter for completed tasks chart ── -->
       <div class="ach-chart-card">
-        <h4><i class="fas fa-chart-column" style="color:var(--accent);"></i> المهام المنجزة خلال آخر 14 يوم</h4>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap;">
+          <h4 style="margin:0;"><i class="fas fa-chart-column" style="color:var(--accent);"></i> المهام المنجزة</h4>
+          <div style="display:flex;gap:5px;flex-wrap:wrap;" id="achTimeFilters">
+            <button class="ach-tf-btn" data-hours="10" onclick="setAchTimeFilter(10,'10 ساعات')">١٠ ساعات</button>
+            <button class="ach-tf-btn" data-hours="48" onclick="setAchTimeFilter(48,'يومان')">يومان</button>
+            <button class="ach-tf-btn active" data-hours="72" onclick="setAchTimeFilter(72,'٣ أيام')">٣ أيام</button>
+            <button class="ach-tf-btn" data-hours="168" onclick="setAchTimeFilter(168,'أسبوع')">أسبوع</button>
+            <button class="ach-tf-btn" data-hours="720" onclick="setAchTimeFilter(720,'شهر')">شهر</button>
+          </div>
+        </div>
+        <div style="font-size:.75rem;color:var(--muted);margin-bottom:8px;" id="achTimeLabel">خلال آخر ٣ أيام</div>
         <canvas id="achChart" height="160"></canvas>
       </div>
       <div class="ach-badges" id="achBadges"></div>
@@ -2858,7 +2986,7 @@ body.lang-en .page-actions .btn,body.lang-en .modal-footer .btn{flex-shrink:0;}
     </div>
 
     <div class="settings-grid" id="settingsGrid">
-      <!-- Settings Home: tap a card to open its full page -->
+      <!-- Settings Home: tap a card to open its section in a dialog -->
       <div class="settings-home-grid" id="settingsHomeGrid">
         <div class="settings-nav-card" onclick="openSettSection('profile')">
           <div class="snc-icon"><i class="fas fa-user"></i></div>
@@ -2884,131 +3012,153 @@ body.lang-en .page-actions .btn,body.lang-en .modal-footer .btn{flex-shrink:0;}
           <p>أدوات تحميل الفيديوهات</p>
           <i class="fas fa-chevron-left snc-arrow"></i>
         </div>
-        <div class="settings-nav-card" onclick="openSettSection('data')">
+        <div class="settings-nav-card" onclick="openSettSection('data')" style="position:relative;">
           <div class="snc-icon"><i class="fas fa-database"></i></div>
           <h4 data-i18n="settab_data">البيانات</h4>
           <p>النسخ الاحتياطي والاستيراد</p>
+          <span id="sncUpdateDot" class="update-dot" style="display:none;top:14px;right:14px;" title="يوجد تحديث جديد"></span>
           <i class="fas fa-chevron-left snc-arrow"></i>
         </div>
       </div>
+    </div>
 
-      <!-- Back button shown only while a section page is open -->
-      <button class="sett-back-btn" id="settBackBtn" onclick="closeSettSection()" style="display:none;">
-        <i class="fas fa-arrow-right"></i> <span data-i18n="settings_back">رجوع للإعدادات</span>
-      </button>
+    <!-- Settings section dialog — fixed size, scrolls internally, never stretches the page -->
+    <div class="modal-bg" id="settSectionModalBg">
+      <div class="modal modal-wide sett-modal">
+        <button class="modal-close" onclick="closeSettSection()"><i class="fas fa-times"></i></button>
+        <h2><i class="fas fa-cog" id="settModalIcon"></i> <span id="settModalTitle">الإعدادات</span></h2>
+        <div class="sett-panel-scroll">
 
-      <!-- PANEL: profile -->
-      <div class="sett-panel" data-sett="profile">
-      <div class="settings-card" style="grid-column:1/-1;max-width:480px;">
-        <h3><i class="fas fa-user-circle"></i> الملف الشخصي</h3>
-        <div class="profile-avatar-wrap">
-          <div class="profile-avatar-big" id="profileAvatarBig" onclick="document.getElementById('avatarUpload').click()">
-            <div id="profileAvatarInitial" style="font-size:2rem;font-weight:900;">م</div>
-            <div class="avatar-edit"><i class="fas fa-camera"></i></div>
+        <!-- PANEL: profile -->
+        <div class="sett-panel" data-sett="profile">
+        <div class="sett-group">
+          <h3><i class="fas fa-id-card"></i> البيانات الشخصية</h3>
+          <div class="profile-avatar-wrap">
+            <div class="profile-avatar-big" id="profileAvatarBig" onclick="document.getElementById('avatarUpload').click()">
+              <div id="profileAvatarInitial" style="font-size:2rem;font-weight:900;">م</div>
+              <div class="avatar-edit"><i class="fas fa-camera"></i></div>
+            </div>
+            <input type="file" id="avatarUpload" accept="image/*" style="display:none" onchange="handleAvatarUpload(this)">
+            <span style="font-size:.8rem;color:var(--muted);">اضغط لتغيير الصورة</span>
           </div>
-          <input type="file" id="avatarUpload" accept="image/*" style="display:none" onchange="handleAvatarUpload(this)">
-          <span style="font-size:.8rem;color:var(--muted);">اضغط لتغيير الصورة</span>
+          <div class="form-group"><label>الاسم المعروض</label><input type="text" id="settDisplayName"></div>
+          <div class="form-group"><label>اسم المستخدم</label><input type="text" id="settUsername"></div>
+          <div class="form-group"><label>البريد الإلكتروني (اختياري)</label><input type="email" id="settEmail"></div>
+          <button class="btn btn-primary" style="width:100%;" onclick="saveProfile()"><i class="fas fa-save"></i> حفظ الملف الشخصي</button>
         </div>
-        <div class="form-group"><label>الاسم المعروض</label><input type="text" id="settDisplayName"></div>
-        <div class="form-group"><label>اسم المستخدم</label><input type="text" id="settUsername"></div>
-        <div class="form-group"><label>البريد الإلكتروني (اختياري)</label><input type="email" id="settEmail"></div>
-        <button class="btn btn-primary" style="width:100%;" onclick="saveProfile()"><i class="fas fa-save"></i> حفظ الملف الشخصي</button>
-      </div>
-      <!-- About -->
-      <div class="settings-card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px;">
-        <h3 style="width:100%;"><i class="fas fa-info-circle"></i> حول التطبيق</h3>
-        <svg viewBox="0 0 64 64" width="40" height="40" aria-hidden="true">
-          <rect x="5" y="5" width="54" height="54" rx="16" fill="var(--accent)"/>
-          <path d="M32 21c-4-3-11-4-15-2v24c4-2 11-1 15 2c4-3 11-4 15-2V19c-4-2-11-1-15 2Z" fill="#fff"/>
-          <path d="M32 21v24" stroke="var(--gold)" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-        <div style="font-size:1rem;font-weight:900;direction:ltr;"><span style="color:var(--gold);">Outer</span><span style="color:var(--accent);">School</span></div>
-        <div style="font-size:.75rem;color:var(--muted);">الإصدار 5.0 · بدون إنترنت · بياناتك محلية</div>
-        <div style="width:100%;margin-top:6px;padding-top:10px;border-top:1px solid var(--border);">
-          <button class="btn btn-danger btn-sm" style="width:100%;font-size:.78rem;padding:7px;" onclick="clearAllData()"><i class="fas fa-trash-alt"></i> مسح كل البيانات</button>
+        <!-- About -->
+        <div class="sett-group" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px;">
+          <svg viewBox="0 0 64 64" width="40" height="40" aria-hidden="true">
+            <rect x="5" y="5" width="54" height="54" rx="16" fill="var(--accent)"/>
+            <path d="M32 21c-4-3-11-4-15-2v24c4-2 11-1 15 2c4-3 11-4 15-2V19c-4-2-11-1-15 2Z" fill="#fff"/>
+            <path d="M32 21v24" stroke="var(--gold)" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <div style="font-family:'Amiri',serif;font-weight:700;font-size:1.15rem;color:var(--accent);direction:rtl;">مَوْئِل</div>
+          <div style="font-size:.75rem;color:var(--muted);">بدون إنترنت · بياناتك محلية</div>
+          <div style="width:100%;margin-top:6px;padding-top:10px;border-top:1px solid var(--border);">
+            <button class="btn btn-danger btn-sm" style="width:100%;font-size:.78rem;padding:7px;" onclick="clearAllData()"><i class="fas fa-trash-alt"></i> مسح كل البيانات</button>
+          </div>
         </div>
-      </div>
-      </div>
-
-      <!-- PANEL: appearance -->
-      <div class="sett-panel" data-sett="appearance">
-      <!-- Themes -->
-      <div class="settings-card">
-        <h3><i class="fas fa-palette"></i> المظهر والثيم</h3>
-        <div class="form-group"><label>اختر الثيم</label><div class="theme-grid" id="themeGrid"></div></div>
-        <div class="form-group" style="margin-top:12px;"><label>الخط</label>
-          <div class="font-grid" id="fontGrid"></div>
         </div>
-      </div>
-      <!-- Interface Size -->
-      <div class="settings-card">
-        <h3><i class="fas fa-text-height"></i> حجم الواجهة</h3>
-        <div class="form-group"><label>حجم الخط: <span class="range-val" id="lcFontVal">100%</span></label><div class="lc-inline-row"><button class="lc-btn" onclick="changeFontSize(-1)">A-</button><button class="lc-btn" onclick="changeFontSize(1)">A+</button></div></div>
-        <div class="form-group"><label>عرض المحتوى: <span class="range-val" id="lcLayoutVal">md</span></label><div class="lc-inline-row"><button class="lc-btn" onclick="changeLayoutScale(-1)">−</button><button class="lc-btn" onclick="changeLayoutScale(1)">+</button></div></div>
-      </div>
-      </div>
 
-      <!-- PANEL: background -->
-      <div class="sett-panel" data-sett="background">
-      <div class="settings-card">
-        <h3><i class="fas fa-image"></i> خلفية البرنامج</h3>
-        <p style="font-size:.8rem;color:var(--muted);margin-bottom:12px;">اختر خلفية من المجموعة الجاهزة.</p>
-        <div class="theme-grid" id="wallpaperGrid"></div>
-        <div class="form-group" style="margin-top:6px;"><button class="btn btn-sm" style="width:100%;color:var(--danger);border-color:var(--danger);" onclick="removeBgImage()"><i class="fas fa-trash"></i> بدون خلفية</button></div>
-        <div class="form-group"><label>ضبابية: <span class="range-val" id="bgBlurVal">0px</span></label><input type="range" id="bgBlurRange" min="0" max="20" value="0" oninput="updateBgBlur(this.value)"></div>
-        <div class="form-group"><label>شفافية: <span class="range-val" id="bgOpacityVal">50%</span></label><input type="range" id="bgOpacityRange" min="0" max="100" value="50" oninput="updateBgOpacity(this.value)"></div>
-      </div>
-      <div class="settings-card">
-        <h3><i class="fas fa-magic"></i> تأثيرات الخلفية — متحركة</h3>
-        <div id="fxAnimatedGroup">
-        <div class="toggle-wrap"><span>تأثير الجسيمات</span><label class="toggle"><input type="checkbox" id="toggleParticles" onchange="toggleParticlesEffect(this.checked)"><span class="toggle-slider"></span></label></div>
-        <div class="toggle-wrap"><span>مطر الماتريكس</span><label class="toggle"><input type="checkbox" id="toggleMatrix" onchange="toggleMatrixEffect(this.checked)"><span class="toggle-slider"></span></label></div>
-        <div class="toggle-wrap"><span>الكرات المتحركة</span><label class="toggle"><input type="checkbox" id="toggleBubbles" onchange="toggleBubblesEffect(this.checked)"><span class="toggle-slider"></span></label></div>
+        <!-- PANEL: appearance -->
+        <div class="sett-panel" data-sett="appearance">
+        <!-- Themes -->
+        <div class="sett-group">
+          <h3><i class="fas fa-palette"></i> الثيم والخط</h3>
+          <div class="form-group"><label>اختر الثيم</label><div class="theme-grid" id="themeGrid"></div></div>
+          <div class="form-group" style="margin-top:12px;"><label>الخط</label>
+            <div class="font-grid" id="fontGrid"></div>
+          </div>
         </div>
-      </div>
-      </div>
-
-      <!-- PANEL: download -->
-      <div class="sett-panel" data-sett="download">
-      <div class="settings-card">
-        <h3><i class="fas fa-download"></i> أداة التحميل</h3>
-        <p style="font-size:.8rem;color:var(--muted);margin-bottom:12px;">استخدم <code>{url}</code> مكان الرابط. مثال: <code style="font-size:.72rem;word-break:break-all;">https://example.com/download?url={url}</code></p>
-        <div class="form-group"><label><i class="fab fa-youtube" style="color:#f00;"></i> أداة تحميل الفيديوهات</label><input type="url" id="settDownloaderUrlVideo"></div>
-        <input type="hidden" id="settDownloaderUrlPlaylist" value="">
-        <button class="btn btn-primary" style="width:100%;" onclick="saveDownloaderUrls()"><i class="fas fa-save"></i> حفظ</button>
-      </div>
-      </div>
-
-      <!-- PANEL: data -->
-      <div class="sett-panel" data-sett="data">
-      <div class="settings-card">
-        <h3><i class="fas fa-database"></i> النسخ الاحتياطي</h3>
-        <p style="font-size:.85rem;color:var(--muted);margin-bottom:18px;">صدّر جميع بياناتك كملف JSON يمكن استيراده لاحقاً.</p>
-        <div class="export-box" style="margin-bottom:14px;"><i class="fas fa-file-export" style="font-size:2rem;color:var(--accent);margin-bottom:10px;display:block;"></i><button class="btn btn-primary" onclick="exportData()"><i class="fas fa-download"></i> تصدير البيانات (JSON)</button></div>
-        <div class="export-box" id="importDropZone" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="handleImportDrop(event)">
-          <i class="fas fa-file-import" style="font-size:2rem;color:var(--gold);margin-bottom:10px;display:block;"></i>
-          <button class="btn" onclick="document.getElementById('importFile').click()"><i class="fas fa-upload"></i> استيراد من JSON</button>
-          <p style="font-size:.78rem;color:var(--muted);margin-top:8px;">أو اسحب الملف هنا</p>
-          <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(this)">
+        <!-- Interface Size -->
+        <div class="sett-group">
+          <h3><i class="fas fa-text-height"></i> حجم الواجهة</h3>
+          <div class="form-group"><label>حجم الخط: <span class="range-val" id="lcFontVal">100%</span></label><div class="lc-inline-row"><button class="lc-btn" onclick="changeFontSize(-1)">A-</button><button class="lc-btn" onclick="changeFontSize(1)">A+</button></div></div>
+          <div class="form-group"><label>عرض المحتوى: <span class="range-val" id="lcLayoutVal">md</span></label><div class="lc-inline-row"><button class="lc-btn" onclick="changeLayoutScale(-1)">−</button><button class="lc-btn" onclick="changeLayoutScale(1)">+</button></div></div>
         </div>
-      </div>
-
-      <div class="settings-card">
-        <h3><i class="fas fa-layer-group"></i> نسخ بيانات متعددة</h3>
-        <p style="font-size:.8rem;color:var(--muted);margin-bottom:12px;">احفظ عدة نسخ منفصلة من بياناتك (مثلاً: نسخة للعمل، نسخة شخصية) وبدّل بينها بضغطة واحدة. كل شيء يعمل من دون إنترنت.</p>
-        <div id="profilesList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;"></div>
-        <div class="quick-add-row">
-          <input type="text" id="newProfileName">
-          <button class="btn btn-primary" onclick="createDataProfile()"><i class="fas fa-plus"></i> حفظ كنسخة جديدة</button>
         </div>
-      </div>
 
-      <div class="settings-card">
-        <h3><i class="fas fa-clock-rotate-left"></i> النسخ الاحتياطي التلقائي</h3>
-        <div class="toggle-wrap"><span>تذكير بنسخة احتياطية كل 7 أيام</span><label class="toggle"><input type="checkbox" id="toggleAutoBackup" onchange="toggleAutoBackupSetting(this.checked)"><span class="toggle-slider"></span></label></div>
-        <p style="font-size:.78rem;color:var(--muted);margin:8px 0 14px;" id="lastBackupInfo"></p>
-        <button class="btn" style="width:100%;margin-bottom:10px;" onclick="pickBackupFolder()"><i class="fas fa-folder-open"></i> اختيار مجلد لحفظ النسخ فيه تلقائياً</button>
-      </div>
+        <!-- PANEL: background -->
+        <div class="sett-panel" data-sett="background">
+        <div class="sett-group">
+          <h3><i class="fas fa-image"></i> خلفية البرنامج</h3>
+          <p style="font-size:.8rem;color:var(--muted);margin-bottom:12px;">اختر خلفية من المجموعة الجاهزة.</p>
+          <div class="theme-grid" id="wallpaperGrid"></div>
+          <div class="form-group" style="margin-top:6px;"><button class="btn btn-sm" style="width:100%;color:var(--danger);border-color:var(--danger);" onclick="removeBgImage()"><i class="fas fa-trash"></i> بدون خلفية</button></div>
+          <div class="form-group"><label>ضبابية: <span class="range-val" id="bgBlurVal">0px</span></label><input type="range" id="bgBlurRange" min="0" max="20" value="0" oninput="updateBgBlur(this.value)"></div>
+          <div class="form-group"><label>شفافية: <span class="range-val" id="bgOpacityVal">50%</span></label><input type="range" id="bgOpacityRange" min="0" max="100" value="50" oninput="updateBgOpacity(this.value)"></div>
+        </div>
+        <div class="sett-group">
+          <h3><i class="fas fa-magic"></i> تأثيرات الخلفية — متحركة</h3>
+          <div id="fxAnimatedGroup">
+          <div class="toggle-wrap"><span>تأثير الجسيمات</span><label class="toggle"><input type="checkbox" id="toggleParticles" onchange="toggleParticlesEffect(this.checked)"><span class="toggle-slider"></span></label></div>
+          <div class="toggle-wrap"><span>مطر الماتريكس</span><label class="toggle"><input type="checkbox" id="toggleMatrix" onchange="toggleMatrixEffect(this.checked)"><span class="toggle-slider"></span></label></div>
+          <div class="toggle-wrap"><span>الكرات المتحركة</span><label class="toggle"><input type="checkbox" id="toggleBubbles" onchange="toggleBubblesEffect(this.checked)"><span class="toggle-slider"></span></label></div>
+          </div>
+        </div>
+        </div>
+
+        <!-- PANEL: download -->
+        <div class="sett-panel" data-sett="download">
+        <div class="sett-group">
+          <h3><i class="fas fa-download"></i> أداة التحميل</h3>
+          <p style="font-size:.8rem;color:var(--muted);margin-bottom:12px;">استخدم <code>{url}</code> مكان الرابط. مثال: <code style="font-size:.72rem;word-break:break-all;">https://example.com/download?url={url}</code></p>
+          <div class="form-group"><label><i class="fab fa-youtube" style="color:#f00;"></i> أداة تحميل الفيديوهات</label><input type="url" id="settDownloaderUrlVideo"></div>
+          <input type="hidden" id="settDownloaderUrlPlaylist" value="">
+          <button class="btn btn-primary" style="width:100%;" onclick="saveDownloaderUrls()"><i class="fas fa-save"></i> حفظ</button>
+        </div>
+        </div>
+
+        <!-- PANEL: data -->
+        <div class="sett-panel" data-sett="data">
+        <div class="sett-group">
+          <h3><i class="fas fa-rotate"></i> تحديث التطبيق</h3>
+          <div id="updateBanner" class="update-banner" style="display:none;">
+            <i class="fas fa-circle-exclamation"></i>
+            <div style="flex:1;">يوجد تحديث جديد للتطبيق جاهز للتثبيت.</div>
+          </div>
+          <p style="font-size:.8rem;color:var(--muted);margin-bottom:12px;">
+            <span id="appVersionLabel" style="display:none;"></span>
+            <span id="appUpdateStatus">لم يتم التحقق بعد</span>
+          </p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn" style="flex:1;" onclick="checkForAppUpdate(true)"><i class="fas fa-magnifying-glass"></i> التحقق من وجود تحديث</button>
+            <button class="btn btn-primary" style="flex:1;" onclick="performAppUpdate()"><i class="fas fa-rotate"></i> تحديث الآن</button>
+          </div>
+          <p style="font-size:.72rem;color:var(--muted);margin-top:8px;">التحديث يجلب أحدث نسخة من الموقع فقط، وبياناتك المحفوظة (الروابط، التصنيفات، الملاحظات...) لا تتأثر أبداً.</p>
+        </div>
+        <div class="sett-group">
+          <h3><i class="fas fa-file-export"></i> النسخ الاحتياطي</h3>
+          <p style="font-size:.85rem;color:var(--muted);margin-bottom:18px;">صدّر جميع بياناتك كملف JSON يمكن استيراده لاحقاً.</p>
+          <div class="export-box" style="margin-bottom:14px;"><i class="fas fa-file-export" style="font-size:2rem;color:var(--accent);margin-bottom:10px;display:block;"></i><button class="btn btn-primary" onclick="exportData()"><i class="fas fa-download"></i> تصدير البيانات (JSON)</button></div>
+          <div class="export-box" id="importDropZone" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="handleImportDrop(event)">
+            <i class="fas fa-file-import" style="font-size:2rem;color:var(--gold);margin-bottom:10px;display:block;"></i>
+            <button class="btn" onclick="document.getElementById('importFile').click()"><i class="fas fa-upload"></i> استيراد من JSON</button>
+            <p style="font-size:.78rem;color:var(--muted);margin-top:8px;">أو اسحب الملف هنا</p>
+            <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(this)">
+          </div>
+        </div>
+
+        <div class="sett-group">
+          <h3><i class="fas fa-layer-group"></i> نسخ بيانات متعددة</h3>
+          <p style="font-size:.8rem;color:var(--muted);margin-bottom:12px;">احفظ عدة نسخ منفصلة من بياناتك (مثلاً: نسخة للعمل، نسخة شخصية) وبدّل بينها بضغطة واحدة. كل شيء يعمل من دون إنترنت.</p>
+          <div id="profilesList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;"></div>
+          <div class="quick-add-row">
+            <input type="text" id="newProfileName">
+            <button class="btn btn-primary" onclick="createDataProfile()"><i class="fas fa-plus"></i> حفظ كنسخة جديدة</button>
+          </div>
+        </div>
+
+        <div class="sett-group">
+          <h3><i class="fas fa-clock-rotate-left"></i> النسخ الاحتياطي التلقائي</h3>
+          <div class="toggle-wrap"><span>تذكير بنسخة احتياطية كل 7 أيام</span><label class="toggle"><input type="checkbox" id="toggleAutoBackup" onchange="toggleAutoBackupSetting(this.checked)"><span class="toggle-slider"></span></label></div>
+          <p style="font-size:.78rem;color:var(--muted);margin:8px 0 14px;" id="lastBackupInfo"></p>
+          <button class="btn" style="width:100%;margin-bottom:10px;" onclick="pickBackupFolder()"><i class="fas fa-folder-open"></i> اختيار مجلد لحفظ النسخ فيه تلقائياً</button>
+        </div>
+        </div>
+
+        </div>
       </div>
     </div>
   </div>
@@ -3304,7 +3454,7 @@ body.lang-en .page-actions .btn,body.lang-en .modal-footer .btn{flex-shrink:0;}
 
 <script>
 // ══════════════════════════════════════════════
-//  OuterSchool — app.js  (v3)
+//  مَوْئِل — app.js  (v3)
 // ══════════════════════════════════════════════
 
 // ══════════════════════════════════════════════
@@ -3484,8 +3634,13 @@ function genId() {
 }
 
 // ══════════════════════════════════════════════
-//  NAVIGATION
+//  NAVIGATION  (with browser history / back-button support)
 // ══════════════════════════════════════════════
+
+// Track whether we're navigating from a popstate event (browser back/forward)
+// to avoid pushing a duplicate history entry.
+let _navFromPopstate = false;
+
 function navigate(view, id) {
   // always clean up any in-DOM injected sub-program before leaving/entering a view
   cleanupInjectedProgram();
@@ -3516,7 +3671,7 @@ function navigate(view, id) {
     APP.currentProgramId = id;
     document.getElementById('view-program-run').classList.add('active');
     runProgram(id);
-    } else if (view === 'notes') {
+  } else if (view === 'notes') {
     document.getElementById('nav-notes').classList.add('active');
     document.getElementById('view-notes').classList.add('active');
     renderNotesView();
@@ -3530,7 +3685,43 @@ function navigate(view, id) {
 
   closeSidebar();
   window.scrollTo({top:0, behavior:'smooth'});
+
+  // Push a history entry so browser back/forward buttons work.
+  // Skip when we're already handling a popstate (avoid double entries).
+  if (!_navFromPopstate) {
+    const state = { view, id: id || null };
+    // Replace the initial state (first load) instead of pushing, to avoid
+    // an extra "dead" entry before the first real navigation.
+    if (history.state === null || history.state === undefined) {
+      history.replaceState(state, '', '#' + view + (id ? '/' + id : ''));
+    } else {
+      history.pushState(state, '', '#' + view + (id ? '/' + id : ''));
+    }
+  }
+  _navFromPopstate = false;
 }
+
+// Listen to browser back/forward button events
+window.addEventListener('popstate', function(e) {
+  if (!e.state) {
+    // Popped to the very beginning (before any pushState) — go home
+    _navFromPopstate = true;
+    navigate('home');
+    return;
+  }
+  const { view, id } = e.state;
+  if (view) {
+    _navFromPopstate = true;
+    navigate(view, id || undefined);
+  }
+});
+
+// On first load, replace the default history state so back-button works immediately
+window.addEventListener('load', function() {
+  if (!history.state) {
+    history.replaceState({ view: 'home', id: null }, '', '#home');
+  }
+});
 
 // ══════════════════════════════════════════════
 //  SIDEBAR
@@ -3713,6 +3904,7 @@ function renderHome() {
       const totalCount = childCount + linkCount;
       const catNeonStyle = cat.neon ? `box-shadow:0 0 16px rgba(${cat.neon.r},${cat.neon.g},${cat.neon.b},0.7),0 0 32px rgba(${cat.neon.r},${cat.neon.g},${cat.neon.b},0.3);border-color:rgba(${cat.neon.r},${cat.neon.g},${cat.neon.b},0.6);` : '';
       return `<div class="cat-card" style="--card-color:${cat.color || 'var(--accent)'};${catNeonStyle}" onclick="navigate('category','${cat.id}')">
+        ${catBgIconsHtml(cat.icon, cat.color || 'var(--accent)')}
         <div class="cat-icon" style="background:${cat.color || 'var(--accent)'};">
           <i class="fas ${cat.icon || 'fa-folder'}"></i>
         </div>
@@ -3832,6 +4024,13 @@ function renderCategoryView(catId) {
   const cat = DB.categories.find(c => c.id === catId);
   if (!cat) { navigate('home'); return; }
 
+  const pageBgEl = document.getElementById('catPageBg');
+  if (pageBgEl) {
+    const ic = cat.icon || 'fa-folder';
+    const co = cat.color || 'var(--accent)';
+    pageBgEl.innerHTML = `<i class="fas ${ic}" style="color:${co}"></i>`.repeat(6);
+  }
+
   const crumbEl = document.getElementById('catBreadcrumb');
   const crumbs = buildBreadcrumb(catId);
   crumbEl.innerHTML = `<span onclick="navigate('home')"><i class="fas fa-home"></i></span>` +
@@ -3846,6 +4045,7 @@ function renderCategoryView(catId) {
   const childCount = DB.categories.filter(c => c.parentId === catId).length;
   const linkCount = DB.links.filter(l => l.catId === catId).length;
   headerEl.innerHTML = `
+    ${catBgIconsHtml(cat.icon, cat.color||'var(--accent)')}
     <div class="cat-view-icon" style="background:${cat.color||'var(--accent)'};">
       <i class="fas ${cat.icon||'fa-folder'}"></i>
     </div>
@@ -3873,6 +4073,7 @@ function renderCategoryView(catId) {
       <div class="cat-grid" id="catSubGridInner">${children.map(child => {
         const cl = DB.links.filter(l => l.catId === child.id).length;
         return `<div class="cat-card" style="--card-color:${child.color||'var(--accent)'};" onclick="navigate('category','${child.id}')">
+          ${catBgIconsHtml(child.icon, child.color||'var(--accent)')}
           <div class="cat-icon" style="background:${child.color||'var(--accent)'};">
             <i class="fas ${child.icon||'fa-folder'}"></i>
           </div>
@@ -4016,7 +4217,7 @@ function renderProgramsGrid(container, limit) {
   }
   container.innerHTML = list.map(p => `
     <div class="cloud-card">
-      <div class="cloud-card-icon"><i class="fas fa-cube" style="color:#f59e0b;"></i></div>
+      <div class="cloud-card-icon prog-icon-slot" data-prog-name="${escHtml(p.name)}"><i class="fas fa-cube" style="color:#f59e0b;"></i></div>
       <h4>${escHtml(p.name)}</h4>
       <p>${escHtml(p.desc||'لا يوجد وصف')}</p>
       <span class="cloud-tag tag-program">برنامج فرعي</span>
@@ -4028,6 +4229,22 @@ function renderProgramsGrid(container, limit) {
       </div>
     </div>
   `).join('');
+  applyProgramLogos(container);
+}
+
+// If an image named exactly like the program (e.g. "./programs/My Tool.png")
+// exists next to index.html, use it as that program's icon in the list.
+function applyProgramLogos(scopeEl) {
+  const root = scopeEl || document;
+  root.querySelectorAll('.prog-icon-slot[data-prog-name]').forEach(slot => {
+    const name = slot.getAttribute('data-prog-name');
+    if (!name) return;
+    const testImg = new Image();
+    testImg.onload = () => {
+      slot.innerHTML = `<img src="${testImg.src}" alt="${escHtml(name)}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">`;
+    };
+    testImg.src = `./programs/${encodeURIComponent(name)}.png`;
+  });
 }
 
 function renderProgramsView() {
@@ -4311,16 +4528,6 @@ const PROGRAM_EFFECTS_CSS = `/* ════════════════
   box-shadow: 0 8px 24px rgba(0,0,0,0.4), 0 0 20px var(--accent-glow);
 }
 
-/* ── Settings card hover ── */
-.settings-card {
-  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition) !important;
-}
-.settings-card:hover {
-  border-color: var(--accent) !important;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.25), 0 0 10px var(--accent-glow) !important;
-  transform: translateY(-1px);
-}
-
 /* ── Topbar subtle glow on scroll ── */
 .topbar {
   transition: box-shadow 0.3s ease !important;
@@ -4339,7 +4546,7 @@ const PROGRAM_EFFECTS_CSS = `/* ════════════════
 
 
 /* ── Smooth color transition on all themed elements ── */
-.cat-card, .stat-card, .cloud-card, .item-row, .settings-card,
+.cat-card, .stat-card, .cloud-card, .item-row,
 .sidebar, .topbar, .modal, .note-card, .todo-item {
   transition: 
     background var(--transition),
@@ -4544,24 +4751,55 @@ function renderNtIndex(filter) {
 }
 
 // ── Achievements panel: stats + 14-day completion chart + badges ──
+// ── Achievements: current time-filter state (hours) ──
+let _achFilterHours = 72; // default: 3 days
+
+function setAchTimeFilter(hours, label) {
+  _achFilterHours = hours;
+  // update active button
+  document.querySelectorAll('.ach-tf-btn').forEach(b => b.classList.toggle('active', +b.dataset.hours === hours));
+  const lblEl = document.getElementById('achTimeLabel');
+  if (lblEl) lblEl.textContent = 'خلال آخر ' + label;
+  renderAchievements();
+}
+
 function renderAchievements() {
   const doneTodos = DB.todos.filter(t=>t.done);
   const totalTodos = DB.todos.length;
   const totalNotes = DB.notes.length;
   const pct = totalTodos ? Math.round(doneTodos.length/totalTodos*100) : 0;
 
-  // streak: consecutive days (including today) with at least 1 completion
-  const days = 14;
-  const now = new Date(); now.setHours(0,0,0,0);
-  const counts = new Array(days).fill(0);
+  // ── Build chart buckets based on _achFilterHours ──
+  const filterMs = _achFilterHours * 3600000;
+  const nowMs = Date.now();
+
+  // Decide granularity: hours < 24 → show hours; else → show days
+  const useHours = _achFilterHours <= 24;
+  const bucketCount = useHours ? _achFilterHours : Math.ceil(_achFilterHours / 24);
+  const bucketMs = filterMs / bucketCount;
+  const counts = new Array(bucketCount).fill(0);
+
+  doneTodos.forEach(t => {
+    if (!t.completedAt) return;
+    const age = nowMs - t.completedAt;
+    if (age < 0 || age > filterMs) return;
+    const idx = Math.floor(age / bucketMs);
+    const slot = bucketCount - 1 - Math.min(idx, bucketCount - 1);
+    counts[slot]++;
+  });
+
+  // streak: consecutive days with ≥1 completion (always based on full days)
+  const streakDays = 14;
+  const nowDay = new Date(); nowDay.setHours(0,0,0,0);
+  const dayCounts = new Array(streakDays).fill(0);
   doneTodos.forEach(t => {
     if (!t.completedAt) return;
     const d = new Date(t.completedAt); d.setHours(0,0,0,0);
-    const diff = Math.round((now - d) / 86400000);
-    if (diff >= 0 && diff < days) counts[days-1-diff]++;
+    const diff = Math.round((nowDay - d) / 86400000);
+    if (diff >= 0 && diff < streakDays) dayCounts[streakDays-1-diff]++;
   });
   let streak = 0;
-  for (let i = days-1; i >= 0; i--) { if (counts[i] > 0) streak++; else break; }
+  for (let i = streakDays-1; i >= 0; i--) { if (dayCounts[i] > 0) streak++; else break; }
 
   document.getElementById('achStatsRow').innerHTML = `
     <div class="ach-stat-card"><div class="n">${doneTodos.length}</div><div class="l">مهام منجزة</div></div>
@@ -4571,7 +4809,7 @@ function renderAchievements() {
     <div class="ach-stat-card"><div class="n">${totalNotes}</div><div class="l">ملاحظات</div></div>
   `;
 
-  drawAchChart(counts, days);
+  drawAchChart(counts, bucketCount, useHours, _achFilterHours);
 
   const badges = [
     { icon:'fa-shoe-prints', label:'أول خطوة', unlocked: doneTodos.length >= 1 },
@@ -4586,7 +4824,7 @@ function renderAchievements() {
   `).join('');
 }
 
-function drawAchChart(counts, days) {
+function drawAchChart(counts, bucketCount, useHours, totalHours) {
   const canvas = document.getElementById('achChart');
   if (!canvas) return;
   const dpr = window.devicePixelRatio || 1;
@@ -4603,27 +4841,34 @@ function drawAchChart(counts, days) {
   const max = Math.max(1, ...counts);
   const padBottom = 22, padTop = 8;
   const barAreaH = cssH - padBottom - padTop;
-  const barW = cssW / days;
+  const barW = cssW / bucketCount;
   const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#3b82f6';
 
-  const now = new Date();
-  for (let i = 0; i < days; i++) {
+  const nowMs = Date.now();
+  const bucketMs = (totalHours * 3600000) / bucketCount;
+
+  for (let i = 0; i < bucketCount; i++) {
     const h = (counts[i]/max) * barAreaH;
     const x = i * barW;
     const y = padTop + (barAreaH - h);
     ctx.fillStyle = counts[i] > 0 ? accent : 'rgba(128,128,128,.18)';
-    const w = Math.max(4, barW*0.55);
-    const cx = x + (barW-w)/2;
+    const w = Math.max(3, barW * 0.65);
+    const cx = x + (barW - w) / 2;
     ctx.beginPath();
-    if (ctx.roundRect) ctx.roundRect(cx, y, w, Math.max(h,2), 3); else ctx.rect(cx, y, w, Math.max(h,2));
+    if (ctx.roundRect) ctx.roundRect(cx, y, w, Math.max(h, 2), 3); else ctx.rect(cx, y, w, Math.max(h, 2));
     ctx.fill();
 
-    if (i % 2 === 0 || days <= 7) {
-      const d = new Date(now); d.setDate(d.getDate() - (days-1-i));
+    // Labels — show every 2nd bucket unless very few buckets
+    const showLabel = (bucketCount <= 10) || (i % Math.ceil(bucketCount / 10) === 0) || i === bucketCount - 1;
+    if (showLabel) {
+      const bucketStart = new Date(nowMs - (bucketCount - i) * bucketMs);
       ctx.fillStyle = 'rgba(128,128,128,.7)';
       ctx.font = '9px var(--font, sans-serif)';
       ctx.textAlign = 'center';
-      ctx.fillText(d.getDate(), x + barW/2, cssH - 6);
+      const label = useHours
+        ? bucketStart.getHours() + ':00'
+        : bucketStart.getDate() + '/' + (bucketStart.getMonth()+1);
+      ctx.fillText(label, x + barW/2, cssH - 6);
     }
   }
 }
@@ -6322,7 +6567,8 @@ function doSearch(q) {
   if (matchCats.length) {
     html += `<div class="sec-heading"><i class="fas fa-folder" style="color:var(--gold);"></i> تصنيفات (${matchCats.length})</div>`;
     html += `<div class="cat-grid" style="margin-bottom:24px;">${matchCats.map(cat => `
-      <div class="cat-card" onclick="navigate('category','${cat.id}')">
+      <div class="cat-card" style="--card-color:${cat.color||'var(--accent)'};" onclick="navigate('category','${cat.id}')">
+        ${catBgIconsHtml(cat.icon, cat.color||'var(--accent)')}
         <div class="cat-icon" style="background:${cat.color||'var(--accent)'}"><i class="fas ${cat.icon||'fa-folder'}"></i></div>
         <div class="cat-name">${highlight(escHtml(cat.name), q)}</div>
       </div>`).join('')}</div>`;
@@ -6493,6 +6739,17 @@ function showToast(msg, type = '') {
 // ══════════════════════════════════════════════
 //  HELPERS
 // ══════════════════════════════════════════════
+function catBgIconsHtml(icon, color) {
+  const ic = icon || 'fa-folder';
+  const co = color || 'var(--accent)';
+  return `<div class="cat-bg-icons" aria-hidden="true">
+    <i class="fas ${ic}" style="color:${co}"></i>
+    <i class="fas ${ic}" style="color:${co}"></i>
+    <i class="fas ${ic}" style="color:${co}"></i>
+    <i class="fas ${ic}" style="color:${co}"></i>
+  </div>`;
+}
+
 function escHtml(str) {
   if (!str) return '';
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -6651,6 +6908,7 @@ function _buildCatCard(cat) {
   const neon=cat.neon?`box-shadow:0 0 16px rgba(${cat.neon.r},${cat.neon.g},${cat.neon.b},.7);border-color:rgba(${cat.neon.r},${cat.neon.g},${cat.neon.b},.6);`:'';
   const total=cl+sc;
   return `<div class="cat-card" style="--card-color:${cat.color||'var(--accent)'};${neon}" onclick="navigate('category','${cat.id}')">
+    ${catBgIconsHtml(cat.icon, cat.color||'var(--accent)')}
     <div class="cat-icon" style="background:${cat.color||'var(--accent)'}"><i class="fas ${cat.icon||'fa-folder'}"></i></div>
     <div class="cat-name">${escHtml(cat.name)}</div>
     <div class="cat-meta">${total} عنصر</div>
@@ -6700,24 +6958,28 @@ window.renderCategoryView=function(catId){
 };
 
 // ── 4. SETTINGS TABS ──
+const SETT_SECTIONS = {
+  profile:    { title: 'الحساب',   icon: 'fa-user' },
+  appearance: { title: 'المظهر',   icon: 'fa-palette' },
+  background: { title: 'الخلفية',  icon: 'fa-image' },
+  download:   { title: 'التحميل',  icon: 'fa-download' },
+  data:       { title: 'البيانات', icon: 'fa-database' },
+};
 function openSettSection(tab){
-  document.getElementById('settingsHomeGrid').style.display='none';
-  document.getElementById('settBackBtn').style.display='flex';
+  const info = SETT_SECTIONS[tab] || { title: 'الإعدادات', icon: 'fa-cog' };
+  document.getElementById('settModalTitle').textContent = info.title;
+  document.getElementById('settModalIcon').className = 'fas ' + info.icon;
   document.querySelectorAll('.sett-panel').forEach(p=>{
     const isActive = p.dataset.sett===tab;
     p.classList.toggle('active', isActive);
-    p.style.display = isActive ? 'contents' : 'none';
+    p.style.display = isActive ? 'block' : 'none';
   });
+  document.getElementById('settSectionModalBg').classList.add('show');
 }
 function closeSettSection(){
-  document.getElementById('settingsHomeGrid').style.display='grid';
-  document.getElementById('settBackBtn').style.display='none';
-  document.querySelectorAll('.sett-panel').forEach(p=>{
-    p.classList.remove('active');
-    p.style.display='none';
-  });
+  document.getElementById('settSectionModalBg').classList.remove('show');
 }
-// Init: show the settings home grid, all section pages hidden, on load
+// Init: all section panels hidden, dialog closed, on load
 (function(){
   document.querySelectorAll('.sett-panel').forEach(p=>{ p.style.display='none'; });
 })();
@@ -7772,7 +8034,7 @@ loadExternalEffects();
 //  hasn't been fetched yet (e.g. very first offline load).
 // ══════════════════════════════════════════════
 const UI_STYLE_ID = 'analog3d';
-const UI_STYLE_FALLBACK_CSS = "[data-ui-style=analog3d]{--bevel-hi:rgba(255,255,255,.10);--bevel-lo:rgba(0,0,0,.28);}[data-ui-style=analog3d] .btn,[data-ui-style=analog3d] .lc-btn,[data-ui-style=analog3d] .lang-switch-btn,[data-ui-style=analog3d] .type-tab,[data-ui-style=analog3d] .nt-tab{border-radius:12px!important;background-color:var(--surface3)!important;background-image:linear-gradient(160deg,var(--bevel-hi),var(--bevel-lo))!important;color:var(--text)!important;border:1px solid var(--border)!important;box-shadow:0 3px 6px rgba(0,0,0,.3),inset 0 1px 0 var(--bevel-hi),inset 0 -2px 3px var(--bevel-lo)!important;text-shadow:0 1px 1px rgba(0,0,0,.25)!important;transition:box-shadow .12s,transform .12s!important;}[data-ui-style=analog3d] .btn:active,[data-ui-style=analog3d] .lc-btn:active,[data-ui-style=analog3d] .type-tab:active{box-shadow:inset 0 2px 5px rgba(0,0,0,.45)!important;transform:translateY(1px);}[data-ui-style=analog3d] .btn-primary,[data-ui-style=analog3d] .type-tab.active,[data-ui-style=analog3d] .nt-tab.active{background-color:var(--accent)!important;background-image:linear-gradient(160deg,rgba(255,255,255,.22),rgba(0,0,0,.15))!important;color:#1a1a1a!important;border-color:rgba(0,0,0,.35)!important;box-shadow:0 2px 5px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.3)!important;}[data-ui-style=analog3d] .settings-card,[data-ui-style=analog3d] .cl-card,[data-ui-style=analog3d] .modal,[data-ui-style=analog3d] .theme-card,[data-ui-style=analog3d] .cat-card,[data-ui-style=analog3d] .stat-card{border-radius:16px!important;background-color:var(--surface)!important;background-image:linear-gradient(160deg,var(--bevel-hi),transparent 40%)!important;border:1px solid var(--border)!important;box-shadow:0 8px 18px rgba(0,0,0,.28),inset 0 1px 0 var(--bevel-hi)!important;}[data-ui-style=analog3d] input,[data-ui-style=analog3d] select,[data-ui-style=analog3d] textarea{border-radius:10px!important;background:var(--surface2)!important;border:1px solid var(--border)!important;box-shadow:inset 0 2px 5px rgba(0,0,0,.3)!important;color:var(--text)!important;}[data-ui-style=analog3d] .toggle-slider{border-radius:20px!important;box-shadow:inset 0 2px 4px rgba(0,0,0,.35)!important;}[data-ui-style=analog3d] .toggle input:checked + .toggle-slider{box-shadow:inset 0 2px 4px rgba(0,0,0,.35),0 0 8px var(--accent-glow)!important;}[data-ui-style=analog3d] .topbar{background-color:var(--surface)!important;background-image:linear-gradient(180deg,var(--bevel-hi),transparent 60%)!important;box-shadow:0 2px 10px rgba(0,0,0,.3),inset 0 -1px 0 var(--bevel-lo)!important;}[data-ui-style=analog3d] .sidebar{background-color:var(--surface)!important;background-image:linear-gradient(180deg,var(--bevel-hi),transparent 30%)!important;border-inline-end:1px solid var(--border)!important;}[data-ui-style=analog3d] .sb-item{border-radius:10px!important;margin:3px 10px!important;padding:9px 14px!important;transition:background .12s,box-shadow .12s,color .12s!important;}[data-ui-style=analog3d] .sb-item:hover{background-color:var(--surface2)!important;background-image:linear-gradient(160deg,var(--bevel-hi),transparent 60%)!important;box-shadow:0 2px 5px rgba(0,0,0,.22)!important;}[data-ui-style=analog3d] .sb-item.active{background-color:var(--surface3)!important;background-image:linear-gradient(160deg,var(--bevel-hi),transparent 60%)!important;box-shadow:inset 0 1px 4px rgba(0,0,0,.35),0 0 0 1px var(--accent-glow)!important;}";
+const UI_STYLE_FALLBACK_CSS = "[data-ui-style=analog3d]{--bevel-hi:rgba(255,255,255,.10);--bevel-lo:rgba(0,0,0,.28);}[data-ui-style=analog3d] .btn,[data-ui-style=analog3d] .lc-btn,[data-ui-style=analog3d] .lang-switch-btn,[data-ui-style=analog3d] .type-tab,[data-ui-style=analog3d] .nt-tab{border-radius:12px!important;background-color:var(--surface3)!important;background-image:linear-gradient(160deg,var(--bevel-hi),var(--bevel-lo))!important;color:var(--text)!important;border:1px solid var(--border)!important;box-shadow:0 3px 6px rgba(0,0,0,.3),inset 0 1px 0 var(--bevel-hi),inset 0 -2px 3px var(--bevel-lo)!important;text-shadow:0 1px 1px rgba(0,0,0,.25)!important;transition:box-shadow .12s,transform .12s!important;}[data-ui-style=analog3d] .btn:active,[data-ui-style=analog3d] .lc-btn:active,[data-ui-style=analog3d] .type-tab:active{box-shadow:inset 0 2px 5px rgba(0,0,0,.45)!important;transform:translateY(1px);}[data-ui-style=analog3d] .btn-primary,[data-ui-style=analog3d] .type-tab.active,[data-ui-style=analog3d] .nt-tab.active{background-color:var(--accent)!important;background-image:linear-gradient(160deg,rgba(255,255,255,.22),rgba(0,0,0,.15))!important;color:#1a1a1a!important;border-color:rgba(0,0,0,.35)!important;box-shadow:0 2px 5px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.3)!important;}[data-ui-style=analog3d] .cl-card,[data-ui-style=analog3d] .modal,[data-ui-style=analog3d] .cat-card,[data-ui-style=analog3d] .stat-card{border-radius:16px!important;background-color:var(--surface)!important;background-image:linear-gradient(160deg,var(--bevel-hi),transparent 40%)!important;border:1px solid var(--border)!important;box-shadow:0 8px 18px rgba(0,0,0,.28),inset 0 1px 0 var(--bevel-hi)!important;}[data-ui-style=analog3d] input,[data-ui-style=analog3d] select,[data-ui-style=analog3d] textarea{border-radius:10px!important;background:var(--surface2)!important;border:1px solid var(--border)!important;box-shadow:inset 0 2px 5px rgba(0,0,0,.3)!important;color:var(--text)!important;}[data-ui-style=analog3d] .toggle-slider{border-radius:20px!important;box-shadow:inset 0 2px 4px rgba(0,0,0,.35)!important;}[data-ui-style=analog3d] .toggle input:checked + .toggle-slider{box-shadow:inset 0 2px 4px rgba(0,0,0,.35),0 0 8px var(--accent-glow)!important;}[data-ui-style=analog3d] .topbar{background-color:var(--surface)!important;background-image:linear-gradient(180deg,var(--bevel-hi),transparent 60%)!important;box-shadow:0 2px 10px rgba(0,0,0,.3),inset 0 -1px 0 var(--bevel-lo)!important;}[data-ui-style=analog3d] .sidebar{background-color:var(--surface)!important;background-image:linear-gradient(180deg,var(--bevel-hi),transparent 30%)!important;border-inline-end:1px solid var(--border)!important;}[data-ui-style=analog3d] .sb-item{border-radius:10px!important;margin:3px 10px!important;padding:9px 14px!important;transition:background .12s,box-shadow .12s,color .12s!important;}[data-ui-style=analog3d] .sb-item:hover{background-color:var(--surface2)!important;background-image:linear-gradient(160deg,var(--bevel-hi),transparent 60%)!important;box-shadow:0 2px 5px rgba(0,0,0,.22)!important;}[data-ui-style=analog3d] .sb-item.active{background-color:var(--surface3)!important;background-image:linear-gradient(160deg,var(--bevel-hi),transparent 60%)!important;box-shadow:inset 0 1px 4px rgba(0,0,0,.35),0 0 0 1px var(--accent-glow)!important;}";
 
 function applyUiStyle() {
   document.body.setAttribute('data-ui-style', UI_STYLE_ID);
@@ -7824,13 +8086,114 @@ loadUiStyles();
 
 
 // ══════════════════════════════════════════════
+//  APP UPDATES — detect a new version of the site (service-worker based)
+//  and let the user pull it in with one click, without wiping their
+//  saved data (data lives in IndexedDB, a separate store from the
+//  page/asset cache the service worker manages).
+// ══════════════════════════════════════════════
+const APP_VERSION = '5.0';
+let swRegistration = null;
+let updateAvailable = false;
+let updateCheckInFlight = false;
+
+function _fmtCheckTime(){
+  return new Date().toLocaleTimeString('ar-EG', { hour:'2-digit', minute:'2-digit' });
+}
+
+function refreshAppUpdateUI(){
+  const dotSb = document.getElementById('sbUpdateDot');
+  const dotSnc = document.getElementById('sncUpdateDot');
+  const banner = document.getElementById('updateBanner');
+  if (dotSb) dotSb.style.display = updateAvailable ? 'block' : 'none';
+  if (dotSnc) dotSnc.style.display = updateAvailable ? 'block' : 'none';
+  if (banner) banner.style.display = updateAvailable ? 'flex' : 'none';
+  const verEl = document.getElementById('appVersionLabel');
+  if (verEl) verEl.textContent = 'v' + APP_VERSION;
+}
+
+function _onUpdateFound(){
+  updateAvailable = true;
+  refreshAppUpdateUI();
+  showToast('🔔 يوجد تحديث جديد للتطبيق — افتح الإعدادات لتثبيته', '');
+}
+
+async function checkForAppUpdate(manual){
+  const statusEl = document.getElementById('appUpdateStatus');
+  if (!('serviceWorker' in navigator)) {
+    if (statusEl) statusEl.textContent = 'التحديث التلقائي غير مدعوم على هذا المتصفح';
+    if (manual) showToast('التحديث التلقائي غير مدعوم على هذا المتصفح', 'error');
+    return;
+  }
+  if (updateCheckInFlight) return;
+  updateCheckInFlight = true;
+  try {
+    if (!swRegistration) swRegistration = await navigator.serviceWorker.getRegistration();
+    if (swRegistration) {
+      await swRegistration.update();
+      if (swRegistration.waiting && navigator.serviceWorker.controller) {
+        updateAvailable = true;
+      }
+    }
+    if (statusEl) statusEl.textContent = 'آخر فحص: ' + _fmtCheckTime() + (updateAvailable ? ' — يوجد تحديث' : ' — أحدث نسخة مثبّتة');
+    if (manual && !updateAvailable) showToast('أنت تستخدم أحدث نسخة بالفعل ✓');
+    refreshAppUpdateUI();
+  } catch (e) {
+    if (statusEl) statusEl.textContent = 'تعذّر التحقق من التحديثات';
+    if (manual) showToast('تعذّر التحقق من التحديثات', 'error');
+  } finally {
+    updateCheckInFlight = false;
+  }
+}
+
+async function performAppUpdate(){
+  showToast('جاري التحديث...');
+  try {
+    if (!('serviceWorker' in navigator)) { location.reload(); return; }
+    const reg = swRegistration || await navigator.serviceWorker.getRegistration();
+    if (reg && reg.waiting) {
+      // A new service worker is already downloaded — activate it, then reload once it takes control.
+      navigator.serviceWorker.addEventListener('controllerchange', () => location.reload(), { once: true });
+      reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+      return;
+    }
+    // No waiting worker (e.g. very first load, or nothing new) — force a clean
+    // pull of the latest site files. Only the SW cache is cleared here;
+    // app data (IndexedDB) is a separate store and is never touched.
+    if (reg) await reg.update();
+    if ('caches' in window) {
+      const keys = await caches.keys();
+      await Promise.all(keys.map(k => caches.delete(k)));
+    }
+    location.reload();
+  } catch (e) {
+    showToast('تعذّر التحديث، جرّب تحديث الصفحة يدوياً', 'error');
+  }
+}
+
+// ══════════════════════════════════════════════
 //  OFFLINE SUPPORT — register the service worker so the whole app (shell +
 //  fetched assets like effects.json / ui.json / program library) keeps
 //  working without an internet connection after the first visit.
 // ══════════════════════════════════════════════
+refreshAppUpdateUI();
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(() => { /* offline mode unavailable on this host — app still works online */ });
+    navigator.serviceWorker.register('./sw.js').then(reg => {
+      swRegistration = reg;
+      // A worker already waiting on load means an update arrived while the tab was closed.
+      if (reg.waiting && navigator.serviceWorker.controller) _onUpdateFound();
+      reg.addEventListener('updatefound', () => {
+        const nw = reg.installing;
+        if (!nw) return;
+        nw.addEventListener('statechange', () => {
+          if (nw.state === 'installed' && navigator.serviceWorker.controller) _onUpdateFound();
+        });
+      });
+      setTimeout(() => checkForAppUpdate(false), 2000);
+      // Re-check periodically while the tab stays open (browsers already
+      // check on navigation, this covers long-lived sessions too).
+      setInterval(() => checkForAppUpdate(false), 30 * 60 * 1000);
+    }).catch(() => { /* offline mode unavailable on this host — app still works online */ });
   });
 }
 </script>
@@ -7846,7 +8209,7 @@ if ('serviceWorker' in navigator) {
 ">
   <div style="
     background:var(--surface);border:1px solid var(--border);border-radius:24px;
-    max-width:460px;width:100%;padding:40px 32px 32px;position:relative;
+    max-width:460px;width:100%;max-height:90vh;overflow-y:auto;padding:40px 32px 32px;position:relative;
     box-shadow:0 32px 80px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.08);
     animation:aboutIn .4s cubic-bezier(.34,1.56,.64,1);
     text-align:center;
@@ -7862,8 +8225,8 @@ if ('serviceWorker' in navigator) {
         <path d="M32 21c-4-3-11-4-15-2v24c4-2 11-1 15 2c4-3 11-4 15-2V19c-4-2-11-1-15 2Z" fill="#fff"/>
         <path d="M32 21v24" stroke="#ffb84d" stroke-width="2" stroke-linecap="round"/>
       </svg>
-      <div style="font-family:'Cairo',sans-serif;font-weight:900;font-size:1.6rem;line-height:1;direction:ltr;">
-        <span style="color:var(--gold);">Outer</span><span style="color:var(--accent);">School</span>
+      <div style="font-family:'Amiri',serif;font-weight:700;font-size:1.9rem;line-height:1;color:var(--accent);direction:rtl;">
+        مَوْئِل
       </div>
     </div>
 
@@ -7889,8 +8252,14 @@ if ('serviceWorker' in navigator) {
     <div style="font-size:3.5rem;line-height:.6;color:var(--accent);opacity:.25;font-family:Georgia,serif;margin-bottom:22px;">"</div>
 
     <!-- Tagline -->
-    <p style="font-size:.82rem;color:var(--muted);margin-bottom:28px;line-height:1.7;">
-      OuterSchool هو مكتبتك التعليمية الشخصية — صمّم ليتكيّف مع أسلوبك في التعلم والتعليم.
+    <p style="font-size:.82rem;color:var(--muted);margin-bottom:16px;line-height:1.7;">
+      مَوْئِل هو مكتبتك التعليمية الشخصية — صمّم ليتكيّف مع أسلوبك في التعلم والتعليم.
+    </p>
+
+    <!-- Name meaning -->
+    <p style="font-size:.8rem;color:var(--muted);line-height:1.8;margin:0 0 20px;">
+      <strong style="font-family:'Amiri',serif;font-weight:700;color:var(--accent);">"مَوْئِل"</strong>
+      تعني المَلجأ والمكان الذي يُرجع إليه — تمامًا كما يكون هذا الموقع مكانك الدائم لكل ما تتعلمه.
     </p>
 
     <!-- Divider -->
@@ -8005,6 +8374,38 @@ if ('serviceWorker' in navigator) {
 
 <script>
 // ══════════════════════════════════════════════
+//  CUSTOM LOGO — if an icon.png sits next to index.html, use it in
+//  place of the built-in SVG mark (topbar + splash screen).
+// ══════════════════════════════════════════════
+(function applyCustomLogo(){
+  try{
+    const test = new Image();
+    test.onload = function(){
+      const src = './icon.png';
+      const topbarMark = document.querySelector('.topbar-logo .logo-mark');
+      if(topbarMark){
+        const img = document.createElement('img');
+        img.src = src; img.alt = 'Logo';
+        img.className = 'logo-mark';
+        img.width = 40; img.height = 40;
+        img.style.cssText = 'border-radius:10px;object-fit:cover;';
+        topbarMark.replaceWith(img);
+      }
+      const splashLogo = document.getElementById('splashLogo');
+      const splashSvg = splashLogo && splashLogo.querySelector('svg');
+      if(splashSvg){
+        const img = document.createElement('img');
+        img.src = src; img.alt = 'Logo';
+        img.width = 88; img.height = 88;
+        img.style.cssText = 'border-radius:20px;object-fit:cover;';
+        splashSvg.replaceWith(img);
+      }
+    };
+    test.src = './icon.png';
+  }catch(e){}
+})();
+
+// ══════════════════════════════════════════════
 //  SPLASH SCREEN
 // ══════════════════════════════════════════════
 (function initSplash(){
@@ -8062,13 +8463,38 @@ if ('serviceWorker' in navigator) {
   }
   drawParticles();
 
-  // ── Sound — play intro.mp3 from same folder ──
+  // ── Sound — play intro.mp3 from same folder, and sync the
+  //    loading duration / progress bar to the audio's real length ──
+  const SPLASH_DEFAULT_MS = 2600;
+  const SPLASH_MIN_MS = 1200;
+  const SPLASH_MAX_MS = 12000;
+  let splashScheduled = false;
+
+  function scheduleSplashDismiss(ms){
+    if(splashScheduled) return;
+    splashScheduled = true;
+    const dur = Math.max(SPLASH_MIN_MS, Math.min(ms || SPLASH_DEFAULT_MS, SPLASH_MAX_MS));
+    fill.style.transition = `width ${(dur/1000).toFixed(2)}s cubic-bezier(.4,0,.2,1)`;
+    setTimeout(()=>{ fill.style.width='100%'; }, 100);
+    setTimeout(dismissSplash, dur);
+  }
+
   function playIntroSound(){
     try{
       const audio = new Audio('./intro.mp3');
       audio.volume = 0.7;
+      audio.addEventListener('loadedmetadata', ()=>{
+        if(audio.duration && isFinite(audio.duration)){
+          scheduleSplashDismiss(audio.duration * 1000);
+        }
+      });
+      audio.addEventListener('error', ()=> scheduleSplashDismiss(SPLASH_DEFAULT_MS));
       audio.play().catch(()=>{}); // silently ignore if blocked or file missing
-    }catch(e){}
+      // Fallback in case the file is missing / metadata never loads (autoplay block etc.)
+      setTimeout(()=> scheduleSplashDismiss(SPLASH_DEFAULT_MS), 900);
+    }catch(e){
+      scheduleSplashDismiss(SPLASH_DEFAULT_MS);
+    }
   }
 
   // ── Sequence ──
@@ -8079,7 +8505,6 @@ if ('serviceWorker' in navigator) {
     tagline.style.opacity='1';
     tagline.style.transform='translateY(0)';
     bar.style.opacity='1';
-    setTimeout(()=>{ fill.style.width='100%'; }, 100);
   }, 200);
 
   function dismissSplash(){
@@ -8090,7 +8515,6 @@ if ('serviceWorker' in navigator) {
     setTimeout(()=>{ splash.style.display='none'; }, 700);
   }
 
-  setTimeout(dismissSplash, 2600);
   splash.addEventListener('click', dismissSplash);
 })();
 
