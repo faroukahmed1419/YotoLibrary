@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+<title>Light Table — PDF Reader</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+  :root {
+    --bg: #151413;
+    --bg-raised: #1e1d1b;
+    --bg-raised-2: #282624;
+    --bg-hover: #32302c;
+    --lightbox: #f5f0e6;
+    --lightbox-dim: #e8e0d0;
+    --ink: #1c1b19;
+    --paper: #d4cfc6;
+    --paper-muted: #a8a299;
+    --paper-faint: #7a756e;
+    --amber: #f0b040;
+    --amber-dim: #d49630;
+    --amber-glow: rgba(240, 176, 64, 0.15);
+    --rust: #e06048;
+    --line: #33302c;
+    --line-strong: #3d3a35;
+    --shadow: rgba(0,0,0,0.4);
+    --touch-target: 44px;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: var(--lightbox); font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif; overflow: hidden; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* App Layout */
+  .app-container { display: flex; flex-direction: column; height: 100vh; height: 100dvh; position: relative; }
+
+  /* Main Header */
+  header {
+    height: 56px;
+    background: var(--bg-raised);
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    z-index: 10;
+    flex-shrink: 0;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand-title { font-size: 16px; font-weight: 700; color: var(--lightbox); letter-spacing: -0.3px; }
+  .brand-title span { color: var(--amber); }
+  .header-actions { display: flex; align-items: center; gap: 8px; }
+
+  /* Buttons - Mobile Optimized */
+  .btn-icon {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    color: var(--paper);
+    width: var(--touch-target);
+    height: var(--touch-target);
+    min-width: var(--touch-target);
+    min-height: var(--touch-target);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    -webkit-touch-callout: none;
+    user-select: none;
+  }
+  .btn-icon::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(255,255,255,0.15) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .btn-icon:active::after { opacity: 1; }
+  .btn-icon:active { transform: scale(0.94); background: var(--bg-hover); border-color: var(--amber-dim); }
+  .btn-icon:hover { border-color: var(--amber-dim); color: var(--lightbox); }
+  .btn-icon.active { background: var(--amber); color: var(--ink); border-color: var(--amber); box-shadow: 0 0 16px var(--amber-glow); }
+  .btn-icon.active:hover { background: var(--amber-dim); }
+  .btn-icon svg { width: 20px; height: 20px; fill: currentColor; flex-shrink: 0; }
+
+  .btn-primary {
+    background: var(--amber);
+    color: var(--ink);
+    border: 1px solid var(--amber);
+    font-weight: 700;
+  }
+  .btn-primary:hover { background: var(--amber-dim); }
+
+  .btn-danger { color: var(--rust); border-color: rgba(224, 96, 72, 0.3); }
+  .btn-danger:hover { background: rgba(224, 96, 72, 0.15); border-color: var(--rust); color: var(--rust); }
+
+  /* Main Viewport */
+  main#mainViewport {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    overflow: hidden;
+    background: radial-gradient(ellipse 900px 500px at 50% -10%, #252320 0%, transparent 60%), var(--bg);
+  }
+
+  /* PDF Viewer Pane */
+  .pdf-pane {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border-left: 1px solid var(--line);
+    position: relative;
+    overflow: hidden;
+    min-width: 0;
+  }
+  .pdf-pane:last-child { border-left: none; }
+  .pdf-pane.hidden { display: none !important; }
+
+  /* Sub-toolbar */
+  .pane-toolbar {
+    min-height: 52px;
+    background: var(--bg-raised-2);
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    gap: 8px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+  }
+  .pane-title { 
+    font-size: 13px; font-weight: 600; color: var(--paper-muted); 
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; 
+    max-width: 140px; flex-shrink: 1;
+  }
+  .pane-controls { display: flex; align-items: center; gap: 6px; flex-shrink: 0; flex-wrap: wrap; }
+
+  /* Mobile overflow menu */
+  .pane-controls .overflow-menu { display: none; }
+
+  .pane-content {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 16px 12px;
+    scroll-behavior: smooth;
+    position: relative;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Pages Layout */
+  .pages-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    margin: 0 auto;
+    padding-bottom: 40px;
+  }
+
+  .pages-container.mode-double .page-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 16px;
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .page-card {
+    position: relative;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.3);
+    border-radius: 6px;
+    background: #fff;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    will-change: transform;
+  }
+  .page-card:hover { transform: translateY(-2px); box-shadow: 0 16px 48px rgba(0,0,0,0.6); }
+  .page-card canvas {
+    display: block;
+    border-radius: 6px;
+    max-width: 100%;
+    height: auto !important;
+    touch-action: pan-y;
+  }
+
+  /* Placeholder for lazy loading */
+  .page-placeholder {
+    background: var(--bg-raised-2);
+    border: 2px dashed var(--line);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--paper-faint);
+    font-size: 12px;
+    min-height: 200px;
+  }
+
+  /* Dropzone */
+  .dropzone {
+    text-align: center;
+    padding: 40px 24px;
+    border: 2px dashed var(--line);
+    border-radius: 16px;
+    background: var(--bg-raised);
+    max-width: 340px;
+    width: 90%;
+    margin: auto;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .dropzone:hover, .dropzone.drag-over {
+    border-color: var(--amber);
+    background: var(--bg-raised-2);
+    box-shadow: 0 0 30px var(--amber-glow);
+  }
+  .dropzone svg { margin-bottom: 12px; opacity: 0.9; }
+  .dropzone h2 { font-size: 16px; margin: 0 0 6px; color: var(--lightbox); }
+  .dropzone p { font-size: 13px; color: var(--paper-faint); margin: 0; line-height: 1.5; }
+  .dropzone input { display: none; }
+
+  /* Loading State */
+  .loading-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(21, 20, 19, 0.85);
+    backdrop-filter: blur(4px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    z-index: 50;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .loading-overlay.active { opacity: 1; pointer-events: auto; }
+  .spinner {
+    width: 40px; height: 40px;
+    border: 3px solid var(--line);
+    border-top-color: var(--amber);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { font-size: 13px; color: var(--paper-muted); }
+
+  /* Bottom Controls */
+  .pane-bottom-bar {
+    min-height: 56px;
+    background: var(--bg-raised-2);
+    border-top: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 8px;
+    flex-shrink: 0;
+  }
+  .page-indicator { 
+    font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--paper-muted); 
+    display: flex; align-items: center; gap: 6px;
+  }
+  .page-indicator input {
+    width: 52px; height: 36px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    color: var(--amber);
+    text-align: center;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    padding: 4px;
+    -moz-appearance: textfield;
+  }
+  .page-indicator input::-webkit-outer-spin-button,
+  .page-indicator input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .page-indicator input:focus { outline: none; border-color: var(--amber); box-shadow: 0 0 0 3px var(--amber-glow); }
+
+  /* Toast */
+  .toast-container {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    pointer-events: none;
+  }
+  .toast {
+    background: var(--bg-raised-2);
+    border: 1px solid var(--line-strong);
+    color: var(--lightbox);
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-size: 13px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards;
+    max-width: 90vw;
+    text-align: center;
+  }
+  .toast.error { border-color: var(--rust); color: var(--rust); }
+  .toast.success { border-color: var(--amber); color: var(--amber); }
+  @keyframes toastIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes toastOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(20px); } }
+
+  /* History Drawer */
+  .drawer-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+
+  .drawer {
+    position: fixed;
+    top: 0; bottom: 0; right: 0;
+    width: 90%;
+    max-width: 380px;
+    background: var(--bg-raised);
+    border-left: 1px solid var(--line);
+    z-index: 101;
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+  }
+  .drawer.open { transform: translateX(0); }
+  .drawer-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--line); padding-bottom: 12px; }
+  .drawer-title { font-weight: 700; font-size: 16px; color: var(--amber); }
+
+  .history-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+  .history-item {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    padding: 14px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+    touch-action: manipulation;
+  }
+  .history-item:hover, .history-item:active { border-color: var(--amber); background: var(--bg-raised-2); }
+  .history-item-header { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .history-item .name { font-size: 13px; font-weight: 600; color: var(--lightbox); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+  .btn-delete-history { 
+    background: transparent; border: none; color: var(--paper-faint); cursor: pointer; 
+    padding: 6px; border-radius: 6px; transition: all 0.15s; flex-shrink: 0;
+    width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+  }
+  .btn-delete-history:hover { background: rgba(224, 96, 72, 0.15); color: var(--rust); }
+  .history-item .meta { font-size: 11px; color: var(--paper-muted); display: flex; justify-content: space-between; }
+  .history-item .progress-bar { height: 4px; background: var(--line); border-radius: 2px; overflow: hidden; }
+  .history-item .progress-fill { height: 100%; background: var(--amber); transition: width 0.3s ease; }
+
+  .hidden { display: none !important; }
+
+  /* Mobile Optimizations */
+  @media (max-width: 768px) {
+    :root { --touch-target: 48px; }
+    header { height: 52px; padding: 0 12px; }
+    .brand-title { font-size: 14px; }
+    .pane-toolbar { min-height: 48px; padding: 6px 10px; }
+    .pane-title { max-width: 100px; font-size: 12px; }
+    .pane-controls { gap: 4px; }
+    .pane-controls .overflow-hidden-mobile { display: none; }
+    .pane-controls .overflow-menu { display: flex; }
+    .dropzone { padding: 32px 20px; }
+    .dropzone h2 { font-size: 15px; }
+    .dropzone p { font-size: 12px; }
+    .page-indicator { font-size: 13px; }
+    .page-indicator input { width: 48px; height: 36px; }
+    .pane-bottom-bar { min-height: 52px; gap: 12px; }
+
+    /* Stack panes on very small screens if split */
+    main#mainViewport.split-mobile-stack { flex-direction: column; }
+    main#mainViewport.split-mobile-stack .pdf-pane { border-left: none; border-top: 1px solid var(--line); height: 50%; }
+    main#mainViewport.split-mobile-stack .pdf-pane:first-child { border-top: none; }
+  }
+
+  @media (max-width: 480px) {
+    .btn-icon svg { width: 18px; height: 18px; }
+    .page-card { border-radius: 4px; }
+    .page-card canvas { border-radius: 4px; }
+  }
+
+  /* Desktop enhancements */
+  @media (min-width: 1024px) {
+    .pane-content { padding: 24px 16px; }
+    .pages-container { gap: 24px; }
+  }
+
+  /* Print styles */
+  @media print {
+    header, .pane-toolbar, .pane-bottom-bar, .drawer, .drawer-overlay, .btn-icon { display: none !important; }
+    .pdf-pane { border: none; }
+    .page-card { box-shadow: none; break-inside: avoid; }
+  }
+</style>
+<base target="_blank">
+</head>
+<body>
+
+<div class="app-container">
+
+  <!-- Top Header -->
+  <header>
+    <div class="brand">
+      <div class="brand-title">Light Table <span>/ Reader</span></div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-icon" id="btnToggleSplit" title="عرض مزدوج (ملفين بجانب بعضهما)">
+        <svg viewBox="0 0 24 24"><path d="M3 4h8v16H3V4zm10 0h8v16h-8V4z"/></svg>
+      </button>
+      <button class="btn-icon" id="btnFullscreen" title="الشاشة الكاملة">
+        <svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+      </button>
+      <button class="btn-icon" id="btnHistory" title="سجل الملفات">
+        <svg viewBox="0 0 24 24"><path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6a7 7 0 1 1 7 7 7.07 7.07 0 0 1-6-3.42l-1.42 1.42A8.91 8.91 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Viewport -->
+  <main id="mainViewport">
+
+    <!-- Pane 1 -->
+    <div class="pdf-pane" id="pane1">
+      <div class="pane-toolbar">
+        <div class="pane-title" id="title1">الملف الرئيسي</div>
+        <div class="pane-controls">
+          <button class="btn-icon btn-primary" id="btnOpen1" title="فتح ملف PDF">
+            <svg viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>
+          </button>
+          <button class="btn-icon btn-danger hidden" id="btnClose1" title="إغلاق الملف">
+            <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+          </button>
+          <button class="btn-icon overflow-hidden-mobile" id="btnViewMode1" title="نمط العرض (صفحة/صفحتين)">
+            <svg viewBox="0 0 24 24"><path d="M21 5H3v14h18V5zm-2 12h-6V7h6v10zM11 17H5V7h6v10z"/></svg>
+          </button>
+          <button class="btn-icon overflow-hidden-mobile" id="btnZoomOut1" title="تصغير">
+            <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14zm-2.5-2h5v-1h-5v1z"/></svg>
+          </button>
+          <button class="btn-icon overflow-hidden-mobile" id="btnZoomIn1" title="تكبير">
+            <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14zm.5-7H9v2H7v1h2v2h1v-2h2V9h-2V7z"/></svg>
+          </button>
+          <button class="btn-icon overflow-hidden-mobile" id="btnZoomFit1" title="ملاءمة العرض">
+            <svg viewBox="0 0 24 24"><path d="M4 6h2v12H4zm14 0h2v12h-2zM8.5 12l2.5-3v2h2V9l2.5 3L13 15v-2h-2v2z"/></svg>
+          </button>
+          <button class="btn-icon overflow-menu" id="btnOverflow1" title="المزيد">
+            <svg viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="pane-content" id="content1">
+        <div class="loading-overlay" id="loading1">
+          <div class="spinner"></div>
+          <div class="loading-text mono">جاري فتح الملف...</div>
+        </div>
+        <div class="dropzone" id="dropzone1">
+          <input type="file" id="fileInput1" accept="application/pdf">
+          <svg width="48" height="48" viewBox="0 0 46 46" fill="none">
+            <rect x="8" y="4" width="24" height="34" rx="2" stroke="#f0b040" stroke-width="1.6"/>
+            <path d="M8 12h24M8 20h24M8 28h16" stroke="#7a756e" stroke-width="1.6"/>
+            <circle cx="36" cy="30" r="7" stroke="#f0b040" stroke-width="1.6"/>
+            <path d="M36 27v6M33 30h6" stroke="#f0b040" stroke-width="1.6"/>
+          </svg>
+          <h2>افتح ملف PDF الأول</h2>
+          <p>اضغط هنا أو اسحب الملف إلى هذه المنطقة</p>
+        </div>
+        <div class="pages-container hidden" id="pagesContainer1"></div>
+      </div>
+
+      <div class="pane-bottom-bar hidden" id="bottomBar1">
+        <button class="btn-icon" id="btnPrev1" title="الصفحة السابقة">
+          <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+        </button>
+        <div class="page-indicator">
+          <input type="number" id="pageNumInput1" value="1" min="1"> / <span id="pageCount1">0</span>
+        </div>
+        <button class="btn-icon" id="btnNext1" title="الصفحة التالية">
+          <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Pane 2 -->
+    <div class="pdf-pane hidden" id="pane2">
+      <div class="pane-toolbar">
+        <div class="pane-title" id="title2">الملف الثاني</div>
+        <div class="pane-controls">
+          <button class="btn-icon btn-primary" id="btnOpen2" title="فتح ملف PDF">
+            <svg viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>
+          </button>
+          <button class="btn-icon btn-danger hidden" id="btnClose2" title="إغلاق الملف">
+            <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+          </button>
+          <button class="btn-icon overflow-hidden-mobile" id="btnViewMode2" title="نمط العرض (صفحة/صفحتين)">
+            <svg viewBox="0 0 24 24"><path d="M21 5H3v14h18V5zm-2 12h-6V7h6v10zM11 17H5V7h6v10z"/></svg>
+          </button>
+          <button class="btn-icon overflow-hidden-mobile" id="btnZoomOut2" title="تصغير">
+            <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14zm-2.5-2h5v-1h-5v1z"/></svg>
+          </button>
+          <button class="btn-icon overflow-hidden-mobile" id="btnZoomIn2" title="تكبير">
+            <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14zm.5-7H9v2H7v1h2v2h1v-2h2V9h-2V7z"/></svg>
+          </button>
+          <button class="btn-icon overflow-hidden-mobile" id="btnZoomFit2" title="ملاءمة العرض">
+            <svg viewBox="0 0 24 24"><path d="M4 6h2v12H4zm14 0h2v12h-2zM8.5 12l2.5-3v2h2V9l2.5 3L13 15v-2h-2v2z"/></svg>
+          </button>
+          <button class="btn-icon overflow-menu" id="btnOverflow2" title="المزيد">
+            <svg viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="pane-content" id="content2">
+        <div class="loading-overlay" id="loading2">
+          <div class="spinner"></div>
+          <div class="loading-text mono">جاري فتح الملف...</div>
+        </div>
+        <div class="dropzone" id="dropzone2">
+          <input type="file" id="fileInput2" accept="application/pdf">
+          <svg width="48" height="48" viewBox="0 0 46 46" fill="none">
+            <rect x="8" y="4" width="24" height="34" rx="2" stroke="#f0b040" stroke-width="1.6"/>
+            <path d="M8 12h24M8 20h24M8 28h16" stroke="#7a756e" stroke-width="1.6"/>
+            <circle cx="36" cy="30" r="7" stroke="#f0b040" stroke-width="1.6"/>
+            <path d="M36 27v6M33 30h6" stroke="#f0b040" stroke-width="1.6"/>
+          </svg>
+          <h2>افتح ملف PDF الثاني</h2>
+          <p>اضغط هنا أو اسحب الملف إلى هذه المنطقة</p>
+        </div>
+        <div class="pages-container hidden" id="pagesContainer2"></div>
+      </div>
+
+      <div class="pane-bottom-bar hidden" id="bottomBar2">
+        <button class="btn-icon" id="btnPrev2" title="الصفحة السابقة">
+          <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+        </button>
+        <div class="page-indicator">
+          <input type="number" id="pageNumInput2" value="1" min="1"> / <span id="pageCount2">0</span>
+        </div>
+        <button class="btn-icon" id="btnNext2" title="الصفحة التالية">
+          <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- History Drawer -->
+  <div class="drawer-overlay" id="drawerOverlay"></div>
+  <div class="drawer" id="drawer">
+    <div class="drawer-header">
+      <div class="drawer-title">سجل الملفات المفتوحة</div>
+      <button class="btn-icon" id="btnCloseDrawer" title="إغلاق">
+        <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
+    </div>
+    <div class="history-list" id="historyList"></div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+</div>
+
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+/* ---------- Utilities ---------- */
+function showToast(message, type = 'info') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+
+function clamp(val, min, max) { return Math.min(Math.max(val, min), max); }
+
+/* ---------- IndexedDB ---------- */
+const DB_NAME = 'PDFReaderStorageDB_v2';
+const DB_VERSION = 1;
+const STORE_NAME = 'pdf_files';
+
+function initDB() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
+    request.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(STORE_NAME)) {
+        db.createObjectStore(STORE_NAME, { keyPath: 'fileName' });
+      }
+    };
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+async function savePdfToDB(fileName, blob) {
+  try {
+    const db = await initDB();
+    const tx = db.transaction(STORE_NAME, 'readwrite');
+    tx.objectStore(STORE_NAME).put({ fileName, blob, updatedAt: Date.now() });
+  } catch (e) { console.warn("DB save error", e); }
+}
+
+async function getPdfFromDB(fileName) {
+  try {
+    const db = await initDB();
+    return new Promise((resolve) => {
+      const tx = db.transaction(STORE_NAME, 'readonly');
+      const req = tx.objectStore(STORE_NAME).get(fileName);
+      req.onsuccess = () => resolve(req.result ? req.result.blob : null);
+      req.onerror = () => resolve(null);
+    });
+  } catch (e) { return null; }
+}
+
+async function deletePdfFromDB(fileName) {
+  try {
+    const db = await initDB();
+    db.transaction(STORE_NAME, 'readwrite').objectStore(STORE_NAME).delete(fileName);
+  } catch (e) { console.warn(e); }
+}
+
+/* ---------- History ---------- */
+function getHistory() {
+  try { return JSON.parse(localStorage.getItem('pdf_reader_history_v2') || '[]'); }
+  catch { return []; }
+}
+
+function saveHistoryItem(fileName, totalPages, currentPage) {
+  let history = getHistory();
+  const existingIndex = history.findIndex(item => item.fileName === fileName);
+  const newItem = { 
+    fileName, totalPages, currentPage, 
+    lastOpened: new Date().toLocaleDateString('ar-EG'), 
+    updatedAt: Date.now() 
+  };
+  if (existingIndex > -1) history[existingIndex] = newItem;
+  else history.unshift(newItem);
+  // Keep max 50 items
+  if (history.length > 50) history = history.slice(0, 50);
+  localStorage.setItem('pdf_reader_history_v2', JSON.stringify(history));
+  renderHistoryUI();
+}
+
+/* ---------- PDF Viewer Pane ---------- */
+class PDFViewerPane {
+  constructor(id, defaultTitle) {
+    this.id = id;
+    this.defaultTitle = defaultTitle;
+    this.pdfDoc = null;
+    this.currentFileName = "";
+    this.pageNum = 1;
+    this.scale = 1.0;
+    this.viewMode = 'single';
+    this.isRendering = false;
+    this.renderedPages = new Set();
+    this.observer = null;
+    this.touchState = { startX: 0, startY: 0, startDist: 0, startScale: 1 };
+
+    this.dom = {
+      title: document.getElementById(`title${id}`),
+      btnOpen: document.getElementById(`btnOpen${id}`),
+      btnClose: document.getElementById(`btnClose${id}`),
+      btnViewMode: document.getElementById(`btnViewMode${id}`),
+      btnZoomOut: document.getElementById(`btnZoomOut${id}`),
+      btnZoomIn: document.getElementById(`btnZoomIn${id}`),
+      btnZoomFit: document.getElementById(`btnZoomFit${id}`),
+      btnOverflow: document.getElementById(`btnOverflow${id}`),
+      dropzone: document.getElementById(`dropzone${id}`),
+      fileInput: document.getElementById(`fileInput${id}`),
+      pagesContainer: document.getElementById(`pagesContainer${id}`),
+      content: document.getElementById(`content${id}`),
+      bottomBar: document.getElementById(`bottomBar${id}`),
+      btnPrev: document.getElementById(`btnPrev${id}`),
+      btnNext: document.getElementById(`btnNext${id}`),
+      pageNumInput: document.getElementById(`pageNumInput${id}`),
+      pageCount: document.getElementById(`pageCount${id}`),
+      loading: document.getElementById(`loading${id}`)
+    };
+
+    this.initEvents();
+    this.initIntersectionObserver();
+    this.initTouch();
+  }
+
+  initEvents() {
+    this.dom.btnOpen.addEventListener('click', () => this.dom.fileInput.click());
+    this.dom.dropzone.addEventListener('click', () => this.dom.fileInput.click());
+    this.dom.btnClose.addEventListener('click', () => this.closePdfFile());
+
+    this.dom.fileInput.addEventListener('change', async (e) => {
+      if (e.target.files.length) {
+        const file = e.target.files[0];
+        const history = getHistory();
+        const existing = history.find(h => h.fileName === file.name);
+        await savePdfToDB(file.name, file);
+        this.loadPdfFile(file, existing ? existing.currentPage : 1);
+      }
+    });
+
+    // Drag & Drop on entire pane content
+    this.dom.content.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      this.dom.dropzone.classList.add('drag-over');
+    });
+    this.dom.content.addEventListener('dragleave', (e) => {
+      if (!this.dom.content.contains(e.relatedTarget)) {
+        this.dom.dropzone.classList.remove('drag-over');
+      }
+    });
+    this.dom.content.addEventListener('drop', async (e) => {
+      e.preventDefault();
+      this.dom.dropzone.classList.remove('drag-over');
+      if (e.dataTransfer.files.length) {
+        const file = e.dataTransfer.files[0];
+        if (file.type !== 'application/pdf') {
+          showToast('الملف ليس PDF. يرجى اختيار ملف PDF.', 'error');
+          return;
+        }
+        await savePdfToDB(file.name, file);
+        this.loadPdfFile(file, 1);
+      }
+    });
+
+    this.dom.btnViewMode.addEventListener('click', () => this.toggleViewMode());
+    this.dom.btnZoomIn.addEventListener('click', () => this.zoom(1.25));
+    this.dom.btnZoomOut.addEventListener('click', () => this.zoom(1 / 1.25));
+    this.dom.btnZoomFit.addEventListener('click', () => this.zoomFit());
+
+    this.dom.btnPrev.addEventListener('click', () => this.goToPage(this.pageNum - 1));
+    this.dom.btnNext.addEventListener('click', () => this.goToPage(this.pageNum + 1));
+    this.dom.pageNumInput.addEventListener('change', (e) => {
+      const val = parseInt(e.target.value, 10);
+      if (!isNaN(val)) this.goToPage(val);
+    });
+    this.dom.pageNumInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.target.blur(); this.goToPage(parseInt(e.target.value, 10)); }
+    });
+
+    // Overflow menu for mobile
+    if (this.dom.btnOverflow) {
+      this.dom.btnOverflow.addEventListener('click', () => {
+        const hidden = this.dom.btnOverflow.parentElement.querySelectorAll('.overflow-hidden-mobile');
+        hidden.forEach(btn => {
+          btn.style.display = btn.style.display === 'flex' ? 'none' : 'flex';
+        });
+      });
+    }
+
+    this.dom.content.addEventListener('scroll', () => this.handleScroll());
+  }
+
+  initIntersectionObserver() {
+    this.observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const pageNum = parseInt(entry.target.dataset.pageNumber, 10);
+          if (!this.renderedPages.has(pageNum)) {
+            this.renderPage(pageNum, entry.target.querySelector('canvas'));
+          }
+        }
+      });
+    }, { root: this.dom.content, rootMargin: '200px 0px', threshold: 0 });
+  }
+
+  initTouch() {
+    let initialDistance = 0;
+    let initialScale = 1;
+    let touchStartTime = 0;
+    let lastTap = 0;
+
+    this.dom.content.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 2) {
+        initialDistance = Math.hypot(
+          e.touches[0].pageX - e.touches[1].pageX,
+          e.touches[0].pageY - e.touches[1].pageY
+        );
+        initialScale = this.scale;
+      } else if (e.touches.length === 1) {
+        this.touchState.startX = e.touches[0].clientX;
+        this.touchState.startY = e.touches[0].clientY;
+        touchStartTime = Date.now();
+      }
+    }, { passive: true });
+
+    this.dom.content.addEventListener('touchmove', (e) => {
+      if (e.touches.length === 2) {
+        e.preventDefault();
+        const dist = Math.hypot(
+          e.touches[0].pageX - e.touches[1].pageX,
+          e.touches[0].pageY - e.touches[1].pageY
+        );
+        const scale = (dist / initialDistance) * initialScale;
+        this.scale = clamp(scale, 0.3, 4.0);
+        this.renderAllPages();
+      }
+    }, { passive: false });
+
+    this.dom.content.addEventListener('touchend', (e) => {
+      if (e.changedTouches.length === 1) {
+        const touch = e.changedTouches[0];
+        const dx = touch.clientX - this.touchState.startX;
+        const dy = touch.clientY - this.touchState.startY;
+        const dt = Date.now() - touchStartTime;
+
+        // Double tap to toggle zoom
+        const now = Date.now();
+        if (now - lastTap < 300) {
+          if (this.scale > 1.5) this.zoomFit();
+          else { this.scale = 2.0; this.renderAllPages(); }
+          lastTap = 0;
+          return;
+        }
+        lastTap = now;
+
+        // Swipe to change page (horizontal swipe with small vertical movement)
+        if (Math.abs(dx) > 60 && Math.abs(dy) < 80 && dt < 400) {
+          if (dx > 0) this.goToPage(this.pageNum - 1); // RTL: right swipe = prev
+          else this.goToPage(this.pageNum + 1); // RTL: left swipe = next
+        }
+      }
+    }, { passive: true });
+  }
+
+  async loadPdfFile(fileOrBlob, savedPage = 1, customName = null) {
+    this.dom.loading.classList.add('active');
+    this.currentFileName = customName || fileOrBlob.name;
+
+    try {
+      const arrayBuffer = await fileOrBlob.arrayBuffer();
+      this.pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    } catch (err) {
+      this.dom.loading.classList.remove('active');
+      showToast('خطأ في فتح الملف: ملف PDF تالف أو غير مدعوم', 'error');
+      console.error(err);
+      return;
+    }
+
+    this.dom.pageCount.textContent = this.pdfDoc.numPages;
+    this.dom.pageNumInput.max = this.pdfDoc.numPages;
+    this.dom.title.textContent = this.currentFileName;
+
+    this.dom.dropzone.classList.add('hidden');
+    this.dom.pagesContainer.classList.remove('hidden');
+    this.dom.bottomBar.classList.remove('hidden');
+    this.dom.btnClose.classList.remove('hidden');
+
+    this.renderedPages.clear();
+    await this.zoomFit();
+
+    const targetPage = clamp(savedPage, 1, this.pdfDoc.numPages);
+    if (targetPage > 1) {
+      setTimeout(() => this.goToPage(targetPage), 200);
+    } else {
+      this.pageNum = 1;
+      this.dom.pageNumInput.value = 1;
+    }
+
+    saveHistoryItem(this.currentFileName, this.pdfDoc.numPages, targetPage);
+    this.dom.loading.classList.remove('active');
+    showToast(`تم فتح: ${this.currentFileName}`, 'success');
+  }
+
+  closePdfFile() {
+    this.pdfDoc = null;
+    this.currentFileName = "";
+    this.pageNum = 1;
+    this.scale = 1.0;
+    this.viewMode = 'single';
+    this.renderedPages.clear();
+
+    this.dom.title.textContent = this.defaultTitle;
+    this.dom.btnViewMode.classList.remove('active');
+
+    this.dom.pagesContainer.innerHTML = '';
+    this.dom.pagesContainer.classList.add('hidden');
+    this.dom.bottomBar.classList.add('hidden');
+    this.dom.btnClose.classList.add('hidden');
+    this.dom.dropzone.classList.remove('hidden');
+    this.dom.pageNumInput.value = 1;
+    this.dom.pageCount.textContent = '0';
+    this.dom.fileInput.value = '';
+  }
+
+  async renderAllPages() {
+    if (!this.pdfDoc || this.isRendering) return;
+    this.isRendering = true;
+
+    this.dom.pagesContainer.innerHTML = '';
+    this.renderedPages.clear();
+
+    if (this.viewMode === 'double') {
+      this.dom.pagesContainer.classList.add('mode-double');
+      for (let i = 1; i <= this.pdfDoc.numPages; i += 2) {
+        const row = document.createElement('div');
+        row.className = 'page-row';
+
+        const card1 = this.createPageCard(i);
+        row.appendChild(card1);
+        this.observer.observe(card1);
+
+        if (i + 1 <= this.pdfDoc.numPages) {
+          const card2 = this.createPageCard(i + 1);
+          row.appendChild(card2);
+          this.observer.observe(card2);
+        }
+        this.dom.pagesContainer.appendChild(row);
+      }
+    } else {
+      this.dom.pagesContainer.classList.remove('mode-double');
+      for (let i = 1; i <= this.pdfDoc.numPages; i++) {
+        const card = this.createPageCard(i);
+        this.dom.pagesContainer.appendChild(card);
+        this.observer.observe(card);
+      }
+    }
+    this.isRendering = false;
+  }
+
+  createPageCard(num) {
+    const card = document.createElement('div');
+    card.className = 'page-card';
+    card.id = `pane${this.id}-card-${num}`;
+    card.dataset.pageNumber = num;
+
+    const canvas = document.createElement('canvas');
+    canvas.style.width = '100px';
+    canvas.style.height = '150px';
+    canvas.style.background = '#fff';
+    card.appendChild(canvas);
+    return card;
+  }
+
+  async renderPage(num, canvasEl) {
+    if (!this.pdfDoc || this.renderedPages.has(num)) return;
+    this.renderedPages.add(num);
+
+    try {
+      const page = await this.pdfDoc.getPage(num);
+      const viewport = page.getViewport({ scale: this.scale });
+      const outputScale = window.devicePixelRatio || 1;
+
+      canvasEl.width = Math.floor(viewport.width * outputScale);
+      canvasEl.height = Math.floor(viewport.height * outputScale);
+      canvasEl.style.width = Math.floor(viewport.width) + "px";
+      canvasEl.style.height = Math.floor(viewport.height) + "px";
+
+      const ctx = canvasEl.getContext('2d');
+      const transform = outputScale !== 1 ? [outputScale, 0, 0, outputScale, 0, 0] : null;
+
+      await page.render({ canvasContext: ctx, transform, viewport }).promise;
+    } catch (err) {
+      console.warn(`Error rendering page ${num}:`, err);
+    }
+  }
+
+  async toggleViewMode() {
+    this.viewMode = this.viewMode === 'single' ? 'double' : 'single';
+    this.dom.btnViewMode.classList.toggle('active', this.viewMode === 'double');
+    await this.zoomFit();
+  }
+
+  async zoom(factor) {
+    this.scale *= factor;
+    this.scale = clamp(this.scale, 0.2, 4.0);
+    this.renderedPages.clear();
+    await this.renderAllPages();
+  }
+
+  async zoomFit() {
+    if (!this.pdfDoc) return;
+
+    // Wait for layout reflow
+    await new Promise(r => requestAnimationFrame(r));
+
+    const firstPage = await this.pdfDoc.getPage(1);
+    const containerWidth = this.dom.content.clientWidth - 32;
+    const unscaledViewport = firstPage.getViewport({ scale: 1.0 });
+
+    if (this.viewMode === 'double') {
+      this.scale = ((containerWidth - 16) / 2) / unscaledViewport.width;
+    } else {
+      this.scale = containerWidth / unscaledViewport.width;
+    }
+    this.scale = clamp(this.scale, 0.2, 4.0);
+    this.renderedPages.clear();
+    await this.renderAllPages();
+  }
+
+  goToPage(num) {
+    if (!this.pdfDoc) return;
+    num = clamp(num, 1, this.pdfDoc.numPages);
+
+    // In double mode, find the row containing this page
+    let target;
+    if (this.viewMode === 'double') {
+      const rows = this.dom.pagesContainer.querySelectorAll('.page-row');
+      const rowIndex = Math.floor((num - 1) / 2);
+      if (rows[rowIndex]) target = rows[rowIndex];
+    } else {
+      target = document.getElementById(`pane${this.id}-card-${num}`);
+    }
+
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  handleScroll() {
+    if (!this.pdfDoc) return;
+    const scrollTop = this.dom.content.scrollTop;
+    const contentHeight = this.dom.content.clientHeight;
+
+    let current = 1;
+
+    if (this.viewMode === 'double') {
+      const rows = this.dom.pagesContainer.querySelectorAll('.page-row');
+      rows.forEach((row, idx) => {
+        const rect = row.getBoundingClientRect();
+        const containerRect = this.dom.content.getBoundingClientRect();
+        const relativeTop = rect.top - containerRect.top;
+        if (relativeTop <= contentHeight / 2) {
+          current = idx * 2 + 1;
+        }
+      });
+    } else {
+      const cards = this.dom.pagesContainer.querySelectorAll('.page-card');
+      cards.forEach(card => {
+        const rect = card.getBoundingClientRect();
+        const containerRect = this.dom.content.getBoundingClientRect();
+        const relativeTop = rect.top - containerRect.top;
+        if (relativeTop <= contentHeight / 3) {
+          current = parseInt(card.dataset.pageNumber, 10);
+        }
+      });
+    }
+
+    if (current !== this.pageNum) {
+      this.pageNum = current;
+      this.dom.pageNumInput.value = current;
+      if (this.currentFileName) {
+        saveHistoryItem(this.currentFileName, this.pdfDoc.numPages, current);
+      }
+    }
+  }
+}
+
+/* ---------- App Init & Split Screen ---------- */
+const pane1 = new PDFViewerPane(1, 'الملف الرئيسي');
+const pane2 = new PDFViewerPane(2, 'الملف الثاني');
+
+const pane2El = document.getElementById('pane2');
+const mainViewport = document.getElementById('mainViewport');
+const btnToggleSplit = document.getElementById('btnToggleSplit');
+
+function updateSplitLayout() {
+  const isMobile = window.innerWidth <= 768;
+  const isSplit = !pane2El.classList.contains('hidden');
+
+  if (isSplit && isMobile) {
+    mainViewport.classList.add('split-mobile-stack');
+  } else {
+    mainViewport.classList.remove('split-mobile-stack');
+  }
+
+  // Refit after layout change
+  requestAnimationFrame(() => {
+    pane1.zoomFit();
+    if (isSplit) pane2.zoomFit();
+  });
+}
+
+btnToggleSplit.addEventListener('click', () => {
+  const isSplit = !pane2El.classList.contains('hidden');
+  if (isSplit) {
+    pane2El.classList.add('hidden');
+    btnToggleSplit.classList.remove('active');
+  } else {
+    pane2El.classList.remove('hidden');
+    btnToggleSplit.classList.add('active');
+    updateSplitLayout();
+  }
+});
+
+window.addEventListener('resize', () => {
+  updateSplitLayout();
+});
+
+// Initial layout check
+updateSplitLayout();
+
+/* ---------- Fullscreen ---------- */
+document.getElementById('btnFullscreen').addEventListener('click', () => {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(() => {});
+  } else {
+    document.exitFullscreen().catch(() => {});
+  }
+});
+
+/* ---------- History Drawer ---------- */
+const drawer = document.getElementById('drawer');
+const drawerOverlay = document.getElementById('drawerOverlay');
+const historyList = document.getElementById('historyList');
+
+document.getElementById('btnHistory').addEventListener('click', () => {
+  drawer.classList.add('open');
+  drawerOverlay.classList.add('open');
+  renderHistoryUI();
+});
+
+document.getElementById('btnCloseDrawer').addEventListener('click', closeDrawer);
+drawerOverlay.addEventListener('click', closeDrawer);
+
+function closeDrawer() {
+  drawer.classList.remove('open');
+  drawerOverlay.classList.remove('open');
+}
+
+function renderHistoryUI() {
+  const history = getHistory();
+  historyList.innerHTML = '';
+
+  if (history.length === 0) {
+    historyList.innerHTML = '<div style="font-size:13px; color:var(--paper-faint); text-align:center; padding:40px 20px; line-height:1.6;">لا يوجد ملفات مسجلة بعد<br><span style="font-size:11px;">افتح ملف PDF لبدء السجل</span></div>';
+    return;
+  }
+
+  history.forEach(item => {
+    const pct = Math.round((item.currentPage / item.totalPages) * 100);
+    const div = document.createElement('div');
+    div.className = 'history-item';
+    div.innerHTML = `
+      <div class="history-item-header">
+        <div class="name" title="${item.fileName}">${item.fileName}</div>
+        <button class="btn-delete-history" title="حذف من السجل">
+          <svg style="width:16px;height:16px;fill:currentColor;" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+        </button>
+      </div>
+      <div class="meta">
+        <span>صفحة ${item.currentPage} من ${item.totalPages} (${pct}%)</span>
+        <span>${item.lastOpened}</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: ${pct}%"></div>
+      </div>
+    `;
+
+    div.addEventListener('click', async (e) => {
+      if (e.target.closest('.btn-delete-history')) return;
+      closeDrawer();
+      const storedBlob = await getPdfFromDB(item.fileName);
+      const targetPane = pane2El.classList.contains('hidden') ? pane1 : (pane2.pdfDoc ? pane1 : pane2);
+
+      if (storedBlob) {
+        targetPane.loadPdfFile(storedBlob, item.currentPage, item.fileName);
+      } else {
+        showToast('الملف غير مخزن. اختره من جهازك.', 'error');
+        targetPane.dom.fileInput.click();
+      }
+    });
+
+    div.querySelector('.btn-delete-history').addEventListener('click', async (e) => {
+      e.stopPropagation();
+      let updatedHistory = getHistory().filter(h => h.fileName !== item.fileName);
+      localStorage.setItem('pdf_reader_history_v2', JSON.stringify(updatedHistory));
+      await deletePdfFromDB(item.fileName);
+      renderHistoryUI();
+      showToast('تم الحذف من السجل', 'success');
+    });
+
+    historyList.appendChild(div);
+  });
+}
+
+// Render history on load
+renderHistoryUI();
+</script>
+</body>
+</html>
