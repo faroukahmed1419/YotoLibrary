@@ -13,13 +13,7 @@
     "desc":"مستخرج صفحات ملفات البي دي إف كصور منفصلة في مجلد مجمع او ملف بي دي إف منفصل " , 
     "folder":"pdfpageextractor"
   }
-  ,
-   {
-    "id":"english_tenses",
-    "name":"English Tenses",
-    "desc":"شرح مفصل لكل قواعد اللغة الإنجليزية مع الأمثلة", 
-    "folder":"english_tenses"
-  },
+,
   {
     "id":"pdf_reader",
     "name":"PDF Reader",
