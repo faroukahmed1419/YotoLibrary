@@ -19,5 +19,12 @@
     "name":"English Tenses",
     "desc":"شرح مفصل لكل قواعد اللغة الإنجليزية مع الأمثلة", 
     "folder":"english_tenses"
+  },
+  {
+    "id":"pdf_reader",
+    "name":"PDF Reader",
+    "desc":"قارئ ملفات PDF",
+    "folder":"pdf_reader"
   }
+
 ]
