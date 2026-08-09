@@ -2855,7 +2855,7 @@ body.lang-en .page-actions .btn,body.lang-en .modal-footer .btn{flex-shrink:0;}
   <div class="view" id="view-program-run">
     <div class="page-header">
       <div class="page-title">
-        <div class="page-title-icon" style="background:linear-gradient(135deg,#f59e0b,#ef4444);">
+        <div class="page-title-icon" id="programRunIcon" style="background:linear-gradient(135deg,#f59e0b,#ef4444);">
           <i class="fas fa-play"></i>
         </div>
         <span id="programRunTitle">برنامج</span>
@@ -4218,7 +4218,7 @@ function renderProgramsGrid(container, limit) {
   }
   container.innerHTML = list.map(p => `
     <div class="cloud-card">
-      <div class="cloud-card-icon prog-icon-slot" data-prog-name="${escHtml(p.name)}"><i class="fas fa-cube" style="color:#f59e0b;"></i></div>
+      <div class="cloud-card-icon prog-icon-slot" data-prog-name="${escHtml(p.name)}" data-prog-icon="${escHtml(p.icon||'')}"><i class="fas fa-cube" style="color:#f59e0b;"></i></div>
       <h4>${escHtml(p.name)}</h4>
       <p>${escHtml(p.desc||'لا يوجد وصف')}</p>
       <span class="cloud-tag tag-program">برنامج فرعي</span>
@@ -4239,12 +4239,13 @@ function applyProgramLogos(scopeEl) {
   const root = scopeEl || document;
   root.querySelectorAll('.prog-icon-slot[data-prog-name]').forEach(slot => {
     const name = slot.getAttribute('data-prog-name');
-    if (!name) return;
+    const storedIcon = slot.getAttribute('data-prog-icon');
+    if (!name && !storedIcon) return;
     const testImg = new Image();
     testImg.onload = () => {
       slot.innerHTML = `<img src="${testImg.src}" alt="${escHtml(name)}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">`;
     };
-    testImg.src = `./programs/${encodeURIComponent(name)}.png`;
+    testImg.src = storedIcon || `./programs/${encodeURIComponent(name)}.png`;
   });
 }
 
@@ -4257,6 +4258,21 @@ function runProgram(id) {
   const p = DB.programs.find(x => x.id === id);
   if (!p) { navigate('programs'); return; }
   document.getElementById('programRunTitle').textContent = p.name;
+
+  // Show the program's own icon in the header if one is stored, else keep the default play icon.
+  const iconBox = document.getElementById('programRunIcon');
+  if (iconBox) {
+    iconBox.style.background = 'linear-gradient(135deg,#f59e0b,#ef4444)';
+    iconBox.innerHTML = '<i class="fas fa-play"></i>';
+    if (p.icon) {
+      const testImg = new Image();
+      testImg.onload = () => {
+        iconBox.style.background = 'transparent';
+        iconBox.innerHTML = `<img src="${testImg.src}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">`;
+      };
+      testImg.src = p.icon;
+    }
+  }
 
   // Build a full HTML doc and inject via srcdoc
   const full = buildProgramHtml(p);
@@ -7857,7 +7873,7 @@ async function spAddProgram(folder, name, desc) {
     const css = await fetch(base + 'style.css').then(r => r.ok ? r.text() : '').catch(() => '');
     const js = await fetch(base + 'script.js').then(r => r.ok ? r.text() : '').catch(() => '');
     if (!html.trim()) { showToast(_t('لم يتم العثور على index.html لهذا البرنامج', 'index.html not found for this program'), 'error'); return; }
-    DB.programs.push({ id: genId(), name, desc, files: { html, css, js }, createdAt: Date.now() });
+    DB.programs.push({ id: genId(), name, desc, icon: `./SUBPROGRAM/${folder}/icon.png`, files: { html, css, js }, createdAt: Date.now() });
     saveDB();
     buildSidebarPrograms();
     if (APP.currentView === 'programs') renderProgramsView();
