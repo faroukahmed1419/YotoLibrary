@@ -5,6 +5,12 @@
     "name": "Dictionary",
     "desc": "قاموس مترجم وناطق - مع ميزة اختيار تصنيف الكلمات و سرعة النطق و البحث عن كلمات معينة.",
     "folder": "dictionary"
+  },
+    {
+    "id": "english_tenses",
+    "name": "English Tenses Explainer",
+    "desc": "شرح جميع أزمنة اللغة الإنجليزية بالتفصيل",
+    "folder": "english_tenses"
   }
   ,
   {
@@ -19,7 +25,6 @@
   "name":"Bubble Sheet Creator",
     "desc":"أداة لإنشاء نماذج بابل شيت  - تفاعلية  و ثابتة - مع تخصيص لعدد الأسئلة و الأعمدة",
     "folder":"bubble_sheet"
-    
   }
   
 ]
