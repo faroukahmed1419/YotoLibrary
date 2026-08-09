@@ -276,9 +276,6 @@ body{
   /* Reduce font-awesome icon sizes that are decorative */
   .page-title-icon{width:36px;height:36px;font-size:.95rem;}
 
-  /* Disable particle/bubble/matrix canvases on mobile to save battery */
-  #bgCanvas,#matrixCanvas,#bubbleCanvas{display:none!important;}
-
   /* Smaller modal for tiny screens */
   .modal{padding:20px 16px;}
   .modal h2{font-size:1.05rem;}
@@ -1538,6 +1535,24 @@ body.fake-fullscreen-lock{ overflow:hidden; }
   /* On mobile: hide nav buttons, collapse topbar to burger | logo | [space] | right */
   .topbar-nav-btns{display:none !important;}
   .topbar{grid-template-columns:auto auto 1fr auto !important;}
+
+  /* Fix: button text getting clipped on phones — let text wrap/shrink to fit
+     the button instead of overflowing past its edges. */
+  .btn{
+    white-space:normal;
+    text-align:center;
+    line-height:1.3;
+    word-break:break-word;
+    min-width:0;
+    height:auto;
+  }
+  .btn-sm{white-space:normal;line-height:1.25;min-width:0;}
+  /* Any row of buttons (settings, modals, etc.) should wrap onto new lines
+     rather than squeezing each button's text into an unreadable sliver. */
+  .modal-footer,.page-actions{flex-wrap:wrap;}
+}
+@media(max-width:420px){
+  .btn{font-size:.78rem;padding:9px 12px;}
 }
 @media(max-width:480px){
   .stats-bar{grid-template-columns:1fr 1fr;}
@@ -3124,7 +3139,6 @@ body.lang-en .page-actions .btn,body.lang-en .modal-footer .btn{flex-shrink:0;}
             <span id="appUpdateStatus">لم يتم التحقق بعد</span>
           </p>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <button class="btn" style="flex:1;" onclick="checkForAppUpdate(true)"><i class="fas fa-magnifying-glass"></i> التحقق من وجود تحديث</button>
             <button class="btn btn-primary" style="flex:1;" onclick="performAppUpdate()"><i class="fas fa-rotate"></i> تحديث الآن</button>
           </div>
           <p style="font-size:.72rem;color:var(--muted);margin-top:8px;">التحديث يجلب أحدث نسخة من الموقع فقط، وبياناتك المحفوظة (الروابط، التصنيفات، الملاحظات...) لا تتأثر أبداً.</p>
@@ -8172,21 +8186,38 @@ async function checkForAppUpdate(manual){
   }
 }
 
+// Single entry point for updating: pressing "تحديث الآن" both checks for a
+// new version and applies it immediately if one exists. No update is ever
+// applied without the user pressing this button — the periodic background
+// check (checkForAppUpdate(false)) only ever sets a notification dot/status
+// text, it never calls this function or reloads the page.
 async function performAppUpdate(){
-  showToast('جاري التحديث...');
+  const statusEl = document.getElementById('appUpdateStatus');
+  showToast('جاري التحقق والتحديث...');
   try {
     if (!('serviceWorker' in navigator)) { location.reload(); return; }
-    const reg = swRegistration || await navigator.serviceWorker.getRegistration();
+    let reg = swRegistration || await navigator.serviceWorker.getRegistration();
+    if (reg) { try { await reg.update(); } catch(e){} }
+    reg = swRegistration || await navigator.serviceWorker.getRegistration();
+
     if (reg && reg.waiting) {
       // A new service worker is already downloaded — activate it, then reload once it takes control.
       navigator.serviceWorker.addEventListener('controllerchange', () => location.reload(), { once: true });
       reg.waiting.postMessage({ type: 'SKIP_WAITING' });
       return;
     }
-    // No waiting worker (e.g. very first load, or nothing new) — force a clean
-    // pull of the latest site files. Only the SW cache is cleared here;
-    // app data (IndexedDB) is a separate store and is never touched.
-    if (reg) await reg.update();
+
+    if (!updateAvailable) {
+      // Nothing new to install.
+      if (statusEl) statusEl.textContent = 'آخر فحص: ' + _fmtCheckTime() + ' — أحدث نسخة مثبّتة';
+      showToast('أنت تستخدم أحدث نسخة بالفعل ✓');
+      return;
+    }
+
+    // updateAvailable was flagged but there's no waiting worker (e.g. cache
+    // already updated in place) — force a clean pull of the latest site
+    // files. Only the SW cache is cleared here; app data (IndexedDB) is a
+    // separate store and is never touched.
     if ('caches' in window) {
       const keys = await caches.keys();
       await Promise.all(keys.map(k => caches.delete(k)));
