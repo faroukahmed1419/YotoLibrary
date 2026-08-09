@@ -13,12 +13,4 @@
     "desc":"مستخرج صفحات ملفات البي دي إف كصور منفصلة في مجلد مجمع او ملف بي دي إف منفصل " , 
     "folder":"pdfpageextractor"
   }
-,
-  {
-    "id":"pdf_reader",
-    "name":"PDF Reader",
-    "desc":"قارئ ملفات PDF",
-    "folder":"pdf_reader"
-  }
-
 ]
