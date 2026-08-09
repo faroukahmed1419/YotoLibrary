@@ -17,7 +17,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=JetBrains+Mono:wght@400;700&family=Tajawal:wght@400;700;900&family=IBM+Plex+Sans+Arabic:wght@400;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Markazi+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <!-- Hide body until splash covers it -->
 <style id="bodyHideStyle">body>*:not(#splashScreen){visibility:hidden;}</style>
@@ -380,7 +379,7 @@ img{max-width:100%;}
 .topbar-logo .logo-school{color:var(--accent); font-weight:900; font-size:1.1rem;}
 .logo-wordmark{
   display:inline-flex; align-items:baseline;
-  font-family:'Markazi Text',serif; font-weight:600; font-size:1.6rem; letter-spacing:0.03em;
+  font-family:'Amiri',serif; font-weight:700; font-size:1.25rem;
   color:var(--accent);
   line-height:1; margin-inline-start:6px;
   direction:rtl; unicode-bidi:isolate;
@@ -1215,15 +1214,12 @@ body.fake-fullscreen-lock{ overflow:hidden; }
 }
 .theme-card:hover{transform:translateY(-2px);}
 .theme-card.active{border-color:var(--accent);}
-.theme-preview{height:68px;position:relative;}
+.theme-preview{height:48px;position:relative;}
 .theme-card span{
   display:block;text-align:center;
-  font-size:.82rem;font-weight:700;
-  padding:8px 6px;
+  font-size:.73rem;font-weight:700;
+  padding:5px 4px;
   background:var(--surface2);
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
 }
 .theme-card .theme-del{
   position:absolute;top:4px;left:4px;
@@ -1236,9 +1232,9 @@ body.fake-fullscreen-lock{ overflow:hidden; }
 .theme-card:hover .theme-del{opacity:1;}
 .theme-grid-row{
   display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:10px;
-  margin-bottom:8px;
+  grid-template-columns:repeat(auto-fill,minmax(72px,1fr));
+  gap:6px;
+  margin-bottom:4px;
 }
 
 /* Font Cards — replaces the old <select> dropdown with tappable cards */
@@ -2446,9 +2442,9 @@ html,body{overscroll-behavior-y:none;}
    PATCH: bigger, easier-to-tap controls in Settings
 ══════════════════════════════════════════════ */
 .lang-switch-btn{padding:16px;font-size:1rem;}
-.theme-grid{grid-template-columns:1fr;gap:0;}
+.theme-grid{grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:14px;}
 .theme-card{border-radius:12px;}
-.theme-card span{padding:8px 6px;font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.theme-card span{padding:8px 6px;font-size:.85rem;}
 .sett-group .btn{padding:12px 18px;font-size:.92rem;}
 .sett-group .toggle{width:52px;height:30px;}
 .sett-group .toggle-slider::before{height:22px;width:22px;}
@@ -2457,19 +2453,6 @@ html,body{overscroll-behavior-y:none;}
    PATCH: "quick view" dropdown button removed site-wide
 ══════════════════════════════════════════════ */
 .cat-card-dd-btn,.cat-dropdown{display:none!important;}
-
-/* ══════════════════════════════════════════════
-   PATCH: theme grid mobile — very small screens
-══════════════════════════════════════════════ */
-@media(max-width:400px){
-  .theme-grid-row{gap:7px;}
-  .theme-card span{font-size:.76rem;padding:7px 4px;}
-  .theme-preview{height:58px;}
-}
-@media(max-width:600px){
-  .sett-modal{border-radius:16px;}
-  .sett-panel-scroll{margin:0 -2px;padding:0 2px;}
-}
 
 /* ══════════════════════════════════════════════
    PATCH: checklists board ("فهارس")
@@ -2583,7 +2566,7 @@ body.lang-en .page-actions .btn,body.lang-en .modal-footer .btn{flex-shrink:0;}
       <path d="M32 21v24" stroke="#ffb84d" stroke-width="2" stroke-linecap="round"/>
     </svg>
     <div style="text-align:center;">
-      <div style="font-family:'Markazi Text',serif;font-weight:600;font-size:3rem;letter-spacing:0.03em;line-height:1;margin-bottom:8px;color:#d98324;direction:rtl;">
+      <div style="font-family:'Amiri',serif;font-weight:700;font-size:2.6rem;letter-spacing:.01em;line-height:1;margin-bottom:8px;color:#d98324;direction:rtl;">
         مَوْئِل
       </div>
       <div id="splashTagline" style="font-family:'Cairo',sans-serif;font-size:1rem;color:rgba(255,255,255,.5);letter-spacing:.04em;opacity:0;transform:translateY(8px);transition:opacity .6s ease .4s,transform .6s ease .4s;">مكتبتك التعليمية الذكية</div>
@@ -2643,7 +2626,7 @@ body.lang-en .page-actions .btn,body.lang-en .modal-footer .btn{flex-shrink:0;}
 <nav class="sidebar" id="sidebar">
   <div class="sb-head">
     <div class="sb-head-logo">
-      <bdi style="font-family:'Markazi Text',serif;font-weight:600;font-size:1.25rem;letter-spacing:0.03em;color:var(--accent);direction:rtl;unicode-bidi:isolate;">مَوْئِل</bdi>
+      <bdi style="font-family:'Amiri',serif;font-weight:700;color:var(--accent);direction:rtl;unicode-bidi:isolate;">مَوْئِل</bdi>
     </div>
     <button class="sb-close" onclick="closeSidebar()"><i class="fas fa-times"></i></button>
   </div>
@@ -3070,7 +3053,7 @@ body.lang-en .page-actions .btn,body.lang-en .modal-footer .btn{flex-shrink:0;}
             <path d="M32 21c-4-3-11-4-15-2v24c4-2 11-1 15 2c4-3 11-4 15-2V19c-4-2-11-1-15 2Z" fill="#fff"/>
             <path d="M32 21v24" stroke="var(--gold)" stroke-width="2" stroke-linecap="round"/>
           </svg>
-          <div style="font-family:'Markazi Text',serif;font-weight:600;font-size:1.35rem;letter-spacing:0.03em;color:var(--accent);direction:rtl;">مَوْئِل</div>
+          <div style="font-family:'Amiri',serif;font-weight:700;font-size:1.15rem;color:var(--accent);direction:rtl;">مَوْئِل</div>
           <div style="font-size:.75rem;color:var(--muted);">بدون إنترنت · بياناتك محلية</div>
           <div style="width:100%;margin-top:6px;padding-top:10px;border-top:1px solid var(--border);">
             <button class="btn btn-danger btn-sm" style="width:100%;font-size:.78rem;padding:7px;" onclick="clearAllData()"><i class="fas fa-trash-alt"></i> مسح كل البيانات</button>
@@ -5442,10 +5425,10 @@ function renderThemeGrid() {
       html += `
         <div class="theme-card ${isActive ? 'active' : ''}" onclick="changeTheme('${t.id}')">
           <div class="theme-preview" style="background:${bg};">
-            <div style="position:absolute;top:6px;right:6px;bottom:6px;left:6px;border-radius:6px;background:${surface};border:1px solid ${accentSolid}44;">
-              <div style="height:4px;background:${accentSolid};border-radius:6px 6px 0 0;"></div>
-              <div style="display:flex;gap:3px;padding:4px;">
-                ${[1,2,3].map(()=>`<div style="flex:1;height:14px;border-radius:3px;background:${accentSolid}22;"></div>`).join('')}
+            <div style="position:absolute;top:5px;right:5px;bottom:5px;left:5px;border-radius:5px;background:${surface};border:1px solid ${accentSolid}44;">
+              <div style="height:3px;background:${accentSolid};border-radius:3px 3px 0 0;"></div>
+              <div style="display:flex;gap:2px;padding:3px;">
+                ${[1,2,3].map(()=>`<div style="flex:1;height:10px;border-radius:2px;background:${accentSolid}22;"></div>`).join('')}
               </div>
             </div>
           </div>
@@ -8242,7 +8225,7 @@ if ('serviceWorker' in navigator) {
         <path d="M32 21c-4-3-11-4-15-2v24c4-2 11-1 15 2c4-3 11-4 15-2V19c-4-2-11-1-15 2Z" fill="#fff"/>
         <path d="M32 21v24" stroke="#ffb84d" stroke-width="2" stroke-linecap="round"/>
       </svg>
-      <div style="font-family:'Markazi Text',serif;font-weight:600;font-size:2.2rem;letter-spacing:0.03em;line-height:1;color:var(--accent);direction:rtl;">
+      <div style="font-family:'Amiri',serif;font-weight:700;font-size:1.9rem;line-height:1;color:var(--accent);direction:rtl;">
         مَوْئِل
       </div>
     </div>
@@ -8275,7 +8258,7 @@ if ('serviceWorker' in navigator) {
 
     <!-- Name meaning -->
     <p style="font-size:.8rem;color:var(--muted);line-height:1.8;margin:0 0 20px;">
-      <strong style="font-family:'Markazi Text',serif;font-weight:600;font-size:1.1em;letter-spacing:0.03em;color:var(--accent);">"مَوْئِل"</strong>
+      <strong style="font-family:'Amiri',serif;font-weight:700;color:var(--accent);">"مَوْئِل"</strong>
       تعني المَلجأ والمكان الذي يُرجع إليه — تمامًا كما يكون هذا الموقع مكانك الدائم لكل ما تتعلمه.
     </p>
 
